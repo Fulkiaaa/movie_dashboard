@@ -1,36 +1,143 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎬 MovieMatch - Dashboard de Films
 
-## Getting Started
+Application Next.js pour découvrir, organiser et gérer vos films préférés avec TMDB et Supabase.
 
-First, run the development server:
+## ✨ Fonctionnalités
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- 🎯 **Dashboard personnalisé** - Suivez votre activité cinéma
+- ❤️ **Système de swipe** - Découvrez des films (à venir)
+- 🔐 **Authentification** - Connexion/Inscription avec Supabase
+- 🎬 **API TMDB** - Base de données complète de films
+- 📊 **Statistiques** - Vos films vus, favoris et à voir
+- 🎨 **Interface moderne** - Design épuré avec Tailwind CSS
+
+## 🚀 Démarrage rapide
+
+### Prérequis
+
+- Node.js 18+
+- npm ou yarn
+- Compte TMDB
+- Compte Supabase
+
+### Installation
+
+1. **Cloner le repository**
+   ```bash
+   git clone https://github.com/Fulkiaaa/movie_dashboard.git
+   cd movie_dashboard
+   ```
+
+2. **Installer les dépendances**
+   ```bash
+   npm install
+   ```
+
+3. **Configurer les variables d'environnement**
+   
+   Copiez `.env.example` vers `.env.local` et remplissez vos clés :
+   
+   ```env
+   # TMDB
+   NEXT_PUBLIC_TMDB_API_KEY=votre_clé_tmdb
+   NEXT_PUBLIC_TMDB_BASE_URL=https://api.themoviedb.org/3
+   NEXT_PUBLIC_TMDB_IMAGE_BASE_URL=https://image.tmdb.org/t/p
+
+   # Supabase
+   NEXT_PUBLIC_SUPABASE_URL=votre_url_supabase
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=votre_clé_publique
+   ```
+
+4. **Obtenir les clés API**
+
+   **TMDB :**
+   - Créez un compte sur [TMDB](https://www.themoviedb.org/)
+   - Allez dans [Paramètres > API](https://www.themoviedb.org/settings/api)
+   - Demandez une clé API (gratuit)
+
+   **Supabase :**
+   - Créez un compte sur [Supabase](https://supabase.com/)
+   - Créez un nouveau projet
+   - Allez dans Settings > API
+   - Copiez l'URL et la clé `anon/public`
+
+5. **Lancer le serveur de développement**
+   ```bash
+   npm run dev
+   ```
+
+6. **Ouvrir l'application**
+   
+   Visitez [http://localhost:3000](http://localhost:3000)
+
+## 📁 Structure du projet
+
+```
+src/
+├── app/
+│   ├── auth/
+│   │   ├── login/          # Page de connexion
+│   │   └── signup/         # Page d'inscription
+│   ├── dashboard/          # Dashboard principal
+│   ├── profile/            # Profil utilisateur
+│   ├── swipe/              # Page de swipe (à venir)
+│   ├── test/               # Page de test des connexions
+│   ├── layout.tsx          # Layout principal avec Header
+│   └── page.tsx            # Page d'accueil
+├── components/
+│   └── Header.tsx          # Header avec navigation
+└── contexts/
+    └── AuthContext.tsx     # Contexte d'authentification
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🧪 Tester les connexions
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Visitez `/test` pour vérifier que :
+- ✅ TMDB API est bien configurée
+- ✅ Supabase est accessible
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🎨 Technologies utilisées
 
-## Learn More
+- **Framework** : Next.js 16 (App Router)
+- **Langage** : TypeScript
+- **Styling** : Tailwind CSS
+- **Authentification** : Supabase Auth
+- **Base de données** : Supabase (PostgreSQL)
+- **API Films** : TMDB
+- **Icons** : Lucide React
+- **Animations** : Framer Motion, GSAP
 
-To learn more about Next.js, take a look at the following resources:
+## 📝 Pages disponibles
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `/` - Page d'accueil
+- `/dashboard` - Dashboard (authentification requise)
+- `/swipe` - Swipe films (authentification requise)
+- `/profile` - Profil utilisateur (authentification requise)
+- `/auth/login` - Connexion
+- `/auth/signup` - Inscription
+- `/test` - Test des connexions API
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🔧 Configuration Supabase
 
-## Deploy on Vercel
+Pour que l'authentification fonctionne localement, ajoutez cette URL dans les paramètres Supabase :
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Allez dans `Authentication > URL Configuration`
+2. Ajoutez `http://localhost:3000` dans les "Redirect URLs"
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🚧 Prochaines fonctionnalités
+
+- [ ] Système de swipe fonctionnel
+- [ ] Gestion des favoris
+- [ ] Historique des films vus
+- [ ] Recommandations personnalisées
+- [ ] Partage de listes
+- [ ] Mode hors ligne
+
+## 📄 License
+
+MIT
+
+## 👤 Auteur
+
+Clara Morin
+
