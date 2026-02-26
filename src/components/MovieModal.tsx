@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { X, Star, Eye, Clock, Calendar, Film as FilmIcon } from 'lucide-react';
+import { X, Star, Eye, Clock, Calendar, Film as FilmIcon, Heart } from 'lucide-react';
 import { tmdbService, Movie, MovieDetails } from '@/services/tmdb';
 import { moviesService, UserMovie } from '@/services/movies';
 import { useAuth } from '@/contexts/AuthContext';
@@ -22,6 +22,7 @@ export default function MovieModal({ movie, onClose, onUpdate }: MovieModalProps
   
   const [selectedRating, setSelectedRating] = useState<number | null>(null);
   const [status, setStatus] = useState<'watched' | 'watchlist' | null>(null);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
     loadMovieData();
@@ -49,6 +50,7 @@ export default function MovieModal({ movie, onClose, onUpdate }: MovieModalProps
           setUserMovie(existingMovie);
           setStatus(existingMovie.status);
           setSelectedRating(existingMovie.rating);
+          setIsFavorite(existingMovie.is_favorite || false);
         }
       }
     } catch (error) {
@@ -101,6 +103,7 @@ export default function MovieModal({ movie, onClose, onUpdate }: MovieModalProps
       setUserMovie(null);
       setStatus(null);
       setSelectedRating(null);
+      setIsFavorite(false);
       
       if (onUpdate) {
         onUpdate();
@@ -108,6 +111,37 @@ export default function MovieModal({ movie, onClose, onUpdate }: MovieModalProps
     } catch (error) {
       console.error('Error deleting movie:', error);
       alert('Erreur lors de la suppression');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleToggleFavorite = async () => {
+    if (!supabase || !userMovie) {
+      // Si le film n'est pas encore dans la collection, l'ajouter d'abord
+      if (!userMovie) {
+        alert("Veuillez d'abord ajouter le film à votre collection (vu ou watchlist)");
+        return;
+      }
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const updatedMovie = await moviesService.toggleFavorite(supabase, userMovie.id);
+      setIsFavorite(updatedMovie.is_favorite);
+      setUserMovie(updatedMovie);
+      
+      if (onUpdate) {
+        onUpdate();
+      }
+    } catch (error: any) {
+      console.error('Error toggling favorite:', error);
+      if (error.message?.includes('10 films favoris maximum')) {
+        alert("Vous ne pouvez avoir que 10 films favoris maximum. Retirez-en un depuis votre profil avant d'en ajouter un nouveau.");
+      } else {
+        alert("Erreur lors de la mise à jour du favori");
+      }
     } finally {
       setSaving(false);
     }
@@ -297,6 +331,24 @@ export default function MovieModal({ movie, onClose, onUpdate }: MovieModalProps
                     <Clock className="w-4 h-4" />
                     {status === 'watchlist' ? 'Dans ma watchlist' : 'Ajouter à la watchlist'}
                   </button>
+
+                  {userMovie && (
+                    <button
+                      onClick={handleToggleFavorite}
+                      disabled={saving}
+                      className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors ${
+                        isFavorite
+                          ? 'bg-black text-white'
+                          : 'bg-gray-100 text-black hover:bg-gray-200'
+                      } disabled:opacity-50`}
+                      title={isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris (max 10)'}
+                    >
+                      <Heart className={`w-4 h-4 ${
+                        isFavorite ? 'fill-white' : ''
+                      }`} />
+                      {isFavorite ? 'Favori' : 'Favori'}
+                    </button>
+                  )}
 
                   {userMovie && (
                     <button

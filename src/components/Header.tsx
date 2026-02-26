@@ -2,12 +2,21 @@
 
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
-import { Film, Menu, User, LogOut, LayoutDashboard, Heart } from 'lucide-react';
-import { useState } from 'react';
+import {
+  Film,
+  Menu,
+  User,
+  LogOut,
+  LayoutDashboard,
+  Heart,
+  ChevronDown,
+} from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 
 export default function Header() {
   const { user, signOut, loading } = useAuth();
   const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   const handleSignOut = async () => {
     try {
@@ -18,70 +27,147 @@ export default function Header() {
     }
   };
 
+  // Ferme le dropdown si clic en dehors (plus propre que l’overlay fixed)
+  useEffect(() => {
+    if (!showDropdown) return;
+
+    const onClick = (e: MouseEvent) => {
+      const target = e.target as Node;
+      if (dropdownRef.current && !dropdownRef.current.contains(target)) {
+        setShowDropdown(false);
+      }
+    };
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setShowDropdown(false);
+    };
+
+    document.addEventListener('mousedown', onClick);
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', onClick);
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, [showDropdown]);
+
+  const username =
+    user?.email?.split('@')[0]?.slice(0, 18) ?? 'Compte';
+
   return (
-    <header className="bg-white border-b border-gray-200">
+    <header className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo et nom */}
+          {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="bg-black p-2 rounded-lg group-hover:scale-110 transition-transform">
+            <div className="bg-black p-2 rounded-xl group-hover:scale-105 transition-transform">
               <Film className="w-6 h-6 text-white" />
             </div>
-            <span className="text-xl font-bold text-black">MovieMatch</span>
+            <span className="text-xl font-bold text-black tracking-tight">
+              MovieMatch
+            </span>
           </Link>
 
           {/* Navigation */}
-          <nav className="hidden md:flex items-center gap-6">
+          <nav className="hidden md:flex items-center gap-1">
             <Link
               href="/dashboard"
-              className="flex items-center gap-2 text-gray-700 hover:text-black transition-colors"
+              className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-gray-700 hover:text-black hover:bg-gray-100 transition-colors"
             >
               <LayoutDashboard className="w-4 h-4" />
               Dashboard
             </Link>
             <Link
               href="/swipe"
-              className="flex items-center gap-2 text-gray-700 hover:text-black transition-colors"
+              className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-gray-700 hover:text-black hover:bg-gray-100 transition-colors"
             >
               <Heart className="w-4 h-4" />
               Swipe
             </Link>
           </nav>
 
-          {/* Auth buttons */}
+          {/* Auth */}
           <div className="flex items-center gap-3">
             {loading ? (
-              <div className="w-8 h-8 rounded-full bg-gray-200 animate-pulse" />
+              <div className="w-9 h-9 rounded-full bg-gray-200 animate-pulse" />
             ) : user ? (
-              <div className="relative">
+              <div className="relative" ref={dropdownRef}>
                 <button
-                  onClick={() => setShowDropdown(!showDropdown)}
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
+                  type="button"
+                  onClick={() => setShowDropdown((v) => !v)}
+                  aria-haspopup="menu"
+                  aria-expanded={showDropdown}
+                  className={[
+                    'inline-flex items-center gap-2 pl-2 pr-3 py-2 rounded-xl',
+                    'bg-gray-100 hover:bg-gray-200 transition-colors',
+                    'border border-transparent hover:border-gray-200',
+                    'focus:outline-none focus-visible:ring-2 focus-visible:ring-black/20',
+                  ].join(' ')}
                 >
-                  <User className="w-4 h-4 text-gray-700" />
-                  <span className="text-sm text-gray-700 hidden sm:inline">
-                    {user.email?.split('@')[0]}
+                  {/* Avatar simple */}
+                  <span className="grid place-items-center w-7 h-7 rounded-lg bg-white border border-gray-200">
+                    <User className="w-4 h-4 text-gray-700" />
                   </span>
+
+                  <span className="text-sm text-gray-800 hidden sm:inline max-w-[140px] truncate">
+                    {username}
+                  </span>
+
+                  <ChevronDown
+                    className={[
+                      'w-4 h-4 text-gray-600 transition-transform',
+                      showDropdown ? 'rotate-180' : '',
+                    ].join(' ')}
+                  />
                 </button>
 
                 {/* Dropdown */}
                 {showDropdown && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-50">
-                    <Link
-                      href="/profile"
-                      className="flex items-center gap-2 px-4 py-3 text-gray-700 hover:bg-gray-100 transition-colors"
-                      onClick={() => setShowDropdown(false)}
-                    >
-                      <User className="w-4 h-4" />
-                      Mon profil
-                    </Link>
-                    <button
-                      onClick={handleSignOut}
-                      className="w-full flex items-center gap-2 px-4 py-3 text-gray-700 hover:bg-gray-100 transition-colors"
-                    >
-                      <LogOut className="w-4 h-4" />
-                      Se déconnecter
-                    </button>
+                  <div
+                    role="menu"
+                    className={[
+                      'absolute right-0 mt-2 w-56 overflow-hidden',
+                      'rounded-xl border border-gray-200 bg-white shadow-lg',
+                      'ring-1 ring-black/5',
+                      'z-50',
+                    ].join(' ')}
+                  >
+                    {/* petit header optionnel, cohérent et clean */}
+                    <div className="px-4 py-3 border-b border-gray-100">
+                      <p className="text-xs text-gray-500">Connecté en tant que</p>
+                      <p className="text-sm font-medium text-gray-900 truncate">
+                        {user.email}
+                      </p>
+                    </div>
+
+                    <div className="py-1">
+                      <Link
+                        href="/profile"
+                        role="menuitem"
+                        className={[
+                          'flex items-center gap-2 px-4 py-2.5 text-sm',
+                          'text-gray-700 hover:text-black hover:bg-gray-100',
+                          'transition-colors',
+                        ].join(' ')}
+                        onClick={() => setShowDropdown(false)}
+                      >
+                        <User className="w-4 h-4" />
+                        Mon profil
+                      </Link>
+
+                      <button
+                        type="button"
+                        role="menuitem"
+                        onClick={handleSignOut}
+                        className={[
+                          'w-full flex items-center gap-2 px-4 py-2.5 text-sm text-left',
+                          'text-gray-700 hover:text-black hover:bg-gray-100',
+                          'transition-colors',
+                        ].join(' ')}
+                      >
+                        <LogOut className="w-4 h-4" />
+                        Se déconnecter
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
@@ -89,34 +175,30 @@ export default function Header() {
               <div className="flex items-center gap-2">
                 <Link
                   href="/auth/login"
-                  className="px-4 py-2 text-sm text-gray-700 hover:text-black transition-colors"
+                  className="px-4 py-2 text-sm rounded-lg text-gray-700 hover:text-black hover:bg-gray-100 transition-colors"
                 >
                   Connexion
                 </Link>
                 <Link
                   href="/auth/signup"
-                  className="px-4 py-2 text-sm bg-black text-white rounded-lg hover:bg-gray-800 transition-all"
+                  className="px-4 py-2 text-sm bg-black text-white rounded-lg hover:bg-gray-900 transition-colors"
                 >
                   Inscription
                 </Link>
               </div>
             )}
 
-            {/* Mobile menu button */}
-            <button className="md:hidden p-2 text-gray-700 hover:text-black">
+            {/* Mobile menu */}
+            <button
+              type="button"
+              className="md:hidden p-2 rounded-lg text-gray-700 hover:text-black hover:bg-gray-100 transition-colors"
+              aria-label="Ouvrir le menu"
+            >
               <Menu className="w-6 h-6" />
             </button>
           </div>
         </div>
       </div>
-
-      {/* Click outside to close dropdown */}
-      {showDropdown && (
-        <div
-          className="fixed inset-0 z-40"
-          onClick={() => setShowDropdown(false)}
-        />
-      )}
     </header>
   );
 }

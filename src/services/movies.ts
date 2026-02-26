@@ -12,6 +12,7 @@ export interface UserMovie {
   release_date: string | null;
   status: 'watched' | 'watchlist';
   rating: number | null;
+  is_favorite: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -125,7 +126,7 @@ export const moviesService = {
   async updateMovie(
     supabase: SupabaseClient,
     id: string,
-    updates: Partial<Pick<UserMovie, 'status' | 'rating'>>
+    updates: Partial<Pick<UserMovie, 'status' | 'rating' | 'is_favorite'>>
   ): Promise<UserMovie> {
     const { data, error } = await supabase
       .from('user_movies')
@@ -220,5 +221,73 @@ export const moviesService = {
       favorites: favoritesCount || 0,
       thisWeek: thisWeekCount || 0,
     };
+  },
+
+  // Récupérer les films favoris
+  async getFavorites(supabase: SupabaseClient): Promise<UserMovie[]> {
+    const { data, error } = await supabase
+      .from('user_movies')
+      .select('*')
+      .eq('is_favorite', true)
+      .order('created_at', { ascending: false })
+      .limit(10);
+
+    if (error) {
+      console.error('Error fetching favorites:', error);
+      throw error;
+    }
+
+    return data || [];
+  },
+
+  // Basculer le statut favori d'un film
+  async toggleFavorite(supabase: SupabaseClient, id: string): Promise<UserMovie> {
+    // Récupérer le film actuel
+    const { data: currentMovie, error: fetchError } = await supabase
+      .from('user_movies')
+      .select('is_favorite')
+      .eq('id', id)
+      .single();
+
+    if (fetchError) {
+      console.error('Error fetching movie:', fetchError);
+      throw fetchError;
+    }
+
+    // Inverser le statut
+    const newFavoriteStatus = !currentMovie.is_favorite;
+
+    const { data, error } = await supabase
+      .from('user_movies')
+      .update({ is_favorite: newFavoriteStatus })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      // Si l'erreur est due à la limite de favoris
+      if (error.message?.includes('10 films favoris maximum')) {
+        throw new Error('Vous ne pouvez avoir que 10 films favoris maximum');
+      }
+      console.error('Error toggling favorite:', error);
+      throw error;
+    }
+
+    return data;
+  },
+
+  // Compter le nombre de favoris
+  async getFavoritesCount(supabase: SupabaseClient): Promise<number> {
+    const { count, error } = await supabase
+      .from('user_movies')
+      .select('*', { count: 'exact', head: true })
+      .eq('is_favorite', true);
+
+    if (error) {
+      console.error('Error counting favorites:', error);
+      throw error;
+    }
+
+    return count || 0;
   },
 };

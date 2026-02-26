@@ -118,6 +118,91 @@ export const tmdbService = {
     };
   },
 
+  // Récupérer les tendances (films et séries)
+  async getTrending(timeWindow: 'day' | 'week' = 'day', page = 1): Promise<{ results: Movie[]; total_pages: number }> {
+    const response = await fetch(
+      `${TMDB_BASE_URL}/trending/all/${timeWindow}?api_key=${TMDB_API_KEY}&page=${page}&language=fr-FR`
+    );
+
+    if (!response.ok) {
+      throw new Error('Erreur lors de la récupération des tendances');
+    }
+
+    const data = await response.json();
+    return {
+      results: data.results.filter((item: any) => item.media_type === 'movie' || item.media_type === 'tv'),
+      total_pages: data.total_pages,
+    };
+  },
+
+  // Récupérer les films en salle actuellement
+  async getNowPlayingMovies(page = 1): Promise<{ results: Movie[]; total_pages: number }> {
+    const response = await fetch(
+      `${TMDB_BASE_URL}/movie/now_playing?api_key=${TMDB_API_KEY}&page=${page}&language=fr-FR&region=FR`
+    );
+
+    if (!response.ok) {
+      throw new Error('Erreur lors de la récupération des films en salle');
+    }
+
+    const data = await response.json();
+    return {
+      results: data.results.map((item: any) => ({ ...item, media_type: 'movie' })),
+      total_pages: data.total_pages,
+    };
+  },
+
+  // Récupérer les films à venir
+  async getUpcomingMovies(page = 1): Promise<{ results: Movie[]; total_pages: number }> {
+    const response = await fetch(
+      `${TMDB_BASE_URL}/movie/upcoming?api_key=${TMDB_API_KEY}&page=${page}&language=fr-FR&region=FR`
+    );
+
+    if (!response.ok) {
+      throw new Error('Erreur lors de la récupération des films à venir');
+    }
+
+    const data = await response.json();
+    return {
+      results: data.results.map((item: any) => ({ ...item, media_type: 'movie' })),
+      total_pages: data.total_pages,
+    };
+  },
+
+  // Récupérer les films les mieux notés
+  async getTopRatedMovies(page = 1): Promise<{ results: Movie[]; total_pages: number }> {
+    const response = await fetch(
+      `${TMDB_BASE_URL}/movie/top_rated?api_key=${TMDB_API_KEY}&page=${page}&language=fr-FR`
+    );
+
+    if (!response.ok) {
+      throw new Error('Erreur lors de la récupération des films les mieux notés');
+    }
+
+    const data = await response.json();
+    return {
+      results: data.results.map((item: any) => ({ ...item, media_type: 'movie' })),
+      total_pages: data.total_pages,
+    };
+  },
+
+  // Récupérer des recommandations basées sur un film
+  async getRecommendations(movieId: number, mediaType: 'movie' | 'tv' = 'movie', page = 1): Promise<{ results: Movie[]; total_pages: number }> {
+    const response = await fetch(
+      `${TMDB_BASE_URL}/${mediaType}/${movieId}/recommendations?api_key=${TMDB_API_KEY}&page=${page}&language=fr-FR`
+    );
+
+    if (!response.ok) {
+      throw new Error('Erreur lors de la récupération des recommandations');
+    }
+
+    const data = await response.json();
+    return {
+      results: data.results.map((item: any) => ({ ...item, media_type: mediaType })),
+      total_pages: data.total_pages,
+    };
+  },
+
   // Construire l'URL de l'image
   getImageUrl(path: string | null, size: 'w200' | 'w300' | 'w500' | 'original' = 'w500'): string {
     if (!path) return '/placeholder.png';
