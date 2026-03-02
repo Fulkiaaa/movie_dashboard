@@ -1,7 +1,7 @@
 'use client';
 
 import { useAuth } from '@/contexts/AuthContext';
-import { Film, List, Search, ArrowLeft, Calendar } from 'lucide-react';
+import { Film, List, Search, ArrowLeft, Calendar, ChevronLeft, ChevronRight, Star, Heart } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import MovieModal from '@/components/MovieModal';
@@ -16,6 +16,8 @@ export default function WatchlistPage() {
   const [filteredMovies, setFilteredMovies] = useState<UserMovie[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [loadingMovies, setLoadingMovies] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const moviesPerPage = 15; // 3 lignes de 5 films
 
   useEffect(() => {
     if (user && supabase) {
@@ -32,6 +34,7 @@ export default function WatchlistPage() {
       );
       setFilteredMovies(filtered);
     }
+    setCurrentPage(1); // Réinitialiser à la page 1 lors d'une recherche
   }, [searchQuery, watchlistMovies]);
 
   const loadData = async () => {
@@ -141,7 +144,7 @@ export default function WatchlistPage() {
           )}
         </div>
 
-        {/* Movies List */}
+        {/* Movies Grid */}
         {loadingMovies ? (
           <div className="flex items-center justify-center py-12">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
@@ -167,58 +170,80 @@ export default function WatchlistPage() {
             )}
           </div>
         ) : (
-          <div className="space-y-3">
-            {filteredMovies.map((movie) => (
-              <button
-                key={movie.id}
-                onClick={() => handleMovieClick(movie)}
-                className="w-full bg-white border-2 border-gray-200 rounded-xl p-4 hover:border-black transition-all group flex items-center gap-4"
-              >
-                {/* Poster */}
-                <div className="flex-shrink-0 w-20 h-30 bg-gray-200 rounded-lg overflow-hidden relative">
-                  {movie.poster_path ? (
-                    <Image
-                      src={tmdbService.getImageUrl(movie.poster_path, 'w200')}
-                      alt={movie.title}
-                      width={80}
-                      height={120}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-400">
-                      <Film className="w-8 h-8" />
+          <>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              {filteredMovies
+                .slice((currentPage - 1) * moviesPerPage, currentPage * moviesPerPage)
+                .map((movie) => (
+                  <button
+                    key={movie.id}
+                    onClick={() => handleMovieClick(movie)}
+                    className="group"
+                  >
+                    <div className="aspect-[2/3] bg-gray-200 rounded-lg overflow-hidden mb-2 border-2 border-transparent group-hover:border-black transition-colors relative">
+                      {movie.poster_path ? (
+                        <Image
+                          src={tmdbService.getImageUrl(movie.poster_path, 'w300')}
+                          alt={movie.title}
+                          width={200}
+                          height={300}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-400">
+                          <Film className="w-12 h-12" />
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-
-                {/* Info */}
-                <div className="flex-1 text-left">
-                  <h3 className="text-lg font-bold text-black group-hover:underline">
-                    {movie.title}
-                  </h3>
-                  <p className="text-sm text-gray-500 mt-1">
-                    Ajouté le {new Date(movie.created_at).toLocaleDateString('fr-FR', {
-                      day: 'numeric',
-                      month: 'long',
-                      year: 'numeric'
-                    })}
-                  </p>
-                  {movie.release_date && (
-                    <p className="text-xs text-gray-400 mt-1">
-                      Sortie : {new Date(movie.release_date).getFullYear()}
+                    <h3 className="text-sm font-semibold text-black group-hover:underline line-clamp-2">
+                      {movie.title}
+                    </h3>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {new Date(movie.created_at).toLocaleDateString('fr-FR', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric'
+                      })}
                     </p>
-                  )}
-                </div>
+                  </button>
+                ))}
+            </div>
 
-                {/* Badge */}
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-1 text-gray-400">
-                    <Calendar className="w-5 h-5" />
-                  </div>
-                </div>
-              </button>
-            ))}
-          </div>
+            {/* Pagination */}
+            {filteredMovies.length > moviesPerPage && (
+              <div className="mt-8 flex items-center justify-center gap-2">
+                <button
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 border-2 border-gray-200 rounded-lg hover:border-black transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-gray-200"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+
+                {Array.from({ length: Math.ceil(filteredMovies.length / moviesPerPage) }, (_, i) => i + 1).map((page) => (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`px-4 py-2 border-2 rounded-lg transition-all ${
+                      currentPage === page
+                        ? 'bg-black text-white border-black'
+                        : 'border-gray-200 hover:border-black'
+                    }`}
+                  >
+                    {page}
+                  </button>
+                ))}
+
+                <button
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(filteredMovies.length / moviesPerPage)))}
+                  disabled={currentPage === Math.ceil(filteredMovies.length / moviesPerPage)}
+                  className="px-4 py-2 border-2 border-gray-200 rounded-lg hover:border-black transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-gray-200"
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
 
