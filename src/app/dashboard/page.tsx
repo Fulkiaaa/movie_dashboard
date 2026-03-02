@@ -214,8 +214,8 @@ export default function DashboardPage() {
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                {watchedMovies.slice(0, 6).map((movie) => (
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {watchedMovies.slice(0, 5).map((movie) => (
                   <button
                     key={movie.id}
                     onClick={() => handleMovieClick(movie)}
@@ -262,7 +262,7 @@ export default function DashboardPage() {
                   </button>
                 ))}
               </div>
-              {watchedMovies.length > 6 && (
+              {watchedMovies.length > 5 && (
                 <div className="mt-6 text-center">
                   <Link
                     href="/dashboard/watched"
@@ -360,8 +360,8 @@ export default function DashboardPage() {
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                {watchlistMovies.slice(0, 6).map((movie) => (
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {watchlistMovies.slice(0, 5).map((movie) => (
                   <button
                     key={movie.id}
                     onClick={() => handleMovieClick(movie)}
@@ -388,7 +388,7 @@ export default function DashboardPage() {
                   </button>
                 ))}
               </div>
-              {watchlistMovies.length > 6 && (
+              {watchlistMovies.length > 5 && (
                 <div className="mt-6 text-center">
                   <Link
                     href="/dashboard/watchlist"
