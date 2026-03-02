@@ -36,8 +36,6 @@ export default function DashboardPage() {
     ratedMoviesCount: 0,
   });
   const [loadingStats, setLoadingStats] = useState(false);
-  const [showAllWatched, setShowAllWatched] = useState(false);
-  const [showAllWatchlist, setShowAllWatchlist] = useState(false);
 
   useEffect(() => {
     if (user && supabase) {
@@ -217,7 +215,7 @@ export default function DashboardPage() {
           ) : (
             <>
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                {(showAllWatched ? watchedMovies : watchedMovies.slice(0, 6)).map((movie) => (
+                {watchedMovies.slice(0, 6).map((movie) => (
                   <button
                     key={movie.id}
                     onClick={() => handleMovieClick(movie)}
@@ -266,12 +264,12 @@ export default function DashboardPage() {
               </div>
               {watchedMovies.length > 6 && (
                 <div className="mt-6 text-center">
-                  <button
-                    onClick={() => setShowAllWatched(!showAllWatched)}
-                    className="px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-all"
+                  <Link
+                    href="/dashboard/watched"
+                    className="inline-block px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-all"
                   >
-                    {showAllWatched ? 'Voir moins' : `Voir plus (${watchedMovies.length - 6} films)`}
-                  </button>
+                    Voir tous les films ({watchedMovies.length})
+                  </Link>
                 </div>
               )}
             </>
@@ -363,7 +361,7 @@ export default function DashboardPage() {
           ) : (
             <>
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                {(showAllWatchlist ? watchlistMovies : watchlistMovies.slice(0, 6)).map((movie) => (
+                {watchlistMovies.slice(0, 6).map((movie) => (
                   <button
                     key={movie.id}
                     onClick={() => handleMovieClick(movie)}
@@ -392,12 +390,12 @@ export default function DashboardPage() {
               </div>
               {watchlistMovies.length > 6 && (
                 <div className="mt-6 text-center">
-                  <button
-                    onClick={() => setShowAllWatchlist(!showAllWatchlist)}
-                    className="px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-all"
+                  <Link
+                    href="/dashboard/watchlist"
+                    className="inline-block px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-all"
                   >
-                    {showAllWatchlist ? 'Voir moins' : `Voir plus (${watchlistMovies.length - 6} films)`}
-                  </button>
+                    Voir toute la watchlist ({watchlistMovies.length})
+                  </Link>
                 </div>
               )}
             </>
