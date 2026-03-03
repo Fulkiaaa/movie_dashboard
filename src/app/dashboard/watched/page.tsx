@@ -100,25 +100,25 @@ export default function WatchedMoviesPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
+      <div className="container mx-auto px-3 md:px-4 py-4 md:py-8 max-w-7xl">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-6 md:mb-8">
           <Link
             href="/dashboard"
-            className="inline-flex items-center gap-2 text-gray-600 hover:text-black mb-4 transition-colors"
+            className="inline-flex items-center gap-2 text-gray-600 hover:text-black mb-3 md:mb-4 transition-colors text-sm md:text-base"
           >
             <ArrowLeft className="w-4 h-4" />
-            Retour au Dashboard
+            Retour
           </Link>
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Eye className="w-8 h-8 text-black" />
+            <div className="flex items-center gap-2 md:gap-3">
+              <Eye className="w-6 h-6 md:w-8 md:h-8 text-black" />
               <div>
-                <h1 className="text-4xl font-bold text-black">
-                  Mes Films Vus
+                <h1 className="text-2xl md:text-4xl font-bold text-black">
+                  Films Vus
                 </h1>
-                <p className="text-gray-600 mt-1">
-                  {watchedMovies.length} film{watchedMovies.length > 1 ? 's' : ''} visionnés
+                <p className="text-xs md:text-base text-gray-600 mt-0.5 md:mt-1">
+                  {watchedMovies.length} film{watchedMovies.length > 1 ? 's' : ''}
                 </p>
               </div>
             </div>
@@ -126,20 +126,20 @@ export default function WatchedMoviesPage() {
         </div>
 
         {/* Search Bar */}
-        <div className="mb-6">
+        <div className="mb-4 md:mb-6">
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <Search className="absolute left-3 md:left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 md:w-5 md:h-5" />
             <input
               type="text"
-              placeholder="Rechercher un film..."
+              placeholder="Rechercher..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-black transition-colors"
+              className="w-full pl-10 md:pl-12 pr-3 md:pr-4 py-2 md:py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-black transition-colors text-sm md:text-base"
             />
           </div>
           {searchQuery && (
-            <p className="text-sm text-gray-600 mt-2">
-              {filteredMovies.length} résultat{filteredMovies.length > 1 ? 's' : ''} trouvé{filteredMovies.length > 1 ? 's' : ''}
+            <p className="text-xs md:text-sm text-gray-600 mt-2">
+              {filteredMovies.length} résultat{filteredMovies.length > 1 ? 's' : ''}
             </p>
           )}
         </div>

@@ -79,24 +79,24 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-white py-8">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-white py-4 md:py-8">
+      <div className="max-w-6xl mx-auto px-3 md:px-4 lg:px-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-black mb-2">Mon Profil</h1>
-          <p className="text-gray-600">Gérez vos informations personnelles et vos favoris</p>
+        <div className="mb-6 md:mb-8">
+          <h1 className="text-2xl md:text-3xl font-bold text-black mb-1 md:mb-2">Mon Profil</h1>
+          <p className="text-sm md:text-base text-gray-600">Gérez vos informations et favoris</p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
           {/* Profile Card */}
           <div className="lg:col-span-1">
-            <div className="bg-white border-2 border-gray-200 rounded-2xl p-6 sticky top-8">
+            <div className="bg-white border-2 border-gray-200 rounded-2xl p-4 md:p-6 lg:sticky lg:top-8">
               {/* Avatar */}
-              <div className="flex flex-col items-center mb-6 pb-6 border-b border-gray-200">
-                <div className="w-20 h-20 rounded-full bg-black flex items-center justify-center mb-4">
-                  <User className="w-10 h-10 text-white" />
+              <div className="flex flex-col items-center mb-4 md:mb-6 pb-4 md:pb-6 border-b border-gray-200">
+                <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-black flex items-center justify-center mb-3 md:mb-4">
+                  <User className="w-8 h-8 md:w-10 md:h-10 text-white" />
                 </div>
-                <h2 className="text-xl font-bold text-black mb-1 text-center">
+                <h2 className="text-lg md:text-xl font-bold text-black mb-1 text-center">
                   {user.email?.split('@')[0]}
                 </h2>
                 <p className="text-gray-600 text-sm">Membre SeenIt</p>
@@ -138,10 +138,10 @@ export default function ProfilePage() {
               </div>
 
               {/* Actions */}
-              <div className="mt-6 pt-6 border-t border-gray-200">
+              <div className="mt-4 md:mt-6 pt-4 md:pt-6 border-t border-gray-200">
                 <Link
                   href="/dashboard"
-                  className="block text-center text-gray-700 hover:text-black underline text-sm"
+                  className="block text-center text-gray-700 hover:text-black underline text-xs md:text-sm"
                 >
                   ← Retour au Dashboard
                 </Link>
@@ -151,13 +151,13 @@ export default function ProfilePage() {
 
           {/* Favorites Section */}
           <div className="lg:col-span-2">
-            <div className="bg-white border-2 border-gray-200 rounded-2xl p-6">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-3">
-                  <Heart className="w-6 h-6 text-black fill-black" />
-                  <h2 className="text-2xl font-bold text-black">Mes Favoris</h2>
+            <div className="bg-white border-2 border-gray-200 rounded-2xl p-4 md:p-6">
+              <div className="flex items-center justify-between mb-4 md:mb-6">
+                <div className="flex items-center gap-2 md:gap-3">
+                  <Heart className="w-5 h-5 md:w-6 md:h-6 text-black fill-black" />
+                  <h2 className="text-lg md:text-2xl font-bold text-black">Mes Favoris</h2>
                 </div>
-                <span className="text-sm text-gray-600">
+                <span className="text-xs md:text-sm text-gray-600">
                   {favoritesCount} / 10
                 </span>
               </div>
@@ -184,10 +184,10 @@ export default function ProfilePage() {
                 </div>
               ) : (
                 <>
-                  <p className="text-gray-600 mb-6">
-                    Vous pouvez ajouter jusqu'à 10 films favoris. Ces films seront utilisés pour personnaliser vos recommandations.
+                  <p className="text-xs md:text-sm text-gray-600 mb-4 md:mb-6">
+                    Vous pouvez ajouter jusqu'à 10 films favoris.
                   </p>
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
                     {favorites.map((movie) => (
                       <div
                         key={movie.id}

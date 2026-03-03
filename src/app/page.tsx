@@ -132,21 +132,21 @@ export default function Home() {
     <div className="min-h-screen bg-white">
       {/* Hero Section with Search */}
       <section className="relative overflow-hidden bg-gray-50">
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
+        <div className="relative max-w-7xl mx-auto px-3 md:px-4 lg:px-8 py-12 md:py-16 lg:py-24">
           <div className="text-center">
             {/* Logo */}
-            <div className="flex justify-center mb-6">
-              <div className="bg-black p-6 rounded-3xl shadow-xl">
-                <Film className="w-16 h-16 text-white" />
+            <div className="flex justify-center mb-4 md:mb-6">
+              <div className="bg-black p-4 md:p-6 rounded-2xl md:rounded-3xl shadow-xl">
+                <Film className="w-12 h-12 md:w-16 md:h-16 text-white" />
               </div>
             </div>
 
             {/* Title */}
-            <h1 className="text-5xl md:text-7xl font-bold text-black mb-4">
+            <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold text-black mb-3 md:mb-4">
               SeenIt
             </h1>
-            <p className="text-xl md:text-2xl text-gray-700 mb-8 max-w-3xl mx-auto">
-              Découvrez, organisez et partagez votre passion pour le cinéma
+            <p className="text-base md:text-xl lg:text-2xl text-gray-700 mb-6 md:mb-8 max-w-3xl mx-auto px-4">
+              Découvrez et organisez votre passion cinéma
             </p>
 
             {/* Search Bar */}
@@ -156,18 +156,18 @@ export default function Home() {
 
             {/* CTA Buttons */}
             {!user && (
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center px-4">
                 <Link
                   href="/auth/signup"
-                  className="px-8 py-4 bg-black text-white rounded-xl font-semibold hover:bg-gray-800 transition-all"
+                  className="px-6 md:px-8 py-3 md:py-4 bg-black text-white rounded-xl font-semibold hover:bg-gray-800 transition-all text-sm md:text-base"
                 >
-                  Commencer gratuitement
+                  Commencer
                 </Link>
                 <Link
                   href="/dashboard"
-                  className="px-8 py-4 bg-white hover:bg-gray-100 text-black rounded-xl font-semibold transition-all border-2 border-black"
+                  className="px-6 md:px-8 py-3 md:py-4 bg-white hover:bg-gray-100 text-black rounded-xl font-semibold transition-all border-2 border-black text-sm md:text-base"
                 >
-                  Explorer le Dashboard
+                  Explorer
                 </Link>
               </div>
             )}
@@ -176,7 +176,7 @@ export default function Home() {
       </section>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto px-3 md:px-4 lg:px-8 py-8 md:py-12">
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
@@ -184,12 +184,12 @@ export default function Home() {
         ) : (
           <>
             {/* Trending Section */}
-            <section className="mb-16">
-              <div className="flex items-center gap-3 mb-6">
-                <TrendingUp className="w-8 h-8 text-black" />
-                <h2 className="text-3xl font-bold text-black">Tendances de la semaine</h2>
+            <section className="mb-12 md:mb-16">
+              <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
+                <TrendingUp className="w-6 h-6 md:w-8 md:h-8 text-black" />
+                <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-black">Tendances</h2>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
                 {trending.map((movie) => (
                   <MovieCard key={movie.id} movie={movie} />
                 ))}
@@ -197,12 +197,12 @@ export default function Home() {
             </section>
 
             {/* Now Playing / New Releases Section */}
-            <section className="mb-16">
-              <div className="flex items-center gap-3 mb-6">
-                <Calendar className="w-8 h-8 text-black" />
-                <h2 className="text-3xl font-bold text-black">En salle actuellement</h2>
+            <section className="mb-12 md:mb-16">
+              <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
+                <Calendar className="w-6 h-6 md:w-8 md:h-8 text-black" />
+                <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-black">En salle</h2>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
                 {nowPlaying.map((movie) => (
                   <MovieCard key={movie.id} movie={movie} />
                 ))}
@@ -210,20 +210,20 @@ export default function Home() {
             </section>
 
             {/* Recommendations Section */}
-            <section className="mb-16">
-              <div className="flex items-center gap-3 mb-6">
-                <Star className="w-8 h-8 text-black" />
-                <h2 className="text-3xl font-bold text-black">
-                  {user ? 'Recommandations pour vous' : 'Les mieux notés'}
+            <section className="mb-12 md:mb-16">
+              <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
+                <Star className="w-6 h-6 md:w-8 md:h-8 text-black" />
+                <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-black">
+                  {user ? 'Pour vous' : 'Mieux notés'}
                 </h2>
               </div>
-              <p className="text-gray-600 mb-6">
+              <p className="text-sm md:text-base text-gray-600 mb-4 md:mb-6">
                 {user 
-                  ? 'Basé sur vos films favoris et votre historique de visionnage'
-                  : 'Découvrez les films les mieux notés de tous les temps'
+                  ? 'Basé sur vos favoris'
+                  : 'Les films les mieux notés'
                 }
               </p>
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
                 {recommendations.map((movie) => (
                   <MovieCard key={movie.id} movie={movie} />
                 ))}
@@ -235,17 +235,17 @@ export default function Home() {
 
       {/* CTA Section */}
       {!user && (
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="bg-black rounded-3xl p-12 text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+        <section className="max-w-7xl mx-auto px-3 md:px-4 lg:px-8 py-12 md:py-16">
+          <div className="bg-black rounded-2xl md:rounded-3xl p-6 md:p-12 text-center">
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-3 md:mb-4">
               Prêt à commencer ?
             </h2>
-            <p className="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
-              Rejoignez SeenIt dès aujourd'hui et découvrez une nouvelle façon de gérer vos films
+            <p className="text-sm md:text-base lg:text-lg text-gray-300 mb-6 md:mb-8 max-w-2xl mx-auto">
+              Rejoignez SeenIt dès aujourd'hui
             </p>
             <Link
               href="/auth/signup"
-              className="inline-block px-8 py-4 bg-white text-black rounded-xl font-semibold hover:bg-gray-100 transition-all"
+              className="inline-block px-6 md:px-8 py-3 md:py-4 bg-white text-black rounded-xl font-semibold hover:bg-gray-100 transition-all text-sm md:text-base"
             >
               Créer un compte
             </Link>

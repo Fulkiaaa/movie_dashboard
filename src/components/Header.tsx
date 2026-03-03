@@ -16,6 +16,7 @@ import { useEffect, useRef, useState } from 'react';
 export default function Header() {
   const { user, signOut, loading } = useAuth();
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   const handleSignOut = async () => {
@@ -191,6 +192,7 @@ export default function Header() {
             {/* Mobile menu */}
             <button
               type="button"
+              onClick={() => setShowMobileMenu(!showMobileMenu)}
               className="md:hidden p-2 rounded-lg text-gray-700 hover:text-black hover:bg-gray-100 transition-colors"
               aria-label="Ouvrir le menu"
             >
@@ -198,6 +200,38 @@ export default function Header() {
             </button>
           </div>
         </div>
+
+        {/* Mobile Navigation Menu */}
+        {showMobileMenu && (
+          <div className="md:hidden border-t border-gray-200 py-3 bg-white">
+            <nav className="flex flex-col gap-1">
+              <Link
+                href="/dashboard"
+                onClick={() => setShowMobileMenu(false)}
+                className="flex items-center gap-2 px-4 py-3 text-gray-700 hover:text-black hover:bg-gray-100 transition-colors rounded-lg"
+              >
+                <LayoutDashboard className="w-5 h-5" />
+                <span className="font-medium">Dashboard</span>
+              </Link>
+              <Link
+                href="/swipe"
+                onClick={() => setShowMobileMenu(false)}
+                className="flex items-center gap-2 px-4 py-3 text-gray-700 hover:text-black hover:bg-gray-100 transition-colors rounded-lg"
+              >
+                <Heart className="w-5 h-5" />
+                <span className="font-medium">Swipe</span>
+              </Link>
+              <Link
+                href="/profile"
+                onClick={() => setShowMobileMenu(false)}
+                className="flex items-center gap-2 px-4 py-3 text-gray-700 hover:text-black hover:bg-gray-100 transition-colors rounded-lg"
+              >
+                <User className="w-5 h-5" />
+                <span className="font-medium">Mon profil</span>
+              </Link>
+            </nav>
+          </div>
+        )}
       </div>
     </header>
   );

@@ -166,29 +166,29 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
+      <div className="container mx-auto px-3 md:px-4 py-4 md:py-8 max-w-7xl">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-black mb-2">
+        <div className="mb-6 md:mb-8">
+          <h1 className="text-2xl md:text-4xl font-bold text-black mb-1 md:mb-2">
             Dashboard Statistiques
           </h1>
-          <p className="text-gray-600">
+          <p className="text-sm md:text-base text-gray-600">
             Analyse complète de votre activité cinéma
           </p>
         </div>
 
         {/* Mes Films Vus - Liste complète */}
-        <div className="bg-white border-2 border-gray-200 rounded-xl p-6 mb-8">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <Eye className="w-7 h-7 text-black" />
-              <h2 className="text-2xl font-bold text-black">Mes Films Vus</h2>
+        <div className="bg-white border-2 border-gray-200 rounded-xl p-4 md:p-6 mb-6 md:mb-8">
+          <div className="flex items-center justify-between mb-4 md:mb-6">
+            <div className="flex items-center gap-2 md:gap-3">
+              <Eye className="w-5 h-5 md:w-7 md:h-7 text-black" />
+              <h2 className="text-lg md:text-2xl font-bold text-black">Mes Films Vus</h2>
             </div>
             <div className="text-right">
-              <p className="text-sm font-semibold text-black">
-                {watchedMovies.length} film{watchedMovies.length > 1 ? 's' : ''} visionnés
+              <p className="text-xs md:text-sm font-semibold text-black">
+                {watchedMovies.length} film{watchedMovies.length > 1 ? 's' : ''}
               </p>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-gray-500 hidden sm:block">
                 {loadingStats ? '...' : formatTime(stats.totalMinutes)} cumulés
               </p>
             </div>
@@ -263,10 +263,10 @@ export default function DashboardPage() {
                 ))}
               </div>
               {watchedMovies.length > 5 && (
-                <div className="mt-6 text-center">
+                <div className="mt-4 md:mt-6 text-center">
                   <Link
                     href="/dashboard/watched"
-                    className="inline-block px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-all"
+                    className="inline-block px-4 md:px-6 py-2 md:py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-all text-sm md:text-base"
                   >
                     Voir tous les films ({watchedMovies.length})
                   </Link>
@@ -277,24 +277,24 @@ export default function DashboardPage() {
         </div>
 
         {/* Additional Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
           {/* Taux de notation */}
-          <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <Percent className="w-6 h-6 text-black" />
-              <h3 className="text-xl font-bold text-black">Taux de Notation</h3>
+          <div className="bg-white border-2 border-gray-200 rounded-xl p-4 md:p-6">
+            <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
+              <Percent className="w-5 h-5 md:w-6 md:h-6 text-black" />
+              <h3 className="text-lg md:text-xl font-bold text-black">Taux de Notation</h3>
             </div>
-            <div className="flex items-end gap-4">
-              <p className="text-4xl font-bold text-black">
+            <div className="flex items-end gap-3 md:gap-4">
+              <p className="text-3xl md:text-4xl font-bold text-black">
                 {loadingStats ? '...' : stats.totalWatched > 0 
                   ? Math.round((stats.ratedMoviesCount / stats.totalWatched) * 100) 
                   : 0}%
               </p>
-              <p className="text-gray-600 mb-2">
-                {stats.ratedMoviesCount} / {stats.totalWatched} films notés
+              <p className="text-sm md:text-base text-gray-600 mb-1 md:mb-2">
+                {stats.ratedMoviesCount} / {stats.totalWatched}
               </p>
             </div>
-            <div className="mt-4 bg-gray-200 rounded-full h-3 overflow-hidden">
+            <div className="mt-3 md:mt-4 bg-gray-200 rounded-full h-2 md:h-3 overflow-hidden">
               <div 
                 className="bg-black h-full transition-all duration-500"
                 style={{ 
@@ -307,23 +307,23 @@ export default function DashboardPage() {
           </div>
 
           {/* Activité */}
-          <div className="bg-white border-2 border-gray-200 rounded-xl p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <BarChart3 className="w-6 h-6 text-black" />
-              <h3 className="text-xl font-bold text-black">Activité Récente</h3>
+          <div className="bg-white border-2 border-gray-200 rounded-xl p-4 md:p-6">
+            <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
+              <BarChart3 className="w-5 h-5 md:w-6 md:h-6 text-black" />
+              <h3 className="text-lg md:text-xl font-bold text-black">Activité Récente</h3>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-2 md:space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">7 derniers jours</span>
-                <span className="text-xl font-bold text-black">{stats.thisWeek}</span>
+                <span className="text-sm md:text-base text-gray-600">7 derniers jours</span>
+                <span className="text-lg md:text-xl font-bold text-black">{stats.thisWeek}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">30 derniers jours</span>
-                <span className="text-xl font-bold text-black">{stats.thisMonth}</span>
+                <span className="text-sm md:text-base text-gray-600">30 derniers jours</span>
+                <span className="text-lg md:text-xl font-bold text-black">{stats.thisMonth}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Moyenne par semaine</span>
-                <span className="text-xl font-bold text-black">
+                <span className="text-sm md:text-base text-gray-600">Moyenne / semaine</span>
+                <span className="text-lg md:text-xl font-bold text-black">
                   {stats.totalWatched > 0 ? Math.round(stats.thisWeek / 1) : 0}
                 </span>
               </div>
@@ -332,14 +332,14 @@ export default function DashboardPage() {
         </div>
 
         {/* Ma Watchlist */}
-        <div className="bg-white border-2 border-gray-200 rounded-xl p-6 mb-8">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <List className="w-7 h-7 text-black" />
-              <h2 className="text-2xl font-bold text-black">Ma Watchlist</h2>
+        <div className="bg-white border-2 border-gray-200 rounded-xl p-4 md:p-6 mb-6 md:mb-8">
+          <div className="flex items-center justify-between mb-4 md:mb-6">
+            <div className="flex items-center gap-2 md:gap-3">
+              <List className="w-5 h-5 md:w-7 md:h-7 text-black" />
+              <h2 className="text-lg md:text-2xl font-bold text-black">Ma Watchlist</h2>
             </div>
-            <span className="text-sm text-gray-600">
-              {watchlistMovies.length} film{watchlistMovies.length > 1 ? 's' : ''} à voir
+            <span className="text-xs md:text-sm text-gray-600">
+              {watchlistMovies.length} film{watchlistMovies.length > 1 ? 's' : ''}
             </span>
           </div>
 
@@ -389,10 +389,10 @@ export default function DashboardPage() {
                 ))}
               </div>
               {watchlistMovies.length > 5 && (
-                <div className="mt-6 text-center">
+                <div className="mt-4 md:mt-6 text-center">
                   <Link
                     href="/dashboard/watchlist"
-                    className="inline-block px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-all"
+                    className="inline-block px-4 md:px-6 py-2 md:py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-all text-sm md:text-base"
                   >
                     Voir toute la watchlist ({watchlistMovies.length})
                   </Link>
