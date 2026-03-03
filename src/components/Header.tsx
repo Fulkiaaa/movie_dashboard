@@ -18,6 +18,7 @@ export default function Header() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const mobileMenuRef = useRef<HTMLDivElement | null>(null);
 
   const handleSignOut = async () => {
     try {
@@ -50,6 +51,20 @@ export default function Header() {
       document.removeEventListener('keydown', onKeyDown);
     };
   }, [showDropdown]);
+
+  // Ferme le menu mobile avec Escape
+  useEffect(() => {
+    if (!showMobileMenu) return;
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setShowMobileMenu(false);
+    };
+
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, [showMobileMenu]);
 
   const username =
     user?.email?.split('@')[0]?.slice(0, 18) ?? 'Compte';

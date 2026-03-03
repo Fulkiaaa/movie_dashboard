@@ -57,20 +57,20 @@ export default function SearchBar({ onSelectMovie }: SearchBarProps) {
     <div className="relative w-full max-w-2xl">
       {/* Search Input */}
       <div className="relative">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+        <Search className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400" />
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Rechercher un film ou une série..."
-          className="w-full pl-12 pr-12 py-4 bg-white border-2 border-gray-200 rounded-xl text-black placeholder-gray-400 focus:outline-none focus:border-black transition-colors"
+          className="w-full pl-10 md:pl-12 pr-10 md:pr-12 py-3 md:py-4 bg-white border-2 border-gray-200 rounded-xl text-sm md:text-base text-black placeholder-gray-400 focus:outline-none focus:border-black transition-colors"
         />
         {query && (
           <button
             onClick={clearSearch}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black transition-colors"
+            className="absolute right-3 md:right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black transition-colors"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4 md:w-5 md:h-5" />
           </button>
         )}
       </div>
@@ -80,14 +80,14 @@ export default function SearchBar({ onSelectMovie }: SearchBarProps) {
         <>
           {/* Backdrop to close */}
           <div
-            className="fixed inset-0 z-10"
+            className="fixed inset-0 z-[60]"
             onClick={() => setShowResults(false)}
           />
 
           {/* Results */}
-          <div className="absolute top-full mt-2 w-full bg-white border-2 border-gray-200 rounded-xl shadow-xl z-20 max-h-96 overflow-y-auto">
+          <div className="absolute top-full mt-2 w-full bg-white border-2 border-gray-200 rounded-xl shadow-2xl z-[70] max-h-[60vh] md:max-h-96 overflow-y-auto">
             {isLoading ? (
-              <div className="p-4 text-center text-gray-500">
+              <div className="p-4 text-center text-gray-500 text-sm md:text-base">
                 Recherche en cours...
               </div>
             ) : results.length > 0 ? (
@@ -96,10 +96,10 @@ export default function SearchBar({ onSelectMovie }: SearchBarProps) {
                   <button
                     key={`${movie.media_type}-${movie.id}`}
                     onClick={() => handleSelectMovie(movie)}
-                    className="w-full p-3 flex items-center gap-3 hover:bg-gray-50 transition-colors text-left"
+                    className="w-full p-2 md:p-3 flex items-center gap-2 md:gap-3 hover:bg-gray-50 transition-colors text-left"
                   >
                     {/* Poster */}
-                    <div className="w-12 h-16 bg-gray-200 rounded overflow-hidden flex-shrink-0">
+                    <div className="w-10 h-14 md:w-12 md:h-16 bg-gray-200 rounded overflow-hidden flex-shrink-0">
                       {movie.poster_path ? (
                         <Image
                           src={tmdbService.getImageUrl(movie.poster_path, 'w200')}
@@ -117,10 +117,10 @@ export default function SearchBar({ onSelectMovie }: SearchBarProps) {
 
                     {/* Info */}
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-black truncate">
+                      <h3 className="font-semibold text-black truncate text-sm md:text-base">
                         {movie.title || movie.name}
                       </h3>
-                      <div className="flex items-center gap-2 text-sm text-gray-600">
+                      <div className="flex items-center gap-1.5 md:gap-2 text-xs md:text-sm text-gray-600">
                         <span className="px-2 py-0.5 bg-gray-100 rounded text-xs font-medium">
                           {movie.media_type === 'movie' ? 'Film' : 'Série'}
                         </span>
@@ -134,7 +134,7 @@ export default function SearchBar({ onSelectMovie }: SearchBarProps) {
 
                     {/* Rating */}
                     {movie.vote_average > 0 && (
-                      <div className="flex items-center gap-1 text-sm">
+                      <div className="hidden sm:flex items-center gap-1 text-xs md:text-sm">
                         <span className="text-black font-semibold">
                           {movie.vote_average.toFixed(1)}
                         </span>
@@ -145,7 +145,7 @@ export default function SearchBar({ onSelectMovie }: SearchBarProps) {
                 ))}
               </div>
             ) : (
-              <div className="p-4 text-center text-gray-500">
+              <div className="p-4 text-center text-gray-500 text-sm md:text-base">
                 Aucun résultat trouvé
               </div>
             )}

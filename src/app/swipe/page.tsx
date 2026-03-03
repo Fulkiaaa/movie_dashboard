@@ -368,7 +368,10 @@ export default function SwipePage() {
             {/* By Year */}
             <div className="relative">
               <button
-                onClick={() => setShowYearMenu(!showYearMenu)}
+                onClick={() => {
+                  setShowYearMenu(!showYearMenu);
+                  if (showGenreMenu) setShowGenreMenu(false);
+                }}
                 className="group w-full p-4 md:p-8 bg-white rounded-xl md:rounded-2xl shadow-sm hover:shadow-xl transition-all border-2 border-transparent hover:border-green-500"
               >
                 <Calendar className="w-10 h-10 md:w-12 md:h-12 text-green-500 mb-3 md:mb-4" />
@@ -377,7 +380,14 @@ export default function SwipePage() {
               </button>
 
               {showYearMenu && (
-                <div className="absolute top-full mt-2 w-full bg-white rounded-xl shadow-2xl p-3 md:p-4 grid grid-cols-2 gap-2 z-10 max-h-80 overflow-y-auto">
+                <>
+                  {/* Backdrop */}
+                  <div
+                    className="fixed inset-0 z-10"
+                    onClick={() => setShowYearMenu(false)}
+                  />
+                  {/* Menu */}
+                  <div className="absolute top-full mt-2 w-full bg-white rounded-xl shadow-2xl p-3 md:p-4 grid grid-cols-2 gap-2 z-20 max-h-80 overflow-y-auto border border-gray-200">
                   {years.map(year => (
                     <button
                       key={year}
@@ -391,13 +401,17 @@ export default function SwipePage() {
                     </button>
                   ))}
                 </div>
+                </>
               )}
             </div>
 
             {/* By Genre */}
             <div className="relative md:col-span-2">
               <button
-                onClick={() => setShowGenreMenu(!showGenreMenu)}
+                onClick={() => {
+                  setShowGenreMenu(!showGenreMenu);
+                  if (showYearMenu) setShowYearMenu(false);
+                }}
                 className="group w-full p-4 md:p-8 bg-white rounded-xl md:rounded-2xl shadow-sm hover:shadow-xl transition-all border-2 border-transparent hover:border-pink-500"
               >
                 <Film className="w-10 h-10 md:w-12 md:h-12 text-pink-500 mb-3 md:mb-4" />
@@ -406,7 +420,14 @@ export default function SwipePage() {
               </button>
 
               {showGenreMenu && (
-                <div className="absolute top-full mt-2 w-full bg-white rounded-xl shadow-2xl p-3 md:p-4 grid grid-cols-2 md:grid-cols-3 gap-2 z-10 max-h-80 md:max-h-96 overflow-y-auto">
+                <>
+                  {/* Backdrop */}
+                  <div
+                    className="fixed inset-0 z-10"
+                    onClick={() => setShowGenreMenu(false)}
+                  />
+                  {/* Menu */}
+                  <div className="absolute top-full mt-2 w-full bg-white rounded-xl shadow-2xl p-3 md:p-4 grid grid-cols-2 md:grid-cols-3 gap-2 z-20 max-h-80 md:max-h-96 overflow-y-auto border border-gray-200">
                   {genres.map(genre => (
                     <button
                       key={genre.id}
@@ -420,6 +441,7 @@ export default function SwipePage() {
                     </button>
                   ))}
                 </div>
+                </>
               )}
             </div>
           </div>
