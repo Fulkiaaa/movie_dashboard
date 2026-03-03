@@ -149,9 +149,9 @@ export default function MovieModal({ movie, onClose, onUpdate }: MovieModalProps
 
   if (loading) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+      <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
         <div className="bg-white rounded-xl md:rounded-2xl p-6 md:p-8">
-          <div className="animate-spin rounded-full h-10 w-10 md:h-12 md:w-12 border-b-2 border-black"></div>
+          <div className="animate-spin rounded-full h-10 w-10 md:h-12 md:h-12 border-b-2 border-black"></div>
         </div>
       </div>
     );
@@ -164,7 +164,7 @@ export default function MovieModal({ movie, onClose, onUpdate }: MovieModalProps
   const year = displayDate ? displayDate.split('-')[0] : '';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/50 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[150] flex items-end md:items-center justify-center bg-black/50 backdrop-blur-sm">
       <div className="bg-white w-full md:max-w-4xl md:rounded-2xl rounded-t-3xl max-h-[92vh] md:max-h-[90vh] overflow-y-auto">
         {/* Header avec backdrop - Compact sur mobile */}
         <div className="relative h-32 md:h-64">
