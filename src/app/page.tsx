@@ -131,8 +131,8 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section with Search */}
-      <section className="relative overflow-hidden bg-gray-50">
-        <div className="relative max-w-7xl mx-auto px-3 md:px-4 lg:px-8 py-12 md:py-16 lg:py-24">
+      <section className="relative bg-gray-50">
+        <div className="relative max-w-7xl mx-auto px-3 md:px-4 lg:px-8 py-12 md:py-16 lg:py-24 pb-20 md:pb-24">
           <div className="text-center">
             {/* Logo */}
             <div className="flex justify-center mb-4 md:mb-6">

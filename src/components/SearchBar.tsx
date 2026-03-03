@@ -54,7 +54,7 @@ export default function SearchBar({ onSelectMovie }: SearchBarProps) {
   };
 
   return (
-    <div className="relative w-full max-w-2xl">
+    <div className="relative w-full max-w-2xl z-[100]">
       {/* Search Input */}
       <div className="relative">
         <Search className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 w-4 h-4 md:w-5 md:h-5 text-gray-400" />
@@ -80,12 +80,12 @@ export default function SearchBar({ onSelectMovie }: SearchBarProps) {
         <>
           {/* Backdrop to close */}
           <div
-            className="fixed inset-0 z-[60]"
+            className="fixed inset-0 z-[110]"
             onClick={() => setShowResults(false)}
           />
 
           {/* Results */}
-          <div className="absolute top-full mt-2 w-full bg-white border-2 border-gray-200 rounded-xl shadow-2xl z-[70] max-h-[60vh] md:max-h-96 overflow-y-auto">
+          <div className="absolute top-full mt-2 w-full bg-white border-2 border-gray-200 rounded-xl shadow-2xl z-[120] max-h-[60vh] md:max-h-96 overflow-y-auto">
             {isLoading ? (
               <div className="p-4 text-center text-gray-500 text-sm md:text-base">
                 Recherche en cours...

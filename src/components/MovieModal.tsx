@@ -164,10 +164,10 @@ export default function MovieModal({ movie, onClose, onUpdate }: MovieModalProps
   const year = displayDate ? displayDate.split('-')[0] : '';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-2 md:p-4">
-      <div className="bg-white rounded-xl md:rounded-2xl max-w-4xl w-full max-h-[95vh] md:max-h-[90vh] overflow-y-auto">
-        {/* Header avec backdrop */}
-        <div className="relative h-40 md:h-64">
+    <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div className="bg-white w-full md:max-w-4xl md:rounded-2xl rounded-t-3xl max-h-[92vh] md:max-h-[90vh] overflow-y-auto">
+        {/* Header avec backdrop - Compact sur mobile */}
+        <div className="relative h-32 md:h-64">
           {details.backdrop_path ? (
             <Image
               src={tmdbService.getImageUrl(details.backdrop_path, 'original')}
@@ -183,17 +183,21 @@ export default function MovieModal({ movie, onClose, onUpdate }: MovieModalProps
           {/* Close button */}
           <button
             onClick={onClose}
-            className="absolute top-2 right-2 md:top-4 md:right-4 p-1.5 md:p-2 bg-white rounded-full shadow-lg hover:bg-gray-100 transition-colors z-10"
+            className="absolute top-2 right-2 md:top-4 md:right-4 p-2 bg-white/90 backdrop-blur rounded-full shadow-lg hover:bg-white transition-colors z-10"
           >
             <X className="w-5 h-5 md:w-6 md:h-6" />
           </button>
+
+          {/* Swipe indicator on mobile */}
+          <div className="md:hidden absolute top-2 left-1/2 -translate-x-1/2 w-12 h-1 bg-gray-300 rounded-full"></div>
         </div>
 
         {/* Content */}
-        <div className="p-3 md:p-6 -mt-20 md:-mt-32 relative">
-          <div className="flex flex-col md:flex-row gap-3 md:gap-6">
-            {/* Poster */}
-            <div className="w-32 md:w-48 flex-shrink-0 mx-auto md:mx-0">
+        <div className="p-4 md:p-6 -mt-16 md:-mt-32 relative">
+          {/* Mobile: Horizontal layout compact / Desktop: Vertical avec poster */}
+          <div className="flex flex-row md:flex-row gap-3 md:gap-6 mb-4">
+            {/* Poster - petit sur mobile */}
+            <div className="w-20 md:w-48 flex-shrink-0">
               <div className="w-full aspect-[2/3] bg-gray-200 rounded-lg md:rounded-xl overflow-hidden shadow-xl">
                 {details.poster_path ? (
                   <Image
@@ -205,32 +209,32 @@ export default function MovieModal({ movie, onClose, onUpdate }: MovieModalProps
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-gray-400">
-                    <FilmIcon className="w-8 h-8 md:w-12 md:h-12" />
+                    <FilmIcon className="w-6 h-6 md:w-12 md:h-12" />
                   </div>
                 )}
               </div>
             </div>
 
-            {/* Info */}
-            <div className="flex-1">
-              <div className="mb-3 md:mb-4">
-                <div className="flex items-center gap-2 mb-2 justify-center md:justify-start">
-                  <span className="px-2 md:px-3 py-1 bg-black text-white rounded-full text-xs md:text-sm font-medium">
+            {/* Info - Compact */}
+            <div className="flex-1 min-w-0">
+              <div className="mb-2">
+                <div className="flex items-center gap-1.5 mb-1.5">
+                  <span className="px-2 py-0.5 md:px-3 md:py-1 bg-black text-white rounded-full text-xs md:text-sm font-medium">
                     {movie.media_type === 'movie' ? 'Film' : 'Série'}
                   </span>
                   {year && (
-                    <span className="text-sm md:text-base text-gray-600">{year}</span>
+                    <span className="text-xs md:text-base text-gray-600">{year}</span>
                   )}
                 </div>
-                <h2 className="text-xl md:text-3xl font-bold text-black mb-2 text-center md:text-left">{displayTitle}</h2>
+                <h2 className="text-lg md:text-3xl font-bold text-black mb-1 line-clamp-2">{displayTitle}</h2>
                 
-                {/* Genres */}
+                {/* Genres - Compact */}
                 {details.genres && details.genres.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5 md:gap-2 mb-2 md:mb-3 justify-center md:justify-start">
-                    {details.genres.map((genre) => (
+                  <div className="flex flex-wrap gap-1 mb-1.5">
+                    {details.genres.slice(0, 3).map((genre) => (
                       <span
                         key={genre.id}
-                        className="px-2 py-0.5 md:py-1 bg-gray-100 rounded text-xs md:text-sm text-gray-700"
+                        className="px-1.5 py-0.5 bg-gray-100 rounded text-xs text-gray-700"
                       >
                         {genre.name}
                       </span>
@@ -238,60 +242,62 @@ export default function MovieModal({ movie, onClose, onUpdate }: MovieModalProps
                   </div>
                 )}
 
-                {/* Stats */}
-                <div className="flex items-center justify-center md:justify-start gap-3 md:gap-4 text-xs md:text-sm text-gray-600 flex-wrap">
+                {/* Stats - Inline compact */}
+                <div className="flex items-center gap-2 md:gap-4 text-xs md:text-sm text-gray-600 flex-wrap">
                   {details.vote_average > 0 && (
                     <div className="flex items-center gap-1">
-                      <Star className="w-4 h-4 fill-black text-black" />
+                      <Star className="w-3 h-3 md:w-4 md:h-4 fill-black text-black" />
                       <span className="font-semibold text-black">
                         {details.vote_average.toFixed(1)}
                       </span>
-                      <span>/10</span>
                     </div>
                   )}
                   {details.runtime && (
                     <div className="flex items-center gap-1">
-                      <Clock className="w-4 h-4" />
+                      <Clock className="w-3 h-3 md:w-4 md:h-4" />
                       <span>{details.runtime} min</span>
                     </div>
                   )}
                   {details.number_of_seasons && (
                     <div className="flex items-center gap-1">
-                      <Calendar className="w-4 h-4" />
+                      <Calendar className="w-3 h-3 md:w-4 md:h-4" />
                       <span>
-                        {details.number_of_seasons} saison{details.number_of_seasons > 1 ? 's' : ''}
+                        {details.number_of_seasons} S
                       </span>
                     </div>
                   )}
                 </div>
               </div>
+            </div>
+          </div>
 
-              {/* Overview */}
-              {details.overview && (
-                <div className="mb-4 md:mb-6">
-                  <h3 className="text-base md:text-lg font-bold text-black mb-2 text-center md:text-left">Synopsis</h3>
-                  <p className="text-sm md:text-base text-gray-700 leading-relaxed text-justify md:text-left">{details.overview}</p>
-                </div>
-              )}
+          {/* Overview - Collapsible sur mobile */}
+          {details.overview && (
+            <div className="mb-3 md:mb-6">
+              <h3 className="text-sm md:text-lg font-bold text-black mb-1 md:mb-2">Synopsis</h3>
+              <p className="text-xs md:text-base text-gray-700 leading-relaxed line-clamp-3 md:line-clamp-none">{details.overview}</p>
+            </div>
+          )}
 
-              {/* User Actions */}
-              <div className="border-t-2 border-gray-200 pt-4 md:pt-6">
-                <h3 className="text-base md:text-lg font-bold text-black mb-3 md:mb-4 text-center md:text-left">Ma collection</h3>
-                
-                {/* Rating */}
-                <div className="mb-3 md:mb-4">
-                  <label className="block text-xs md:text-sm font-medium text-gray-700 mb-2 text-center md:text-left">
+          {/* User Actions - Compact */}
+          <div className="border-t border-gray-200 pt-3 md:pt-6">
+            <h3 className="text-sm md:text-lg font-bold text-black mb-2 md:mb-4">Ma collection</h3>
+            
+            <div>
+              {/* Rating - Compact */}
+              <div className="mb-3 md:mb-4">
+                  <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1.5 md:mb-2">
                     Ma note
                   </label>
-                  <div className="flex gap-1.5 md:gap-2 justify-center md:justify-start">
+                  <div className="flex gap-1 md:gap-2">
                     {[1, 2, 3, 4, 5].map((rating) => (
                       <button
                         key={rating}
                         onClick={() => setSelectedRating(rating === selectedRating ? null : rating)}
-                        className={`w-9 h-9 md:w-10 md:h-10 rounded-lg border-2 transition-colors ${
+                        className={`w-8 h-8 md:w-10 md:h-10 rounded-lg border-2 transition-all active:scale-90 ${
                           selectedRating && selectedRating >= rating
                             ? 'bg-black text-white border-black'
-                            : 'bg-white text-gray-400 border-gray-200 hover:border-black active:scale-95'
+                            : 'bg-white text-gray-400 border-gray-200 hover:border-black'
                         }`}
                       >
                         <Star
@@ -304,46 +310,45 @@ export default function MovieModal({ movie, onClose, onUpdate }: MovieModalProps
                   </div>
                 </div>
 
-                {/* Action Buttons */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-3">
+                {/* Action Buttons - Ultra compact sur mobile */}
+                <div className="grid grid-cols-2 gap-2">
                   <button
                     onClick={() => handleSave('watched')}
                     disabled={saving}
-                    className={`flex items-center justify-center gap-2 px-3 md:px-4 py-2.5 md:py-2 rounded-lg text-sm md:text-base font-medium transition-all active:scale-95 ${
+                    className={`flex items-center justify-center gap-1.5 md:gap-2 px-2 md:px-4 py-2 md:py-2.5 rounded-lg text-xs md:text-base font-medium transition-all active:scale-95 ${
                       status === 'watched'
                         ? 'bg-black text-white'
                         : 'bg-gray-100 text-black hover:bg-gray-200'
                     } disabled:opacity-50`}
                   >
-                    <Eye className="w-4 h-4" />
-                    <span className="truncate">{status === 'watched' ? 'Déjà vu' : 'Marquer comme vu'}</span>
+                    <Eye className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                    <span className="truncate">{status === 'watched' ? 'Vu' : 'Vu'}</span>
                   </button>
 
                   <button
                     onClick={() => handleSave('watchlist')}
                     disabled={saving}
-                    className={`flex items-center justify-center gap-2 px-3 md:px-4 py-2.5 md:py-2 rounded-lg text-sm md:text-base font-medium transition-all active:scale-95 ${
+                    className={`flex items-center justify-center gap-1.5 md:gap-2 px-2 md:px-4 py-2 md:py-2.5 rounded-lg text-xs md:text-base font-medium transition-all active:scale-95 ${
                       status === 'watchlist'
                         ? 'bg-black text-white'
                         : 'bg-gray-100 text-black hover:bg-gray-200'
                     } disabled:opacity-50`}
                   >
-                    <Clock className="w-4 h-4" />
-                    <span className="truncate">{status === 'watchlist' ? 'Dans watchlist' : 'Ajouter watchlist'}</span>
+                    <Clock className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                    <span className="truncate">{status === 'watchlist' ? 'Dans liste' : 'Watchlist'}</span>
                   </button>
 
                   {userMovie && (
                     <button
                       onClick={handleToggleFavorite}
                       disabled={saving}
-                      className={`flex items-center justify-center gap-2 px-3 md:px-4 py-2.5 md:py-2 rounded-lg text-sm md:text-base font-medium transition-all active:scale-95 ${
+                      className={`flex items-center justify-center gap-1.5 md:gap-2 px-2 md:px-4 py-2 md:py-2.5 rounded-lg text-xs md:text-base font-medium transition-all active:scale-95 ${
                         isFavorite
                           ? 'bg-black text-white'
                           : 'bg-gray-100 text-black hover:bg-gray-200'
                       } disabled:opacity-50`}
-                      title={isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris (max 10)'}
                     >
-                      <Heart className={`w-4 h-4 ${
+                      <Heart className={`w-3.5 h-3.5 md:w-4 md:h-4 ${
                         isFavorite ? 'fill-white' : ''
                       }`} />
                       <span className="truncate">Favori</span>
@@ -354,9 +359,9 @@ export default function MovieModal({ movie, onClose, onUpdate }: MovieModalProps
                     <button
                       onClick={handleDelete}
                       disabled={saving}
-                      className="flex items-center justify-center gap-2 px-3 md:px-4 py-2.5 md:py-2 rounded-lg text-sm md:text-base font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all active:scale-95 disabled:opacity-50"
+                      className="flex items-center justify-center gap-1.5 md:gap-2 px-2 md:px-4 py-2 md:py-2.5 rounded-lg text-xs md:text-base font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all active:scale-95 disabled:opacity-50"
                     >
-                      <X className="w-4 h-4" />
+                      <X className="w-3.5 h-3.5 md:w-4 md:h-4" />
                       <span className="truncate">Retirer</span>
                     </button>
                   )}
@@ -366,6 +371,5 @@ export default function MovieModal({ movie, onClose, onUpdate }: MovieModalProps
           </div>
         </div>
       </div>
-    </div>
   );
 }
