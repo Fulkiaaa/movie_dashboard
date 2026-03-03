@@ -45,7 +45,7 @@ export default function LoginPage() {
             Connexion
           </h1>
           <p className="text-gray-600 text-center mb-6">
-            Accédez à votre compte MovieMatch
+            Accédez à votre compte SeenIt
           </p>
 
           {/* Error Message */}

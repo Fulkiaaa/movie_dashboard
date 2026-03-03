@@ -63,7 +63,7 @@ export default function Header() {
               <Film className="w-6 h-6 text-white" />
             </div>
             <span className="text-xl font-bold text-black tracking-tight">
-              MovieMatch
+              SeenIt
             </span>
           </Link>
 

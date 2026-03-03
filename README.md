@@ -1,4 +1,4 @@
-# 🎬 MovieMatch - Dashboard de Films
+# 🎬 SeenIt - Dashboard de Films
 
 Application Next.js pour découvrir, organiser et suivre vos films avec statistiques détaillées, propulsée par TMDB et Supabase.
 

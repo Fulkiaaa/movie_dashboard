@@ -99,7 +99,7 @@ export default function ProfilePage() {
                 <h2 className="text-xl font-bold text-black mb-1 text-center">
                   {user.email?.split('@')[0]}
                 </h2>
-                <p className="text-gray-600 text-sm">Membre MovieMatch</p>
+                <p className="text-gray-600 text-sm">Membre SeenIt</p>
               </div>
 
               {/* Info */}

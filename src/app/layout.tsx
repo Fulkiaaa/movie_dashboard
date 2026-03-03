@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "MovieMatch - Votre dashboard de films",
+  title: "SeenIt - Votre dashboard de films",
   description: "Découvrez, swipez et gérez vos films préférés",
 };
 

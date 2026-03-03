@@ -63,7 +63,7 @@ export default function SignUpPage() {
             Inscription
           </h1>
           <p className="text-gray-600 text-center mb-6">
-            Créez votre compte MovieMatch
+            Créez votre compte SeenIt
           </p>
 
           {/* Success Message */}

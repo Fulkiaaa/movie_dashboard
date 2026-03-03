@@ -143,7 +143,7 @@ export default function Home() {
 
             {/* Title */}
             <h1 className="text-5xl md:text-7xl font-bold text-black mb-4">
-              MovieMatch
+              SeenIt
             </h1>
             <p className="text-xl md:text-2xl text-gray-700 mb-8 max-w-3xl mx-auto">
               Découvrez, organisez et partagez votre passion pour le cinéma
@@ -241,7 +241,7 @@ export default function Home() {
               Prêt à commencer ?
             </h2>
             <p className="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
-              Rejoignez MovieMatch dès aujourd'hui et découvrez une nouvelle façon de gérer vos films
+              Rejoignez SeenIt dès aujourd'hui et découvrez une nouvelle façon de gérer vos films
             </p>
             <Link
               href="/auth/signup"
@@ -261,7 +261,7 @@ export default function Home() {
               <div className="bg-black p-2 rounded-lg">
                 <Film className="w-5 h-5 text-white" />
               </div>
-              <span className="text-gray-600">© 2026 MovieMatch</span>
+              <span className="text-gray-600">© 2026 SeenIt</span>
             </div>
             <div className="flex gap-6">
               <Link href="/dashboard" className="text-gray-600 hover:text-black transition-colors">
