@@ -186,6 +186,23 @@ export const tmdbService = {
     };
   },
 
+  // Récupérer les séries les mieux notées
+  async getTopRatedTV(page = 1): Promise<{ results: Movie[]; total_pages: number }> {
+    const response = await fetch(
+      `${TMDB_BASE_URL}/tv/top_rated?api_key=${TMDB_API_KEY}&page=${page}&language=fr-FR`
+    );
+
+    if (!response.ok) {
+      throw new Error('Erreur lors de la récupération des séries les mieux notées');
+    }
+
+    const data = await response.json();
+    return {
+      results: data.results.map((item: any) => ({ ...item, media_type: 'tv' })),
+      total_pages: data.total_pages,
+    };
+  },
+
   // Récupérer des recommandations basées sur un film
   async getRecommendations(movieId: number, mediaType: 'movie' | 'tv' = 'movie', page = 1): Promise<{ results: Movie[]; total_pages: number }> {
     const response = await fetch(
@@ -199,6 +216,125 @@ export const tmdbService = {
     const data = await response.json();
     return {
       results: data.results.map((item: any) => ({ ...item, media_type: mediaType })),
+      total_pages: data.total_pages,
+    };
+  },
+
+  // Récupérer la liste des genres pour les films
+  async getMovieGenres(): Promise<{ id: number; name: string }[]> {
+    const response = await fetch(
+      `${TMDB_BASE_URL}/genre/movie/list?api_key=${TMDB_API_KEY}&language=fr-FR`
+    );
+
+    if (!response.ok) {
+      throw new Error('Erreur lors de la récupération des genres');
+    }
+
+    const data = await response.json();
+    return data.genres;
+  },
+
+  // Récupérer la liste des genres pour les séries
+  async getTVGenres(): Promise<{ id: number; name: string }[]> {
+    const response = await fetch(
+      `${TMDB_BASE_URL}/genre/tv/list?api_key=${TMDB_API_KEY}&language=fr-FR`
+    );
+
+    if (!response.ok) {
+      throw new Error('Erreur lors de la récupération des genres');
+    }
+
+    const data = await response.json();
+    return data.genres;
+  },
+
+  // Découvrir des films avec des filtres
+  async discoverMovies(params: {
+    page?: number;
+    genre?: number;
+    year?: number;
+    sortBy?: 'popularity.desc' | 'vote_average.desc' | 'release_date.desc';
+    language?: string;
+    region?: string;
+  } = {}): Promise<{ results: Movie[]; total_pages: number }> {
+    const queryParams = new URLSearchParams();
+    queryParams.append('api_key', TMDB_API_KEY || '');
+    queryParams.append('language', 'fr-FR');
+    queryParams.append('page', (params.page || 1).toString());
+    queryParams.append('sort_by', params.sortBy || 'popularity.desc');
+    queryParams.append('include_adult', 'false');
+    queryParams.append('vote_count.gte', '100');
+
+    if (params.genre) {
+      queryParams.append('with_genres', params.genre.toString());
+    }
+
+    if (params.year) {
+      queryParams.append('primary_release_year', params.year.toString());
+    }
+
+    if (params.language) {
+      queryParams.append('with_original_language', params.language);
+    }
+
+    if (params.region) {
+      queryParams.append('region', params.region);
+    }
+
+    const response = await fetch(
+      `${TMDB_BASE_URL}/discover/movie?${queryParams.toString()}`
+    );
+
+    if (!response.ok) {
+      throw new Error('Erreur lors de la découverte de films');
+    }
+
+    const data = await response.json();
+    return {
+      results: data.results.map((item: any) => ({ ...item, media_type: 'movie' })),
+      total_pages: data.total_pages,
+    };
+  },
+
+  // Découvrir des séries avec des filtres
+  async discoverTV(params: {
+    page?: number;
+    genre?: number;
+    year?: number;
+    sortBy?: 'popularity.desc' | 'vote_average.desc' | 'first_air_date.desc';
+    language?: string;
+  } = {}): Promise<{ results: Movie[]; total_pages: number }> {
+    const queryParams = new URLSearchParams();
+    queryParams.append('api_key', TMDB_API_KEY || '');
+    queryParams.append('language', 'fr-FR');
+    queryParams.append('page', (params.page || 1).toString());
+    queryParams.append('sort_by', params.sortBy || 'popularity.desc');
+    queryParams.append('include_adult', 'false');
+    queryParams.append('vote_count.gte', '50');
+
+    if (params.genre) {
+      queryParams.append('with_genres', params.genre.toString());
+    }
+
+    if (params.year) {
+      queryParams.append('first_air_date_year', params.year.toString());
+    }
+
+    if (params.language) {
+      queryParams.append('with_original_language', params.language);
+    }
+
+    const response = await fetch(
+      `${TMDB_BASE_URL}/discover/tv?${queryParams.toString()}`
+    );
+
+    if (!response.ok) {
+      throw new Error('Erreur lors de la découverte de séries');
+    }
+
+    const data = await response.json();
+    return {
+      results: data.results.map((item: any) => ({ ...item, media_type: 'tv' })),
       total_pages: data.total_pages,
     };
   },

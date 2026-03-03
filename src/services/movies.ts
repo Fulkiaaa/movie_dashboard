@@ -290,4 +290,63 @@ export const moviesService = {
 
     return count || 0;
   },
+
+  // Ajouter un film à la liste des skippés
+  async addSkippedMovie(
+    supabase: SupabaseClient,
+    tmdb_id: number,
+    media_type: 'movie' | 'tv'
+  ): Promise<void> {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    const { error } = await supabase
+      .from('skipped_movies')
+      .insert({
+        user_id: user.id,
+        tmdb_id,
+        media_type,
+      });
+
+    if (error && error.code !== '23505') {
+      // 23505 = duplicate key (déjà skippé)
+      console.error('Error adding skipped movie:', error);
+      throw error;
+    }
+  },
+
+  // Récupérer tous les IDs de films skippés pour cet utilisateur
+  async getSkippedMovieIds(supabase: SupabaseClient): Promise<number[]> {
+    const { data, error } = await supabase
+      .from('skipped_movies')
+      .select('tmdb_id');
+
+    if (error) {
+      console.error('Error fetching skipped movies:', error);
+      throw error;
+    }
+
+    return data?.map((item) => item.tmdb_id) || [];
+  },
+
+  // Supprimer un film de la liste des skippés (pour le réinitialiser)
+  async removeSkippedMovie(
+    supabase: SupabaseClient,
+    tmdb_id: number,
+    media_type: 'movie' | 'tv'
+  ): Promise<void> {
+    const { error } = await supabase
+      .from('skipped_movies')
+      .delete()
+      .eq('tmdb_id', tmdb_id)
+      .eq('media_type', media_type);
+
+    if (error) {
+      console.error('Error removing skipped movie:', error);
+      throw error;
+    }
+  },
 };
