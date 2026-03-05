@@ -1070,7 +1070,7 @@ export default function SwipePage() {
           <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12 mt-6 md:mt-0">
             {/* Movie Card */}
             <div
-              className={`w-full max-w-sm md:w-auto ${
+              className={`w-[85vw] max-w-[340px] md:max-w-[420px] ${
                 swipeDirection === 'left'
                   ? 'opacity-0 -translate-x-[200px] -rotate-45 scale-75 transition-all duration-500 ease-out'
                   : swipeDirection === 'right'
@@ -1104,7 +1104,7 @@ export default function SwipePage() {
               </h2>
 
               <div 
-                className="relative rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl md:w-[420px] cursor-grab active:cursor-grabbing select-none"
+                className="relative rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl w-[85vw] max-w-[340px] md:max-w-[420px]"
                 onMouseDown={onMouseDown}
                 onTouchStart={onTouchStart}
                 onTouchMove={isDragging ? onTouchMove : undefined}
@@ -1116,6 +1116,7 @@ export default function SwipePage() {
                       src={`https://image.tmdb.org/t/p/w780${currentMovie.poster_path}`}
                       alt={currentMovie.title || currentMovie.name || ''}
                       fill
+                      sizes="(max-width: 768px) 85vw, 420px"
                       className="object-cover pointer-events-none"
                       priority
                       draggable={false}
