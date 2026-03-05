@@ -256,6 +256,12 @@ export const tmdbService = {
     sortBy?: 'popularity.desc' | 'vote_average.desc' | 'release_date.desc';
     language?: string;
     region?: string;
+    releaseDateGte?: string; // Format: YYYY-MM-DD
+    releaseDateLte?: string; // Format: YYYY-MM-DD
+    certification?: string;
+    certificationCountry?: string;
+    withWatchProviders?: string; // IDs séparés par |
+    watchRegion?: string;
   } = {}): Promise<{ results: Movie[]; total_pages: number }> {
     const queryParams = new URLSearchParams();
     queryParams.append('api_key', TMDB_API_KEY || '');
@@ -273,12 +279,30 @@ export const tmdbService = {
       queryParams.append('primary_release_year', params.year.toString());
     }
 
+    if (params.releaseDateGte) {
+      queryParams.append('primary_release_date.gte', params.releaseDateGte);
+    }
+
+    if (params.releaseDateLte) {
+      queryParams.append('primary_release_date.lte', params.releaseDateLte);
+    }
+
     if (params.language) {
       queryParams.append('with_original_language', params.language);
     }
 
     if (params.region) {
       queryParams.append('region', params.region);
+    }
+
+    if (params.certification && params.certificationCountry) {
+      queryParams.append('certification_country', params.certificationCountry);
+      queryParams.append('certification', params.certification);
+    }
+
+    if (params.withWatchProviders && params.watchRegion) {
+      queryParams.append('with_watch_providers', params.withWatchProviders);
+      queryParams.append('watch_region', params.watchRegion);
     }
 
     const response = await fetch(
@@ -303,6 +327,10 @@ export const tmdbService = {
     year?: number;
     sortBy?: 'popularity.desc' | 'vote_average.desc' | 'first_air_date.desc';
     language?: string;
+    firstAirDateGte?: string;
+    firstAirDateLte?: string;
+    withWatchProviders?: string;
+    watchRegion?: string;
   } = {}): Promise<{ results: Movie[]; total_pages: number }> {
     const queryParams = new URLSearchParams();
     queryParams.append('api_key', TMDB_API_KEY || '');
@@ -320,8 +348,21 @@ export const tmdbService = {
       queryParams.append('first_air_date_year', params.year.toString());
     }
 
+    if (params.firstAirDateGte) {
+      queryParams.append('first_air_date.gte', params.firstAirDateGte);
+    }
+
+    if (params.firstAirDateLte) {
+      queryParams.append('first_air_date.lte', params.firstAirDateLte);
+    }
+
     if (params.language) {
       queryParams.append('with_original_language', params.language);
+    }
+
+    if (params.withWatchProviders && params.watchRegion) {
+      queryParams.append('with_watch_providers', params.withWatchProviders);
+      queryParams.append('watch_region', params.watchRegion);
     }
 
     const response = await fetch(
@@ -337,6 +378,58 @@ export const tmdbService = {
       results: data.results.map((item: any) => ({ ...item, media_type: 'tv' })),
       total_pages: data.total_pages,
     };
+  },
+
+  // Récupérer les langues disponibles
+  async getLanguages(): Promise<{ iso_639_1: string; english_name: string; name: string }[]> {
+    const response = await fetch(
+      `${TMDB_BASE_URL}/configuration/languages?api_key=${TMDB_API_KEY}`
+    );
+
+    if (!response.ok) {
+      throw new Error('Erreur lors de la récupération des langues');
+    }
+
+    return response.json();
+  },
+
+  // Récupérer les pays disponibles
+  async getCountries(): Promise<{ iso_3166_1: string; english_name: string; native_name: string }[]> {
+    const response = await fetch(
+      `${TMDB_BASE_URL}/configuration/countries?api_key=${TMDB_API_KEY}`
+    );
+
+    if (!response.ok) {
+      throw new Error('Erreur lors de la récupération des pays');
+    }
+
+    return response.json();
+  },
+
+  // Récupérer les certifications de films
+  async getMovieCertifications(): Promise<any> {
+    const response = await fetch(
+      `${TMDB_BASE_URL}/certification/movie/list?api_key=${TMDB_API_KEY}`
+    );
+
+    if (!response.ok) {
+      throw new Error('Erreur lors de la récupération des certifications');
+    }
+
+    return response.json();
+  },
+
+  // Récupérer les providers de streaming disponibles
+  async getWatchProviders(region: string = 'FR'): Promise<{ results: any[] }> {
+    const response = await fetch(
+      `${TMDB_BASE_URL}/watch/providers/movie?api_key=${TMDB_API_KEY}&language=fr-FR&watch_region=${region}`
+    );
+
+    if (!response.ok) {
+      throw new Error('Erreur lors de la récupération des providers');
+    }
+
+    return response.json();
   },
 
   // Construire l'URL de l'image

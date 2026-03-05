@@ -1,20 +1,32 @@
 'use client';
 
 import { useAuth } from '@/contexts/AuthContext';
-import { Heart, X, Bookmark, Star, TrendingUp, Calendar, Film, Globe, Languages, Play } from 'lucide-react';
+import { Heart, X, Bookmark, Star, TrendingUp, Calendar, Film, Globe, Languages, Play, Sliders, Check } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { tmdbService, Movie } from '@/services/tmdb';
 import { moviesService } from '@/services/movies';
 import Image from 'next/image';
 
-type SwipeMode = 'selection' | 'swipe';
-type FilterType = 'popular' | 'topRated' | 'year' | 'genre' | 'trending';
+type SwipeMode = 'selection' | 'swipe' | 'customFilter';
+type FilterType = 'popular' | 'topRated' | 'year' | 'genre' | 'trending' | 'custom';
+
+interface CustomFilterParams {
+  genres: number[];
+  releaseDateFrom?: string;
+  releaseDateTo?: string;
+  languages: string[];
+  countries: string[];
+  certifications: string[];
+  providers: number[];
+  watchRegion?: string;
+}
 
 interface SwipeFilter {
   type: FilterType;
   genre?: number;
   year?: number;
+  customParams?: CustomFilterParams;
 }
 
 export default function SwipePage() {
@@ -30,6 +42,21 @@ export default function SwipePage() {
   const [genres, setGenres] = useState<{ id: number; name: string }[]>([]);
   const [showYearMenu, setShowYearMenu] = useState(false);
   const [showGenreMenu, setShowGenreMenu] = useState(false);
+  const [currentFilter, setCurrentFilter] = useState<SwipeFilter | null>(null);
+  
+  // Custom filter states
+  const [customFilter, setCustomFilter] = useState<CustomFilterParams>({
+    genres: [],
+    languages: [],
+    countries: [],
+    certifications: [],
+    providers: [],
+    watchRegion: 'FR',
+  });
+  const [availableLanguages, setAvailableLanguages] = useState<{ iso_639_1: string; english_name: string }[]>([]);
+  const [availableCountries, setAvailableCountries] = useState<{ iso_3166_1: string; english_name: string }[]>([]);
+  const [availableProviders, setAvailableProviders] = useState<{ provider_id: number; provider_name: string; logo_path: string }[]>([]);
+  const [availableCertifications, setAvailableCertifications] = useState<{ certification: string }[]>([]);
   
   // Drag states
   const [isDragging, setIsDragging] = useState(false);
@@ -137,26 +164,53 @@ export default function SwipePage() {
     };
   }, [isDragging, dragStart, dragOffset]);
 
-  // Load genres on mount
+  // Load genres and filter options on mount
   useEffect(() => {
-    const loadGenres = async () => {
+    const loadFilterOptions = async () => {
       try {
-        const [movieGenres, tvGenres] = await Promise.all([
+        const [movieGenres, tvGenres, languages, countries, providers, certifications] = await Promise.all([
           tmdbService.getMovieGenres(),
           tmdbService.getTVGenres(),
+          tmdbService.getLanguages(),
+          tmdbService.getCountries(),
+          tmdbService.getWatchProviders('FR'),
+          tmdbService.getMovieCertifications(),
         ]);
+        
         // Combiner et dédupliquer les genres
         const allGenres = [...movieGenres, ...tvGenres];
         const uniqueGenres = Array.from(
           new Map(allGenres.map(g => [g.id, g])).values()
         );
         setGenres(uniqueGenres.sort((a, b) => a.name.localeCompare(b.name)));
+        
+        // Langues populaires en priorité
+        const popularLanguages = ['fr', 'en', 'es', 'de', 'it', 'ja', 'ko', 'zh'];
+        const sortedLanguages = languages.sort((a, b) => {
+          const aIndex = popularLanguages.indexOf(a.iso_639_1);
+          const bIndex = popularLanguages.indexOf(b.iso_639_1);
+          if (aIndex !== -1 && bIndex !== -1) return aIndex - bIndex;
+          if (aIndex !== -1) return -1;
+          if (bIndex !== -1) return 1;
+          return a.english_name.localeCompare(b.english_name);
+        });
+        setAvailableLanguages(sortedLanguages);
+        
+        // Pays
+        setAvailableCountries(countries.sort((a, b) => a.english_name.localeCompare(b.english_name)));
+        
+        // Providers
+        setAvailableProviders(providers.results || []);
+        
+        // Certifications françaises
+        const frCerts = certifications.certifications?.FR || [];
+        setAvailableCertifications(frCerts);
       } catch (error) {
-        console.error('Error loading genres:', error);
+        console.error('Error loading filter options:', error);
       }
     };
 
-    loadGenres();
+    loadFilterOptions();
   }, []);
 
   // Load movies based on selected filter
@@ -166,6 +220,7 @@ export default function SwipePage() {
     try {
       setLoadingMovies(true);
       setMode('swipe');
+      setCurrentFilter(filter); // Sauvegarder le filtre actuel
       
       // Récupérer les films de l'utilisateur (vus et watchlist) pour les exclure
       const [userMovies, skippedIds] = await Promise.all([
@@ -235,6 +290,63 @@ export default function SwipePage() {
             ];
           }
           break;
+
+        case 'custom':
+          if (filter.customParams) {
+            const params = filter.customParams;
+            const discoverParams: any = {
+              page: 1,
+            };
+
+            if (params.genres.length > 0) {
+              discoverParams.genre = params.genres[0]; // TMDB accepte un seul genre par requête
+            }
+
+            if (params.releaseDateFrom) {
+              discoverParams.releaseDateGte = params.releaseDateFrom;
+            }
+
+            if (params.releaseDateTo) {
+              discoverParams.releaseDateLte = params.releaseDateTo;
+            }
+
+            if (params.languages.length > 0) {
+              discoverParams.language = params.languages[0];
+            }
+
+            if (params.countries.length > 0) {
+              discoverParams.region = params.countries[0];
+            }
+
+            if (params.certifications.length > 0) {
+              discoverParams.certification = params.certifications[0];
+              discoverParams.certificationCountry = 'FR';
+            }
+
+            if (params.providers.length > 0) {
+              discoverParams.withWatchProviders = params.providers.join('|');
+              discoverParams.watchRegion = params.watchRegion || 'FR';
+            }
+
+            const [customMovies, customTV] = await Promise.all([
+              tmdbService.discoverMovies(discoverParams),
+              tmdbService.discoverTV({
+                page: 1,
+                genre: discoverParams.genre,
+                language: discoverParams.language,
+                firstAirDateGte: discoverParams.releaseDateGte,
+                firstAirDateLte: discoverParams.releaseDateLte,
+                withWatchProviders: discoverParams.withWatchProviders,
+                watchRegion: discoverParams.watchRegion,
+              }),
+            ]);
+
+            allMovies = [
+              ...customMovies.results,
+              ...customTV.results,
+            ];
+          }
+          break;
       }
 
       // Filtrer les doublons et les films déjà vus/watchlist/skippés
@@ -256,25 +368,106 @@ export default function SwipePage() {
 
   // Load more movies when running low
   const loadMoreMovies = async () => {
-    if (!supabase) return;
+    if (!supabase || !currentFilter) return;
 
     try {
       const nextPage = Math.floor(movies.length / 20) + 2;
-      const [popularMovies, topRatedMovies, popularTV, topRatedTV, trending] = await Promise.all([
-        tmdbService.getPopularMovies(nextPage),
-        tmdbService.getTopRatedMovies(nextPage),
-        tmdbService.getPopularTV(nextPage),
-        tmdbService.getTopRatedTV(nextPage),
-        tmdbService.getTrending('week', nextPage),
-      ]);
+      let newMovies: Movie[] = [];
 
-      const newMovies = [
-        ...popularMovies.results.map(m => ({ ...m, media_type: 'movie' as const })),
-        ...topRatedMovies.results.map(m => ({ ...m, media_type: 'movie' as const })),
-        ...popularTV.results.map(m => ({ ...m, media_type: 'tv' as const })),
-        ...topRatedTV.results.map(m => ({ ...m, media_type: 'tv' as const })),
-        ...trending.results,
-      ];
+      // Charger la MÊME catégorie que le filtre initial
+      switch (currentFilter.type) {
+        case 'popular':
+          const [popularMovies, popularTV] = await Promise.all([
+            tmdbService.getPopularMovies(nextPage),
+            tmdbService.getPopularTV(nextPage),
+          ]);
+          newMovies = [
+            ...popularMovies.results.map(m => ({ ...m, media_type: 'movie' as const })),
+            ...popularTV.results.map(m => ({ ...m, media_type: 'tv' as const })),
+          ];
+          break;
+
+        case 'topRated':
+          const [topRatedMovies, topRatedTV] = await Promise.all([
+            tmdbService.getTopRatedMovies(nextPage),
+            tmdbService.getTopRatedTV(nextPage),
+          ]);
+          newMovies = [
+            ...topRatedMovies.results.map(m => ({ ...m, media_type: 'movie' as const })),
+            ...topRatedTV.results.map(m => ({ ...m, media_type: 'tv' as const })),
+          ];
+          break;
+
+        case 'trending':
+          const trending = await tmdbService.getTrending('week', nextPage);
+          newMovies = trending.results;
+          break;
+
+        case 'year':
+          if (currentFilter.year) {
+            const [moviesByYear, tvByYear] = await Promise.all([
+              tmdbService.discoverMovies({ year: currentFilter.year, page: nextPage }),
+              tmdbService.discoverTV({ year: currentFilter.year, page: nextPage }),
+            ]);
+            newMovies = [
+              ...moviesByYear.results,
+              ...tvByYear.results,
+            ];
+          }
+          break;
+
+        case 'genre':
+          if (currentFilter.genre) {
+            const [moviesByGenre, tvByGenre] = await Promise.all([
+              tmdbService.discoverMovies({ genre: currentFilter.genre, page: nextPage }),
+              tmdbService.discoverTV({ genre: currentFilter.genre, page: nextPage }),
+            ]);
+            newMovies = [
+              ...moviesByGenre.results,
+              ...tvByGenre.results,
+            ];
+          }
+          break;
+
+        case 'custom':
+          if (currentFilter.customParams) {
+            const params = currentFilter.customParams;
+            const discoverParams: any = { page: nextPage };
+
+            if (params.genres.length > 0) discoverParams.genre = params.genres[0];
+            if (params.releaseDateFrom) discoverParams.releaseDateGte = params.releaseDateFrom;
+            if (params.releaseDateTo) discoverParams.releaseDateLte = params.releaseDateTo;
+            if (params.languages.length > 0) discoverParams.language = params.languages[0];
+            if (params.countries.length > 0) discoverParams.region = params.countries[0];
+            if (params.certifications.length > 0) {
+              discoverParams.certification = params.certifications[0];
+              discoverParams.certificationCountry = 'FR';
+            }
+            if (params.providers.length > 0) {
+              discoverParams.withWatchProviders = params.providers.join('|');
+              discoverParams.watchRegion = params.watchRegion || 'FR';
+            }
+
+            const [customMovies, customTV] = await Promise.all([
+              tmdbService.discoverMovies(discoverParams),
+              tmdbService.discoverTV({
+                page: nextPage,
+                genre: discoverParams.genre,
+                language: discoverParams.language,
+                firstAirDateGte: discoverParams.releaseDateGte,
+                firstAirDateLte: discoverParams.releaseDateLte,
+                withWatchProviders: discoverParams.withWatchProviders,
+                watchRegion: discoverParams.watchRegion,
+              }),
+            ]);
+
+            newMovies = [
+              ...customMovies.results,
+              ...customTV.results,
+            ];
+          }
+          break;
+      }
 
       const uniqueNewMovies = Array.from(
         new Map(newMovies.map(m => [m.id, m])).values()
@@ -439,6 +632,18 @@ export default function SwipePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 mb-6 md:mb-8">
+            {/* Custom Filter */}
+            <div className="md:col-span-2">
+              <button
+                onClick={() => setMode('customFilter')}
+                className="group w-full p-4 md:p-8 bg-white rounded-xl md:rounded-2xl shadow-sm hover:shadow-xl transition-all border-2 border-transparent hover:border-black"
+              >
+                <Sliders className="w-10 h-10 md:w-12 md:h-12 text-black mb-3 md:mb-4 mx-auto" />
+                <h3 className="text-lg md:text-xl font-bold text-black mb-1 md:mb-2">Filtre personnalisé</h3>
+                <p className="text-gray-600 text-xs md:text-sm">Créez votre propre sélection sur mesure</p>
+              </button>
+            </div>
+
             {/* Popular */}
             <button
               onClick={() => loadMoviesWithFilter({ type: 'popular' })}
@@ -557,6 +762,245 @@ export default function SwipePage() {
             >
               Retour au dashboard
             </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Custom Filter Configuration Screen
+  if (mode === 'customFilter') {
+    const toggleArrayItem = (array: any[], item: any) => {
+      return array.includes(item) ? array.filter(i => i !== item) : [...array, item];
+    };
+
+    return (
+      <div className="min-h-screen bg-gray-50 py-6 px-4 overflow-y-auto">
+        <div className="max-w-4xl mx-auto pb-24">
+          <div className="flex items-center gap-4 mb-8">
+            <button
+              onClick={() => setMode('selection')}
+              className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
+            >
+              ← Retour
+            </button>
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold text-black">Filtre personnalisé</h1>
+              <p className="text-sm text-gray-600">Configurez vos critères de recherche</p>
+            </div>
+          </div>
+
+          {/* Genres */}
+          <div className="bg-white rounded-xl p-6 mb-4 shadow-sm">
+            <h3 className="font-bold text-lg text-black mb-3 flex items-center gap-2">
+              <Film className="w-5 h-5" />
+              Genres
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+              {genres.map(genre => (
+                <button
+                  key={genre.id}
+                  onClick={() => setCustomFilter(prev => ({
+                    ...prev,
+                    genres: toggleArrayItem(prev.genres, genre.id),
+                  }))}
+                  className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+                    customFilter.genres.includes(genre.id)
+                      ? 'bg-black text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {customFilter.genres.includes(genre.id) && <Check className="w-4 h-4 inline mr-1" />}
+                  {genre.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Date Range */}
+          <div className="bg-white rounded-xl p-6 mb-4 shadow-sm">
+            <h3 className="font-bold text-lg text-black mb-3 flex items-center gap-2">
+              <Calendar className="w-5 h-5" />
+              Période de sortie
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Du</label>
+                <input
+                  type="date"
+                  value={customFilter.releaseDateFrom || ''}
+                  onChange={(e) => setCustomFilter(prev => ({ ...prev, releaseDateFrom: e.target.value }))}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Au</label>
+                <input
+                  type="date"
+                  value={customFilter.releaseDateTo || ''}
+                  onChange={(e) => setCustomFilter(prev => ({ ...prev, releaseDateTo: e.target.value }))}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Languages */}
+          <div className="bg-white rounded-xl p-6 mb-4 shadow-sm">
+            <h3 className="font-bold text-lg text-black mb-3 flex items-center gap-2">
+              <Languages className="w-5 h-5" />
+              Langues originales
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 max-h-48 overflow-y-auto">
+              {availableLanguages.slice(0, 20).map(lang => (
+                <button
+                  key={lang.iso_639_1}
+                  onClick={() => setCustomFilter(prev => ({
+                    ...prev,
+                    languages: toggleArrayItem(prev.languages, lang.iso_639_1),
+                  }))}
+                  className={`px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
+                    customFilter.languages.includes(lang.iso_639_1)
+                      ? 'bg-black text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {customFilter.languages.includes(lang.iso_639_1) && <Check className="w-3 h-3 inline mr-1" />}
+                  {lang.english_name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Countries */}
+          <div className="bg-white rounded-xl p-6 mb-4 shadow-sm">
+            <h3 className="font-bold text-lg text-black mb-3 flex items-center gap-2">
+              <Globe className="w-5 h-5" />
+              Pays de production
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 max-h-48 overflow-y-auto">
+              {availableCountries.slice(0, 30).map(country => (
+                <button
+                  key={country.iso_3166_1}
+                  onClick={() => setCustomFilter(prev => ({
+                    ...prev,
+                    countries: toggleArrayItem(prev.countries, country.iso_3166_1),
+                  }))}
+                  className={`px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
+                    customFilter.countries.includes(country.iso_3166_1)
+                      ? 'bg-black text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {customFilter.countries.includes(country.iso_3166_1) && <Check className="w-3 h-3 inline mr-1" />}
+                  {country.english_name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Certifications */}
+          {availableCertifications.length > 0 && (
+            <div className="bg-white rounded-xl p-6 mb-4 shadow-sm">
+              <h3 className="font-bold text-lg text-black mb-3 flex items-center gap-2">
+                <Star className="w-5 h-5" />
+                Classification (France)
+              </h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                {availableCertifications.map(cert => (
+                  <button
+                    key={cert.certification}
+                    onClick={() => setCustomFilter(prev => ({
+                      ...prev,
+                      certifications: toggleArrayItem(prev.certifications, cert.certification),
+                    }))}
+                    className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${
+                      customFilter.certifications.includes(cert.certification)
+                        ? 'bg-black text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    {customFilter.certifications.includes(cert.certification) && <Check className="w-4 h-4 inline mr-1" />}
+                    {cert.certification}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Streaming Providers */}
+          {availableProviders.length > 0 && (
+            <div className="bg-white rounded-xl p-6 mb-4 shadow-sm">
+              <h3 className="font-bold text-lg text-black mb-3 flex items-center gap-2">
+                <Play className="w-5 h-5" />
+                Plateformes de streaming
+              </h3>
+              <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                {availableProviders.slice(0, 18).map(provider => (
+                  <button
+                    key={provider.provider_id}
+                    onClick={() => setCustomFilter(prev => ({
+                      ...prev,
+                      providers: toggleArrayItem(prev.providers, provider.provider_id),
+                    }))}
+                    className={`relative p-3 rounded-lg transition-all ${
+                      customFilter.providers.includes(provider.provider_id)
+                        ? 'ring-4 ring-black bg-gray-100'
+                        : 'bg-gray-100 hover:bg-gray-200'
+                    }`}
+                    title={provider.provider_name}
+                  >
+                    {provider.logo_path ? (
+                      <Image
+                        src={`https://image.tmdb.org/t/p/w92${provider.logo_path}`}
+                        alt={provider.provider_name}
+                        width={60}
+                        height={60}
+                        className="rounded-lg mx-auto"
+                      />
+                    ) : (
+                      <div className="w-15 h-15 bg-gray-300 rounded-lg flex items-center justify-center text-xs text-center">
+                        {provider.provider_name}
+                      </div>
+                    )}
+                    {customFilter.providers.includes(provider.provider_id) && (
+                      <div className="absolute -top-2 -right-2 bg-black rounded-full p-1">
+                        <Check className="w-4 h-4 text-white" />
+                      </div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Fixed bottom action button */}
+          <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg">
+            <div className="max-w-4xl mx-auto">
+              <button
+                onClick={() => {
+                  loadMoviesWithFilter({ 
+                    type: 'custom', 
+                    customParams: customFilter 
+                  });
+                }}
+                disabled={
+                  customFilter.genres.length === 0 && 
+                  customFilter.languages.length === 0 && 
+                  customFilter.countries.length === 0 && 
+                  customFilter.certifications.length === 0 && 
+                  customFilter.providers.length === 0 &&
+                  !customFilter.releaseDateFrom &&
+                  !customFilter.releaseDateTo
+                }
+                className="w-full py-4 bg-black text-white rounded-xl font-bold text-lg hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-xl"
+              >
+                🎬 Découvrir les films
+              </button>
+              <p className="text-center text-xs text-gray-500 mt-2">
+                Sélectionnez au moins un critère pour commencer
+              </p>
+            </div>
           </div>
         </div>
       </div>
