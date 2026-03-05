@@ -1133,7 +1133,7 @@ export default function SwipePage() {
           <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12 mt-0 md:mt-0">
             {/* Movie Card */}
             <div
-              className={`w-[85vw] max-w-[340px] md:max-w-[420px] ${
+              className={`relative w-[85vw] max-w-[340px] md:max-w-[420px] ${
                 swipeDirection === 'left'
                   ? 'opacity-0 -translate-x-[200px] -rotate-45 scale-75 transition-all duration-500 ease-out'
                   : swipeDirection === 'right'
