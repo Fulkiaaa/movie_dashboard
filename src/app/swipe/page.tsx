@@ -1067,10 +1067,10 @@ export default function SwipePage() {
             </button>
           </div>
         ) : (
-          <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12 mt-16 md:mt-0">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12 mt-6 md:mt-0">
             {/* Movie Card */}
             <div
-              className={`w-full max-w-xs md:w-auto ${
+              className={`w-full max-w-sm md:w-auto ${
                 swipeDirection === 'left'
                   ? 'opacity-0 -translate-x-[200px] -rotate-45 scale-75 transition-all duration-500 ease-out'
                   : swipeDirection === 'right'
@@ -1099,7 +1099,7 @@ export default function SwipePage() {
               }
             >
               {/* Title above poster */}
-              <h2 className="text-black text-lg md:text-2xl font-bold mb-4 text-center px-4">
+              <h2 className="text-black text-lg md:text-2xl font-bold mb-2 md:mb-4 text-center px-4">
                 {currentMovie.title || currentMovie.name}
               </h2>
 
