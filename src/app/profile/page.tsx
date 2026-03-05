@@ -1,7 +1,7 @@
 'use client';
 
 import { useAuth } from '@/contexts/AuthContext';
-import { User, Mail, Calendar, Star, Heart, Film, X } from 'lucide-react';
+import { User, Mail, Calendar, Star, Heart, Film, X, Download } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { moviesService, UserMovie } from '@/services/movies';
@@ -13,6 +13,7 @@ export default function ProfilePage() {
   const [favorites, setFavorites] = useState<UserMovie[]>([]);
   const [favoritesCount, setFavoritesCount] = useState(0);
   const [loadingFavorites, setLoadingFavorites] = useState(true);
+  const [exportingData, setExportingData] = useState(false);
 
   useEffect(() => {
     if (user && supabase) {
@@ -45,6 +46,52 @@ export default function ProfilePage() {
     } catch (error) {
       console.error('Error removing favorite:', error);
       alert('Erreur lors de la suppression du favori');
+    }
+  };
+
+  const exportData = async () => {
+    if (!supabase) return;
+
+    setExportingData(true);
+    try {
+      // Récupérer tous les films de l'utilisateur
+      const allMovies = await moviesService.getUserMovies(supabase);
+
+      // Créer le contenu CSV avec BOM UTF-8 pour l'encodage correct
+      const BOM = '\uFEFF';
+      const csvHeaders = 'Statut,Titre,Type,Date d\'ajout,Date de sortie,Note\n';
+      const csvRows = allMovies.map(movie => {
+        const status = movie.status === 'watched' ? 'Vu' : 'À voir';
+        const title = `"${movie.title.replace(/"/g, '""')}"`;
+        const mediaType = movie.media_type === 'movie' ? 'Film' : 'Série';
+        const addedDate = new Date(movie.created_at).toLocaleDateString('fr-FR');
+        const releaseDate = movie.release_date || 'N/A';
+        const rating = movie.rating ? movie.rating.toString() : 'N/A';
+        
+        return `${status},${title},${mediaType},${addedDate},${releaseDate},${rating}`;
+      }).join('\n');
+
+      const csvContent = BOM + csvHeaders + csvRows;
+
+      // Créer un blob et télécharger le fichier
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      
+      link.setAttribute('href', url);
+      link.setAttribute('download', `seenit_export_${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error exporting data:', error);
+      alert('Erreur lors de l\'export des données');
+    } finally {
+      setExportingData(false);
     }
   };
 
@@ -138,7 +185,18 @@ export default function ProfilePage() {
               </div>
 
               {/* Actions */}
-              <div className="mt-4 md:mt-6 pt-4 md:pt-6 border-t border-gray-200">
+              <div className="mt-4 md:mt-6 pt-4 md:pt-6 border-t border-gray-200 space-y-3">
+                <button
+                  onClick={exportData}
+                  disabled={exportingData}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Download className="w-4 h-4" />
+                  <span className="text-sm font-medium">
+                    {exportingData ? 'Export en cours...' : 'Exporter mes données'}
+                  </span>
+                </button>
+                
                 <Link
                   href="/dashboard"
                   className="block text-center text-gray-700 hover:text-black underline text-xs md:text-sm"
