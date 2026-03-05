@@ -1090,7 +1090,7 @@ export default function SwipePage() {
 
   // Swipe Screen
   return (
-    <div className="h-screen overflow-hidden bg-gray-50 flex items-start justify-center pt-14 md:pt-2 px-2 md:px-4 touch-none">
+    <div className="min-h-screen overflow-hidden bg-gray-50 flex items-start justify-center pt-6 md:pt-8 px-2 md:px-4 touch-none">
       <div className="w-full max-w-5xl">
         {/* Back button */}
         <div className="absolute top-2 md:top-4 left-2 md:left-4 z-20">
