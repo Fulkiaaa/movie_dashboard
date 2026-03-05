@@ -1027,7 +1027,7 @@ export default function SwipePage() {
 
   // Swipe Screen
   return (
-    <div className="h-screen overflow-hidden bg-gray-50 flex items-center justify-center p-2 md:p-4 touch-none">
+    <div className="h-screen overflow-hidden bg-gray-50 flex items-start justify-center pt-8 md:pt-12 px-2 md:px-4 touch-none">
       <div className="w-full max-w-5xl">
         {/* Back button */}
         <div className="absolute top-2 md:top-4 left-2 md:left-4 z-20">
@@ -1098,8 +1098,8 @@ export default function SwipePage() {
                     }
               }
             >
-              {/* Title above poster - Desktop only */}
-              <h2 className="hidden md:block text-black text-2xl font-bold mb-4 text-center px-4">
+              {/* Title above poster */}
+              <h2 className="text-black text-lg md:text-2xl font-bold mb-2 md:mb-4 text-center px-4">
                 {currentMovie.title || currentMovie.name}
               </h2>
 
@@ -1237,11 +1237,6 @@ export default function SwipePage() {
                   </button>
                 </div>
               </div>
-
-              {/* Title below poster - Mobile only */}
-              <h2 className="md:hidden text-black text-lg font-bold mt-3 text-center px-4">
-                {currentMovie.title || currentMovie.name}
-              </h2>
             </div>
 
             {/* Action Buttons Desktop - Side */}
