@@ -1090,7 +1090,7 @@ export default function SwipePage() {
 
   // Swipe Screen
   return (
-    <div className="h-screen overflow-hidden bg-gray-50 flex items-start justify-center pt-8 md:pt-12 px-2 md:px-4 touch-none">
+    <div className="h-screen overflow-hidden bg-gray-50 flex items-start justify-center pt-4 md:pt-8 px-2 md:px-4 touch-none">
       <div className="w-full max-w-5xl">
         {/* Back button */}
         <div className="absolute top-2 md:top-4 left-2 md:left-4 z-20">
@@ -1130,7 +1130,7 @@ export default function SwipePage() {
             </button>
           </div>
         ) : (
-          <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12 mt-6 md:mt-0">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12 mt-0 md:mt-0">
             {/* Movie Card */}
             <div
               className={`w-[85vw] max-w-[340px] md:max-w-[420px] ${
