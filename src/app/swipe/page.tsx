@@ -164,6 +164,24 @@ export default function SwipePage() {
     };
   }, [isDragging, dragStart, dragOffset]);
 
+  // Prevent body scroll when in swipe mode
+  useEffect(() => {
+    if (mode === 'swipe') {
+      // Prevent scrolling and pull-to-refresh on mobile
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+      document.body.style.height = '100%';
+      
+      return () => {
+        document.body.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.width = '';
+        document.body.style.height = '';
+      };
+    }
+  }, [mode]);
+
   // Load genres and filter options on mount
   useEffect(() => {
     const loadFilterOptions = async () => {
@@ -1009,7 +1027,7 @@ export default function SwipePage() {
 
   // Swipe Screen
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-2 md:p-4">
+    <div className="h-screen overflow-hidden bg-gray-50 flex items-center justify-center p-2 md:p-4 touch-none">
       <div className="w-full max-w-5xl">
         {/* Back button */}
         <div className="absolute top-2 md:top-4 left-2 md:left-4 z-20">
@@ -1052,7 +1070,7 @@ export default function SwipePage() {
           <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12 mt-16 md:mt-0">
             {/* Movie Card */}
             <div
-              className={`w-full max-w-xs md:w-auto ${
+              className={`w-full max-w-sm md:w-auto ${
                 swipeDirection === 'left'
                   ? 'opacity-0 -translate-x-[200px] -rotate-45 scale-75 transition-all duration-500 ease-out'
                   : swipeDirection === 'right'
@@ -1081,7 +1099,7 @@ export default function SwipePage() {
               }
             >
               {/* Title above poster */}
-              <h2 className="text-black text-lg md:text-2xl font-bold mb-3 md:mb-4 text-center px-4">
+              <h2 className="text-black text-xl md:text-2xl font-bold mb-4 text-center px-4">
                 {currentMovie.title || currentMovie.name}
               </h2>
 
