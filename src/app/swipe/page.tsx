@@ -1052,7 +1052,7 @@ export default function SwipePage() {
           <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12 mt-16 md:mt-0">
             {/* Movie Card */}
             <div
-              className={`w-full max-w-sm md:w-auto ${
+              className={`w-full max-w-xs md:w-auto ${
                 swipeDirection === 'left'
                   ? 'opacity-0 -translate-x-[200px] -rotate-45 scale-75 transition-all duration-500 ease-out'
                   : swipeDirection === 'right'
@@ -1081,7 +1081,7 @@ export default function SwipePage() {
               }
             >
               {/* Title above poster */}
-              <h2 className="text-black text-xl md:text-2xl font-bold mb-4 text-center px-4">
+              <h2 className="text-black text-lg md:text-2xl font-bold mb-3 md:mb-4 text-center px-4">
                 {currentMovie.title || currentMovie.name}
               </h2>
 
@@ -1184,18 +1184,51 @@ export default function SwipePage() {
                     </div>
                   )}
                 </div>
+
+                {/* Action Buttons Mobile - Overlay */}
+                <div className="md:hidden absolute bottom-4 left-0 right-0 flex justify-center gap-3 px-4">
+                  <button
+                    onClick={handleDislike}
+                    disabled={swipeDirection !== null}
+                    className="group relative"
+                  >
+                    <div className="w-14 h-14 rounded-full bg-white/90 backdrop-blur-sm border border-gray-200 hover:border-red-500 flex items-center justify-center transition-all hover:scale-110 active:scale-95 disabled:opacity-30 shadow-lg">
+                      <X className="w-7 h-7 text-gray-600 group-hover:text-red-500 transition-colors" />
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={handleWatchlist}
+                    disabled={swipeDirection !== null}
+                    className="group relative"
+                  >
+                    <div className="w-14 h-14 rounded-full bg-white/90 backdrop-blur-sm border border-gray-200 hover:border-blue-400 flex items-center justify-center transition-all hover:scale-110 active:scale-95 disabled:opacity-30 shadow-lg">
+                      <Bookmark className="w-6 h-6 text-gray-600 group-hover:text-blue-400 transition-colors" />
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={handleLike}
+                    disabled={swipeDirection !== null || showRating}
+                    className="group relative"
+                  >
+                    <div className="w-14 h-14 rounded-full bg-red-500/90 backdrop-blur-sm hover:bg-red-600 flex items-center justify-center transition-all hover:scale-110 active:scale-95 disabled:opacity-30 shadow-lg">
+                      <Heart className="w-7 h-7 text-white fill-white" />
+                    </div>
+                  </button>
+                </div>
               </div>
             </div>
 
-            {/* Action Buttons */}
-            <div className="flex flex-row md:flex-col gap-4 md:gap-6">
+            {/* Action Buttons Desktop - Side */}
+            <div className="hidden md:flex flex-col gap-6">
               <button
                 onClick={handleDislike}
                 disabled={swipeDirection !== null}
                 className="group relative"
               >
-                <div className="w-20 h-20 md:w-16 md:h-16 rounded-full bg-white border-2 border-gray-200 hover:border-red-500 flex items-center justify-center transition-all hover:scale-110 active:scale-95 disabled:opacity-30 shadow-lg">
-                  <X className="w-10 h-10 md:w-8 md:h-8 text-gray-400 group-hover:text-red-500 transition-colors" />
+                <div className="w-16 h-16 rounded-full bg-white border-2 border-gray-200 hover:border-red-500 flex items-center justify-center transition-all hover:scale-110 active:scale-95 disabled:opacity-30 shadow-lg">
+                  <X className="w-8 h-8 text-gray-400 group-hover:text-red-500 transition-colors" />
                 </div>
               </button>
 
@@ -1204,8 +1237,8 @@ export default function SwipePage() {
                 disabled={swipeDirection !== null}
                 className="group relative"
               >
-                <div className="w-20 h-20 md:w-16 md:h-16 rounded-full bg-white border-2 border-gray-200 hover:border-blue-400 flex items-center justify-center transition-all hover:scale-110 active:scale-95 disabled:opacity-30 shadow-lg">
-                  <Bookmark className="w-9 h-9 md:w-7 md:h-7 text-gray-400 group-hover:text-blue-400 transition-colors" />
+                <div className="w-16 h-16 rounded-full bg-white border-2 border-gray-200 hover:border-blue-400 flex items-center justify-center transition-all hover:scale-110 active:scale-95 disabled:opacity-30 shadow-lg">
+                  <Bookmark className="w-7 h-7 text-gray-400 group-hover:text-blue-400 transition-colors" />
                 </div>
               </button>
 
@@ -1214,8 +1247,8 @@ export default function SwipePage() {
                 disabled={swipeDirection !== null || showRating}
                 className="group relative"
               >
-                <div className="w-20 h-20 md:w-16 md:h-16 rounded-full bg-red-500 hover:bg-red-600 flex items-center justify-center transition-all hover:scale-110 active:scale-95 disabled:opacity-30 shadow-lg">
-                  <Heart className="w-10 h-10 md:w-8 md:h-8 text-white fill-white" />
+                <div className="w-16 h-16 rounded-full bg-red-500 hover:bg-red-600 flex items-center justify-center transition-all hover:scale-110 active:scale-95 disabled:opacity-30 shadow-lg">
+                  <Heart className="w-8 h-8 text-white fill-white" />
                 </div>
               </button>
             </div>
