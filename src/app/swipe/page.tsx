@@ -30,8 +30,112 @@ export default function SwipePage() {
   const [genres, setGenres] = useState<{ id: number; name: string }[]>([]);
   const [showYearMenu, setShowYearMenu] = useState(false);
   const [showGenreMenu, setShowGenreMenu] = useState(false);
+  
+  // Drag states
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
   const currentMovie = movies[currentIndex];
+
+  // Drag handlers
+  const handleDragStart = (clientX: number, clientY: number) => {
+    if (showRating) return; // Don't allow dragging while rating
+    setIsDragging(true);
+    setDragStart({ x: clientX, y: clientY });
+    setDragOffset({ x: 0, y: 0 });
+  };
+
+  const handleDragMove = (clientX: number, clientY: number) => {
+    if (!isDragging) return;
+    const offsetX = clientX - dragStart.x;
+    const offsetY = clientY - dragStart.y;
+    setDragOffset({ x: offsetX, y: offsetY });
+  };
+
+  const handleDragEnd = () => {
+    if (!isDragging) return;
+    setIsDragging(false);
+
+    const swipeThreshold = 100; // pixels
+    const { x, y } = dragOffset;
+
+    // Determine swipe direction based on offset
+    if (Math.abs(x) > Math.abs(y)) {
+      // Horizontal swipe
+      if (x > swipeThreshold) {
+        // Swipe right - Like/Watched
+        setDragOffset({ x: 0, y: 0 }); // Reset offset before action
+        handleLike();
+      } else if (x < -swipeThreshold) {
+        // Swipe left - Dislike/Skip
+        setDragOffset({ x: 0, y: 0 }); // Reset offset before action
+        handleDislike();
+      } else {
+        // Not enough swipe, reset with animation
+        setDragOffset({ x: 0, y: 0 });
+      }
+    } else {
+      // Vertical swipe
+      if (y < -swipeThreshold) {
+        // Swipe up - Watchlist
+        setDragOffset({ x: 0, y: 0 }); // Reset offset before action
+        handleWatchlist();
+      } else {
+        // Not enough swipe, reset with animation
+        setDragOffset({ x: 0, y: 0 });
+      }
+    }
+  };
+
+  // Mouse events
+  const onMouseDown = (e: React.MouseEvent) => {
+    handleDragStart(e.clientX, e.clientY);
+  };
+
+  const onMouseMove = (e: React.MouseEvent) => {
+    handleDragMove(e.clientX, e.clientY);
+  };
+
+  const onMouseUp = () => {
+    handleDragEnd();
+  };
+
+  // Touch events
+  const onTouchStart = (e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    handleDragStart(touch.clientX, touch.clientY);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    handleDragMove(touch.clientX, touch.clientY);
+  };
+
+  const onTouchEnd = () => {
+    handleDragEnd();
+  };
+
+  // Global mouse event listeners when dragging
+  useEffect(() => {
+    if (!isDragging) return;
+
+    const handleGlobalMouseMove = (e: MouseEvent) => {
+      handleDragMove(e.clientX, e.clientY);
+    };
+
+    const handleGlobalMouseUp = () => {
+      handleDragEnd();
+    };
+
+    document.addEventListener('mousemove', handleGlobalMouseMove);
+    document.addEventListener('mouseup', handleGlobalMouseUp);
+
+    return () => {
+      document.removeEventListener('mousemove', handleGlobalMouseMove);
+      document.removeEventListener('mouseup', handleGlobalMouseUp);
+    };
+  }, [isDragging, dragStart, dragOffset]);
 
   // Load genres on mount
   useEffect(() => {
@@ -504,35 +608,104 @@ export default function SwipePage() {
           <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12 mt-16 md:mt-0">
             {/* Movie Card */}
             <div
-              className={`transition-all duration-500 ease-out w-full max-w-sm md:w-auto ${
+              className={`w-full max-w-sm md:w-auto ${
                 swipeDirection === 'left'
-                  ? 'opacity-0 -translate-x-[200px] -rotate-45 scale-75'
+                  ? 'opacity-0 -translate-x-[200px] -rotate-45 scale-75 transition-all duration-500 ease-out'
                   : swipeDirection === 'right'
-                  ? 'opacity-0 translate-x-[200px] rotate-45 scale-75'
+                  ? 'opacity-0 translate-x-[200px] rotate-45 scale-75 transition-all duration-500 ease-out'
                   : swipeDirection === 'up'
-                  ? 'opacity-0 -translate-y-[200px] scale-75'
-                  : 'opacity-100 translate-x-0 translate-y-0 rotate-0 scale-100'
+                  ? 'opacity-0 -translate-y-[200px] scale-75 transition-all duration-500 ease-out'
+                  : 'opacity-100'
               }`}
+              style={
+                isDragging
+                  ? {
+                      transform: `translate(${dragOffset.x}px, ${dragOffset.y}px) rotate(${dragOffset.x * 0.1}deg)`,
+                      transition: 'none',
+                    }
+                  : swipeDirection
+                  ? {}
+                  : dragOffset.x !== 0 || dragOffset.y !== 0
+                  ? {
+                      transform: `translate(${dragOffset.x}px, ${dragOffset.y}px) rotate(${dragOffset.x * 0.1}deg)`,
+                      transition: 'transform 0.3s ease-out',
+                    }
+                  : {
+                      transform: 'translate(0px, 0px) rotate(0deg)',
+                      transition: 'transform 0.3s ease-out',
+                    }
+              }
             >
               {/* Title above poster */}
               <h2 className="text-black text-xl md:text-2xl font-bold mb-4 text-center px-4">
                 {currentMovie.title || currentMovie.name}
               </h2>
 
-              <div className="relative rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl md:w-[420px]">
+              <div 
+                className="relative rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl md:w-[420px] cursor-grab active:cursor-grabbing select-none"
+                onMouseDown={onMouseDown}
+                onTouchStart={onTouchStart}
+                onTouchMove={isDragging ? onTouchMove : undefined}
+                onTouchEnd={onTouchEnd}
+              >
                 <div className="relative aspect-[2/3] w-full">
                   {currentMovie.poster_path ? (
                     <Image
                       src={`https://image.tmdb.org/t/p/w780${currentMovie.poster_path}`}
                       alt={currentMovie.title || currentMovie.name || ''}
                       fill
-                      className="object-cover"
+                      className="object-cover pointer-events-none"
                       priority
+                      draggable={false}
                     />
                   ) : (
                     <div className="w-full h-full bg-gray-200 flex items-center justify-center">
                       <span className="text-gray-400 text-2xl">Pas d'affiche</span>
                     </div>
+                  )}
+
+                  {/* Swipe indicators */}
+                  {isDragging && (
+                    <>
+                      {/* Left indicator - Dislike */}
+                      <div
+                        className={`absolute left-8 top-1/2 -translate-y-1/2 transition-opacity ${
+                          dragOffset.x < -50 && Math.abs(dragOffset.x) > Math.abs(dragOffset.y)
+                            ? 'opacity-100'
+                            : 'opacity-0'
+                        }`}
+                      >
+                        <div className="bg-red-500 rounded-full p-4 shadow-2xl">
+                          <X className="w-12 h-12 text-white" strokeWidth={3} />
+                        </div>
+                      </div>
+
+                      {/* Right indicator - Like */}
+                      <div
+                        className={`absolute right-8 top-1/2 -translate-y-1/2 transition-opacity ${
+                          dragOffset.x > 50 && Math.abs(dragOffset.x) > Math.abs(dragOffset.y)
+                            ? 'opacity-100'
+                            : 'opacity-0'
+                        }`}
+                      >
+                        <div className="bg-green-500 rounded-full p-4 shadow-2xl">
+                          <Heart className="w-12 h-12 text-white fill-white" strokeWidth={3} />
+                        </div>
+                      </div>
+
+                      {/* Up indicator - Watchlist */}
+                      <div
+                        className={`absolute left-1/2 -translate-x-1/2 top-8 transition-opacity ${
+                          dragOffset.y < -50 && Math.abs(dragOffset.y) > Math.abs(dragOffset.x)
+                            ? 'opacity-100'
+                            : 'opacity-0'
+                        }`}
+                      >
+                        <div className="bg-blue-500 rounded-full p-4 shadow-2xl">
+                          <Bookmark className="w-12 h-12 text-white" strokeWidth={3} />
+                        </div>
+                      </div>
+                    </>
                   )}
 
                   {/* Rating overlay when active */}
