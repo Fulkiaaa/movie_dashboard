@@ -1267,15 +1267,15 @@ export default function SwipePage() {
                   )}
                 </div>
 
-                {/* Action Buttons Mobile - Overlay */}
-                <div className="md:hidden absolute bottom-4 left-0 right-0 flex justify-center gap-3 px-4">
+                {/* Action Buttons - Overlay en bas de l'affiche */}
+                <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-3 px-4">
                   <button
                     onClick={handleDislike}
                     disabled={swipeDirection !== null}
                     className="group relative"
                   >
-                    <div className="w-14 h-14 rounded-full bg-white/90 backdrop-blur-sm border border-gray-200 hover:border-red-500 flex items-center justify-center transition-all hover:scale-110 active:scale-95 disabled:opacity-30 shadow-lg">
-                      <X className="w-7 h-7 text-gray-600 group-hover:text-red-500 transition-colors" />
+                    <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-white/90 backdrop-blur-sm border border-gray-200 hover:border-red-500 flex items-center justify-center transition-all hover:scale-110 active:scale-95 disabled:opacity-30 shadow-lg">
+                      <X className="w-7 h-7 md:w-8 md:h-8 text-gray-600 group-hover:text-red-500 transition-colors" />
                     </div>
                   </button>
 
@@ -1284,8 +1284,8 @@ export default function SwipePage() {
                     disabled={swipeDirection !== null}
                     className="group relative"
                   >
-                    <div className="w-14 h-14 rounded-full bg-white/90 backdrop-blur-sm border border-gray-200 hover:border-blue-400 flex items-center justify-center transition-all hover:scale-110 active:scale-95 disabled:opacity-30 shadow-lg">
-                      <Bookmark className="w-6 h-6 text-gray-600 group-hover:text-blue-400 transition-colors" />
+                    <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-white/90 backdrop-blur-sm border border-gray-200 hover:border-blue-400 flex items-center justify-center transition-all hover:scale-110 active:scale-95 disabled:opacity-30 shadow-lg">
+                      <Bookmark className="w-6 h-6 md:w-7 md:h-7 text-gray-600 group-hover:text-blue-400 transition-colors" />
                     </div>
                   </button>
 
@@ -1294,45 +1294,12 @@ export default function SwipePage() {
                     disabled={swipeDirection !== null || showRating}
                     className="group relative"
                   >
-                    <div className="w-14 h-14 rounded-full bg-red-500/90 backdrop-blur-sm hover:bg-red-600 flex items-center justify-center transition-all hover:scale-110 active:scale-95 disabled:opacity-30 shadow-lg">
-                      <Heart className="w-7 h-7 text-white fill-white" />
+                    <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-red-500/90 backdrop-blur-sm hover:bg-red-600 flex items-center justify-center transition-all hover:scale-110 active:scale-95 disabled:opacity-30 shadow-lg">
+                      <Heart className="w-7 h-7 md:w-8 md:h-8 text-white fill-white" />
                     </div>
                   </button>
                 </div>
               </div>
-            </div>
-
-            {/* Action Buttons Desktop - Side */}
-            <div className="hidden md:flex flex-col gap-6">
-              <button
-                onClick={handleDislike}
-                disabled={swipeDirection !== null}
-                className="group relative"
-              >
-                <div className="w-16 h-16 rounded-full bg-white border-2 border-gray-200 hover:border-red-500 flex items-center justify-center transition-all hover:scale-110 active:scale-95 disabled:opacity-30 shadow-lg">
-                  <X className="w-8 h-8 text-gray-400 group-hover:text-red-500 transition-colors" />
-                </div>
-              </button>
-
-              <button
-                onClick={handleWatchlist}
-                disabled={swipeDirection !== null}
-                className="group relative"
-              >
-                <div className="w-16 h-16 rounded-full bg-white border-2 border-gray-200 hover:border-blue-400 flex items-center justify-center transition-all hover:scale-110 active:scale-95 disabled:opacity-30 shadow-lg">
-                  <Bookmark className="w-7 h-7 text-gray-400 group-hover:text-blue-400 transition-colors" />
-                </div>
-              </button>
-
-              <button
-                onClick={handleLike}
-                disabled={swipeDirection !== null || showRating}
-                className="group relative"
-              >
-                <div className="w-16 h-16 rounded-full bg-red-500 hover:bg-red-600 flex items-center justify-center transition-all hover:scale-110 active:scale-95 disabled:opacity-30 shadow-lg">
-                  <Heart className="w-8 h-8 text-white fill-white" />
-                </div>
-              </button>
             </div>
           </div>
         )}
