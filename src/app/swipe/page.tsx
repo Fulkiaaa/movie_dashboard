@@ -62,6 +62,9 @@ export default function SwipePage() {
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  
+  // État pour éviter les vérifications multiples du même film
+  const [checkedMovieIds, setCheckedMovieIds] = useState<Set<number>>(new Set());
 
   const currentMovie = movies[currentIndex];
 
@@ -231,6 +234,53 @@ export default function SwipePage() {
     loadFilterOptions();
   }, []);
 
+  // Vérifier que le film actuel n'est pas déjà dans la base de données
+  useEffect(() => {
+    const checkCurrentMovie = async () => {
+      if (!currentMovie || !supabase || mode !== 'swipe') return;
+      
+      // Éviter de vérifier le même film plusieurs fois
+      if (checkedMovieIds.has(currentMovie.id)) return;
+
+      try {
+        const existingMovie = await moviesService.getMovieByTmdbId(
+          supabase,
+          currentMovie.id,
+          currentMovie.media_type || 'movie'
+        );
+
+        // Marquer ce film comme vérifié
+        setCheckedMovieIds(prev => new Set([...prev, currentMovie.id]));
+
+        // Si le film existe déjà (watchlist ou watched), passer au suivant
+        if (existingMovie) {
+          console.log(`Film déjà présent détecté: ${currentMovie.title || currentMovie.name}, status: ${existingMovie.status}`);
+          setExcludedMovieIds(prev => new Set([...prev, currentMovie.id]));
+          const nextIndex = currentIndex + 1;
+          if (nextIndex < movies.length) {
+            setCurrentIndex(nextIndex);
+          }
+          return;
+        }
+
+        // Vérifier aussi dans les skippés
+        const skippedIds = await moviesService.getSkippedMovieIds(supabase);
+        if (skippedIds.includes(currentMovie.id)) {
+          console.log(`Film skippé détecté: ${currentMovie.title || currentMovie.name}`);
+          setExcludedMovieIds(prev => new Set([...prev, currentMovie.id]));
+          const nextIndex = currentIndex + 1;
+          if (nextIndex < movies.length) {
+            setCurrentIndex(nextIndex);
+          }
+        }
+      } catch (error) {
+        console.error('Error checking current movie:', error);
+      }
+    };
+
+    checkCurrentMovie();
+  }, [currentMovie?.id, supabase, mode]);
+
   // Load movies based on selected filter
   const loadMoviesWithFilter = async (filter: SwipeFilter) => {
     if (!user || !supabase) return;
@@ -377,6 +427,7 @@ export default function SwipePage() {
       
       setMovies(shuffled);
       setCurrentIndex(0);
+      setCheckedMovieIds(new Set()); // Réinitialiser les films vérifiés
     } catch (error) {
       console.error('Error loading movies:', error);
     } finally {
@@ -389,6 +440,18 @@ export default function SwipePage() {
     if (!supabase || !currentFilter) return;
 
     try {
+      // Rafraîchir la liste des films exclus avant de charger plus de films
+      const [userMovies, skippedIds] = await Promise.all([
+        moviesService.getUserMovies(supabase),
+        moviesService.getSkippedMovieIds(supabase),
+      ]);
+
+      const refreshedExcludedIds = new Set([
+        ...userMovies.map(m => m.tmdb_id),
+        ...skippedIds,
+      ]);
+      setExcludedMovieIds(refreshedExcludedIds);
+
       const nextPage = Math.floor(movies.length / 20) + 2;
       let newMovies: Movie[] = [];
 
@@ -489,7 +552,7 @@ export default function SwipePage() {
 
       const uniqueNewMovies = Array.from(
         new Map(newMovies.map(m => [m.id, m])).values()
-      ).filter(m => !excludedMovieIds.has(m.id));
+      ).filter(m => !refreshedExcludedIds.has(m.id));
 
       const shuffled = uniqueNewMovies.sort(() => Math.random() - 0.5);
       setMovies(prev => [...prev, ...shuffled]);
