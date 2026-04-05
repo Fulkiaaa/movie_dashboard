@@ -106,32 +106,26 @@ export default function PrivacyPolicyPage() {
               <div>
                 <h2 className="text-xl font-bold text-black mb-3">Stockage et sécurité</h2>
                 <p className="text-gray-700 mb-4">
-                  Vos données sont stockées de manière sécurisée via <strong>Supabase</strong> :
+                  Vos données sont stockées de manière sécurisée sur une base de données <strong>PostgreSQL locale</strong> :
                 </p>
                 <ul className="space-y-2 text-gray-700 mb-4">
                   <li className="flex items-start gap-2">
                     <span className="text-black font-bold">•</span>
-                    <span><strong>Hébergement :</strong> Serveurs sécurisés en Europe (conformité RGPD)</span>
+                    <span><strong>Hébergement :</strong> Base de données locale, vos données restent sur votre infrastructure</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-black font-bold">•</span>
-                    <span><strong>Chiffrement :</strong> Toutes les données sont chiffrées en transit (HTTPS) et au repos</span>
+                    <span><strong>Chiffrement :</strong> Toutes les données sont chiffrées en transit (HTTPS)</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-black font-bold">•</span>
-                    <span><strong>Authentification :</strong> Gestion sécurisée par Supabase Auth (hash bcrypt)</span>
+                    <span><strong>Authentification :</strong> Mots de passe hachés avec bcrypt, sessions via JWT (cookie httpOnly)</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-black font-bold">•</span>
-                    <span><strong>Accès :</strong> Row Level Security (RLS) - vos données sont isolées et privées</span>
+                    <span><strong>Accès :</strong> Chaque requête API vérifie le token JWT — vos données sont isolées et privées</span>
                   </li>
                 </ul>
-                <div className="p-4 bg-gray-100 rounded-lg">
-                  <p className="text-sm text-gray-700">
-                    <strong>Note technique :</strong> Supabase est conforme aux normes SOC2 Type 2, ISO 27001 et GDPR.
-                    Pour plus d'informations : <a href="https://supabase.com/docs/guides/platform/security" target="_blank" rel="noopener noreferrer" className="text-black underline hover:no-underline">Documentation Supabase Security</a>
-                  </p>
-                </div>
               </div>
             </div>
           </section>
@@ -198,9 +192,9 @@ export default function PrivacyPolicyPage() {
                 </thead>
                 <tbody className="bg-white">
                   <tr className="border-b border-gray-200">
-                    <td className="px-4 py-3 font-mono text-xs">sb-*-auth-token</td>
+                    <td className="px-4 py-3 font-mono text-xs">auth_token</td>
                     <td className="px-4 py-3">7 jours</td>
-                    <td className="px-4 py-3">Session d'authentification Supabase</td>
+                    <td className="px-4 py-3">Session d'authentification (JWT httpOnly)</td>
                   </tr>
                 </tbody>
               </table>

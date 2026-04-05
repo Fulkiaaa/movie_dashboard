@@ -14,12 +14,12 @@ interface MovieModalProps {
 }
 
 export default function MovieModal({ movie, onClose, onUpdate }: MovieModalProps) {
-  const { supabase } = useAuth();
+  const { user } = useAuth();
   const [details, setDetails] = useState<MovieDetails | null>(null);
   const [userMovie, setUserMovie] = useState<UserMovie | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  
+
   const [selectedRating, setSelectedRating] = useState<number | null>(null);
   const [status, setStatus] = useState<'watched' | 'watchlist' | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
@@ -31,20 +31,14 @@ export default function MovieModal({ movie, onClose, onUpdate }: MovieModalProps
   const loadMovieData = async () => {
     setLoading(true);
     try {
-      // Charger les détails depuis TMDB
       const movieDetails = movie.media_type === 'movie'
         ? await tmdbService.getMovieDetails(movie.id)
         : await tmdbService.getTVDetails(movie.id);
-      
+
       setDetails(movieDetails);
 
-      // Charger les données utilisateur si connecté
-      if (supabase) {
-        const existingMovie = await moviesService.getMovieByTmdbId(
-          supabase,
-          movie.id,
-          movie.media_type
-        );
+      if (user) {
+        const existingMovie = await moviesService.getMovieByTmdbId(movie.id, movie.media_type);
 
         if (existingMovie) {
           setUserMovie(existingMovie);
@@ -61,7 +55,7 @@ export default function MovieModal({ movie, onClose, onUpdate }: MovieModalProps
   };
 
   const handleSave = async (newStatus: 'watched' | 'watchlist') => {
-    if (!supabase) return;
+    if (!user) return;
 
     setSaving(true);
     try {
@@ -75,13 +69,11 @@ export default function MovieModal({ movie, onClose, onUpdate }: MovieModalProps
         rating: newStatus === 'watched' ? selectedRating : null,
       };
 
-      const savedMovie = await moviesService.upsertMovie(supabase, params);
+      const savedMovie = await moviesService.upsertMovie(params);
       setUserMovie(savedMovie);
       setStatus(savedMovie.status);
-      
-      if (onUpdate) {
-        onUpdate();
-      }
+
+      if (onUpdate) onUpdate();
     } catch (error) {
       console.error('Error saving movie:', error);
       alert('Erreur lors de la sauvegarde');
@@ -91,23 +83,19 @@ export default function MovieModal({ movie, onClose, onUpdate }: MovieModalProps
   };
 
   const handleDelete = async () => {
-    if (!supabase || !userMovie) return;
+    if (!user || !userMovie) return;
 
-    if (!confirm('Voulez-vous vraiment supprimer ce film ?')) {
-      return;
-    }
+    if (!confirm('Voulez-vous vraiment supprimer ce film ?')) return;
 
     setSaving(true);
     try {
-      await moviesService.deleteMovie(supabase, userMovie.id);
+      await moviesService.deleteMovie(userMovie.id);
       setUserMovie(null);
       setStatus(null);
       setSelectedRating(null);
       setIsFavorite(false);
-      
-      if (onUpdate) {
-        onUpdate();
-      }
+
+      if (onUpdate) onUpdate();
     } catch (error) {
       console.error('Error deleting movie:', error);
       alert('Erreur lors de la suppression');
@@ -117,24 +105,20 @@ export default function MovieModal({ movie, onClose, onUpdate }: MovieModalProps
   };
 
   const handleToggleFavorite = async () => {
-    if (!supabase || !userMovie) {
-      // Si le film n'est pas encore dans la collection, l'ajouter d'abord
+    if (!user || !userMovie) {
       if (!userMovie) {
         alert("Veuillez d'abord ajouter le film à votre collection (vu ou watchlist)");
-        return;
       }
       return;
     }
 
     setSaving(true);
     try {
-      const updatedMovie = await moviesService.toggleFavorite(supabase, userMovie.id);
+      const updatedMovie = await moviesService.toggleFavorite(userMovie.id);
       setIsFavorite(updatedMovie.is_favorite);
       setUserMovie(updatedMovie);
-      
-      if (onUpdate) {
-        onUpdate();
-      }
+
+      if (onUpdate) onUpdate();
     } catch (error: any) {
       console.error('Error toggling favorite:', error);
       if (error.message?.includes('10 films favoris maximum')) {
@@ -166,7 +150,7 @@ export default function MovieModal({ movie, onClose, onUpdate }: MovieModalProps
   return (
     <div className="fixed inset-0 z-[150] flex items-end md:items-center justify-center bg-black/50 backdrop-blur-sm">
       <div className="bg-white w-full md:max-w-4xl md:rounded-2xl rounded-t-3xl max-h-[92vh] md:max-h-[90vh] overflow-y-auto">
-        {/* Header avec backdrop - Compact sur mobile */}
+        {/* Header avec backdrop */}
         <div className="relative h-32 md:h-64">
           {details.backdrop_path ? (
             <Image
@@ -179,8 +163,7 @@ export default function MovieModal({ movie, onClose, onUpdate }: MovieModalProps
             <div className="w-full h-full bg-gray-200"></div>
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-white via-white/50 to-transparent"></div>
-          
-          {/* Close button */}
+
           <button
             onClick={onClose}
             className="absolute top-2 right-2 md:top-4 md:right-4 p-2 bg-white/90 backdrop-blur rounded-full shadow-lg hover:bg-white transition-colors z-10"
@@ -188,15 +171,12 @@ export default function MovieModal({ movie, onClose, onUpdate }: MovieModalProps
             <X className="w-5 h-5 md:w-6 md:h-6" />
           </button>
 
-          {/* Swipe indicator on mobile */}
           <div className="md:hidden absolute top-2 left-1/2 -translate-x-1/2 w-12 h-1 bg-gray-300 rounded-full"></div>
         </div>
 
         {/* Content */}
         <div className="p-4 md:p-6 -mt-16 md:-mt-32 relative">
-          {/* Mobile: Horizontal layout compact / Desktop: Vertical avec poster */}
           <div className="flex flex-row md:flex-row gap-3 md:gap-6 mb-4">
-            {/* Poster - petit sur mobile */}
             <div className="w-20 md:w-48 flex-shrink-0">
               <div className="w-full aspect-[2/3] bg-gray-200 rounded-lg md:rounded-xl overflow-hidden shadow-xl">
                 {details.poster_path ? (
@@ -215,7 +195,6 @@ export default function MovieModal({ movie, onClose, onUpdate }: MovieModalProps
               </div>
             </div>
 
-            {/* Info - Compact */}
             <div className="flex-1 min-w-0">
               <div className="mb-2">
                 <div className="flex items-center gap-1.5 mb-1.5">
@@ -227,8 +206,7 @@ export default function MovieModal({ movie, onClose, onUpdate }: MovieModalProps
                   )}
                 </div>
                 <h2 className="text-lg md:text-3xl font-bold text-black mb-1 line-clamp-2">{displayTitle}</h2>
-                
-                {/* Genres - Compact */}
+
                 {details.genres && details.genres.length > 0 && (
                   <div className="flex flex-wrap gap-1 mb-1.5">
                     {details.genres.slice(0, 3).map((genre) => (
@@ -242,7 +220,6 @@ export default function MovieModal({ movie, onClose, onUpdate }: MovieModalProps
                   </div>
                 )}
 
-                {/* Stats - Inline compact */}
                 <div className="flex items-center gap-2 md:gap-4 text-xs md:text-sm text-gray-600 flex-wrap">
                   {details.vote_average > 0 && (
                     <div className="flex items-center gap-1">
@@ -261,9 +238,7 @@ export default function MovieModal({ movie, onClose, onUpdate }: MovieModalProps
                   {details.number_of_seasons && (
                     <div className="flex items-center gap-1">
                       <Calendar className="w-3 h-3 md:w-4 md:h-4" />
-                      <span>
-                        {details.number_of_seasons} S
-                      </span>
+                      <span>{details.number_of_seasons} S</span>
                     </div>
                   )}
                 </div>
@@ -271,7 +246,6 @@ export default function MovieModal({ movie, onClose, onUpdate }: MovieModalProps
             </div>
           </div>
 
-          {/* Overview - Collapsible sur mobile */}
           {details.overview && (
             <div className="mb-3 md:mb-6">
               <h3 className="text-sm md:text-lg font-bold text-black mb-1 md:mb-2">Synopsis</h3>
@@ -279,97 +253,92 @@ export default function MovieModal({ movie, onClose, onUpdate }: MovieModalProps
             </div>
           )}
 
-          {/* User Actions - Compact */}
           <div className="border-t border-gray-200 pt-3 md:pt-6">
             <h3 className="text-sm md:text-lg font-bold text-black mb-2 md:mb-4">Ma collection</h3>
-            
+
             <div>
-              {/* Rating - Compact */}
               <div className="mb-3 md:mb-4">
-                  <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1.5 md:mb-2">
-                    Ma note
-                  </label>
-                  <div className="flex gap-1 md:gap-2">
-                    {[1, 2, 3, 4, 5].map((rating) => (
-                      <button
-                        key={rating}
-                        onClick={() => setSelectedRating(rating === selectedRating ? null : rating)}
-                        className={`w-8 h-8 md:w-10 md:h-10 rounded-lg border-2 transition-all active:scale-90 ${
-                          selectedRating && selectedRating >= rating
-                            ? 'bg-black text-white border-black'
-                            : 'bg-white text-gray-400 border-gray-200 hover:border-black'
+                <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1.5 md:mb-2">
+                  Ma note
+                </label>
+                <div className="flex gap-1 md:gap-2">
+                  {[1, 2, 3, 4, 5].map((rating) => (
+                    <button
+                      key={rating}
+                      onClick={() => setSelectedRating(rating === selectedRating ? null : rating)}
+                      className={`w-8 h-8 md:w-10 md:h-10 rounded-lg border-2 transition-all active:scale-90 ${
+                        selectedRating && selectedRating >= rating
+                          ? 'bg-black text-white border-black'
+                          : 'bg-white text-gray-400 border-gray-200 hover:border-black'
+                      }`}
+                    >
+                      <Star
+                        className={`w-4 h-4 md:w-5 md:h-5 mx-auto ${
+                          selectedRating && selectedRating >= rating ? 'fill-white' : ''
                         }`}
-                      >
-                        <Star
-                          className={`w-4 h-4 md:w-5 md:h-5 mx-auto ${
-                            selectedRating && selectedRating >= rating ? 'fill-white' : ''
-                          }`}
-                        />
-                      </button>
-                    ))}
-                  </div>
+                      />
+                    </button>
+                  ))}
                 </div>
+              </div>
 
-                {/* Action Buttons - Ultra compact sur mobile */}
-                <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={() => handleSave('watched')}
+                  disabled={saving}
+                  className={`flex items-center justify-center gap-1.5 md:gap-2 px-2 md:px-4 py-2 md:py-2.5 rounded-lg text-xs md:text-base font-medium transition-all active:scale-95 ${
+                    status === 'watched'
+                      ? 'bg-black text-white'
+                      : 'bg-gray-100 text-black hover:bg-gray-200'
+                  } disabled:opacity-50`}
+                >
+                  <Eye className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                  <span className="truncate">Vu</span>
+                </button>
+
+                <button
+                  onClick={() => handleSave('watchlist')}
+                  disabled={saving}
+                  className={`flex items-center justify-center gap-1.5 md:gap-2 px-2 md:px-4 py-2 md:py-2.5 rounded-lg text-xs md:text-base font-medium transition-all active:scale-95 ${
+                    status === 'watchlist'
+                      ? 'bg-black text-white'
+                      : 'bg-gray-100 text-black hover:bg-gray-200'
+                  } disabled:opacity-50`}
+                >
+                  <Clock className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                  <span className="truncate">{status === 'watchlist' ? 'Dans liste' : 'Watchlist'}</span>
+                </button>
+
+                {userMovie && (
                   <button
-                    onClick={() => handleSave('watched')}
+                    onClick={handleToggleFavorite}
                     disabled={saving}
                     className={`flex items-center justify-center gap-1.5 md:gap-2 px-2 md:px-4 py-2 md:py-2.5 rounded-lg text-xs md:text-base font-medium transition-all active:scale-95 ${
-                      status === 'watched'
+                      isFavorite
                         ? 'bg-black text-white'
                         : 'bg-gray-100 text-black hover:bg-gray-200'
                     } disabled:opacity-50`}
                   >
-                    <Eye className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                    <span className="truncate">{status === 'watched' ? 'Vu' : 'Vu'}</span>
+                    <Heart className={`w-3.5 h-3.5 md:w-4 md:h-4 ${isFavorite ? 'fill-white' : ''}`} />
+                    <span className="truncate">Favori</span>
                   </button>
+                )}
 
+                {userMovie && (
                   <button
-                    onClick={() => handleSave('watchlist')}
+                    onClick={handleDelete}
                     disabled={saving}
-                    className={`flex items-center justify-center gap-1.5 md:gap-2 px-2 md:px-4 py-2 md:py-2.5 rounded-lg text-xs md:text-base font-medium transition-all active:scale-95 ${
-                      status === 'watchlist'
-                        ? 'bg-black text-white'
-                        : 'bg-gray-100 text-black hover:bg-gray-200'
-                    } disabled:opacity-50`}
+                    className="flex items-center justify-center gap-1.5 md:gap-2 px-2 md:px-4 py-2 md:py-2.5 rounded-lg text-xs md:text-base font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all active:scale-95 disabled:opacity-50"
                   >
-                    <Clock className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                    <span className="truncate">{status === 'watchlist' ? 'Dans liste' : 'Watchlist'}</span>
+                    <X className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                    <span className="truncate">Retirer</span>
                   </button>
-
-                  {userMovie && (
-                    <button
-                      onClick={handleToggleFavorite}
-                      disabled={saving}
-                      className={`flex items-center justify-center gap-1.5 md:gap-2 px-2 md:px-4 py-2 md:py-2.5 rounded-lg text-xs md:text-base font-medium transition-all active:scale-95 ${
-                        isFavorite
-                          ? 'bg-black text-white'
-                          : 'bg-gray-100 text-black hover:bg-gray-200'
-                      } disabled:opacity-50`}
-                    >
-                      <Heart className={`w-3.5 h-3.5 md:w-4 md:h-4 ${
-                        isFavorite ? 'fill-white' : ''
-                      }`} />
-                      <span className="truncate">Favori</span>
-                    </button>
-                  )}
-
-                  {userMovie && (
-                    <button
-                      onClick={handleDelete}
-                      disabled={saving}
-                      className="flex items-center justify-center gap-1.5 md:gap-2 px-2 md:px-4 py-2 md:py-2.5 rounded-lg text-xs md:text-base font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all active:scale-95 disabled:opacity-50"
-                    >
-                      <X className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                      <span className="truncate">Retirer</span>
-                    </button>
-                  )}
-                </div>
+                )}
               </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
   );
 }

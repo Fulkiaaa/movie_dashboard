@@ -9,26 +9,24 @@ import { tmdbService } from '@/services/tmdb';
 import Image from 'next/image';
 
 export default function ProfilePage() {
-  const { user, loading, supabase } = useAuth();
+  const { user, loading } = useAuth();
   const [favorites, setFavorites] = useState<UserMovie[]>([]);
   const [favoritesCount, setFavoritesCount] = useState(0);
   const [loadingFavorites, setLoadingFavorites] = useState(true);
   const [exportingData, setExportingData] = useState(false);
 
   useEffect(() => {
-    if (user && supabase) {
+    if (user) {
       loadFavorites();
     }
-  }, [user, supabase]);
+  }, [user]);
 
   const loadFavorites = async () => {
-    if (!supabase) return;
-
     setLoadingFavorites(true);
     try {
-      const favs = await moviesService.getFavorites(supabase);
+      const favs = await moviesService.getFavorites();
       setFavorites(favs);
-      const count = await moviesService.getFavoritesCount(supabase);
+      const count = await moviesService.getFavoritesCount();
       setFavoritesCount(count);
     } catch (error) {
       console.error('Error loading favorites:', error);
@@ -38,10 +36,8 @@ export default function ProfilePage() {
   };
 
   const handleRemoveFavorite = async (id: string) => {
-    if (!supabase) return;
-
     try {
-      await moviesService.toggleFavorite(supabase, id);
+      await moviesService.toggleFavorite(id);
       await loadFavorites();
     } catch (error) {
       console.error('Error removing favorite:', error);
@@ -50,12 +46,10 @@ export default function ProfilePage() {
   };
 
   const exportData = async () => {
-    if (!supabase) return;
-
     setExportingData(true);
     try {
       // Récupérer tous les films de l'utilisateur
-      const allMovies = await moviesService.getUserMovies(supabase);
+      const allMovies = await moviesService.getUserMovies();
 
       // Créer le contenu CSV avec BOM UTF-8 pour l'encodage correct
       const BOM = '\uFEFF';
@@ -164,7 +158,7 @@ export default function ProfilePage() {
                   <div className="flex-1">
                     <p className="text-xs text-gray-600 mb-1">Membre depuis</p>
                     <p className="text-sm text-black font-medium">
-                      {new Date(user.created_at || '').toLocaleDateString('fr-FR', {
+                      {new Date().toLocaleDateString('fr-FR', {
                         year: 'numeric',
                         month: 'long',
                         day: 'numeric',

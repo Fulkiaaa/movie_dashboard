@@ -10,7 +10,7 @@ import { moviesService, UserMovie } from '@/services/movies';
 import Image from 'next/image';
 
 export default function WatchedMoviesPage() {
-  const { user, loading, supabase } = useAuth();
+  const { user, loading } = useAuth();
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
   const [watchedMovies, setWatchedMovies] = useState<UserMovie[]>([]);
   const [filteredMovies, setFilteredMovies] = useState<UserMovie[]>([]);
@@ -20,10 +20,10 @@ export default function WatchedMoviesPage() {
   const moviesPerPage = 15; // 3 lignes de 5 films
 
   useEffect(() => {
-    if (user && supabase) {
+    if (user) {
       loadData();
     }
-  }, [user, supabase]);
+  }, [user]);
 
   useEffect(() => {
     if (searchQuery.trim() === '') {
@@ -38,11 +38,9 @@ export default function WatchedMoviesPage() {
   }, [searchQuery, watchedMovies]);
 
   const loadData = async () => {
-    if (!supabase) return;
-
     setLoadingMovies(true);
     try {
-      const watched = await moviesService.getWatchedMovies(supabase);
+      const watched = await moviesService.getWatchedMovies();
       setWatchedMovies(watched);
       setFilteredMovies(watched);
     } catch (error) {

@@ -1,6 +1,4 @@
-// Services pour interagir avec Supabase pour les films de l'utilisateur
-
-import { SupabaseClient } from '@supabase/supabase-js';
+// Services pour interagir avec l'API locale (PostgreSQL)
 
 export interface UserMovie {
   id: string;
@@ -27,326 +25,94 @@ export interface AddMovieParams {
   rating?: number | null;
 }
 
+async function apiFetch<T>(url: string, options?: RequestInit): Promise<T> {
+  const res = await fetch(url, {
+    ...options,
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+  });
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.error || `Erreur API: ${res.status}`);
+  }
+  return res.json();
+}
+
 export const moviesService = {
-  // Récupérer tous les films de l'utilisateur
-  async getUserMovies(supabase: SupabaseClient): Promise<UserMovie[]> {
-    const { data, error } = await supabase
-      .from('user_movies')
-      .select('*')
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('Error fetching user movies:', error);
-      throw error;
-    }
-
-    return data || [];
+  async getUserMovies(): Promise<UserMovie[]> {
+    return apiFetch('/api/movies');
   },
 
-  // Récupérer les films vus
-  async getWatchedMovies(supabase: SupabaseClient): Promise<UserMovie[]> {
-    const { data, error } = await supabase
-      .from('user_movies')
-      .select('*')
-      .eq('status', 'watched')
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('Error fetching watched movies:', error);
-      throw error;
-    }
-
-    return data || [];
+  async getWatchedMovies(): Promise<UserMovie[]> {
+    const movies = await apiFetch<UserMovie[]>('/api/movies');
+    return movies.filter((m) => m.status === 'watched');
   },
 
-  // Récupérer la watchlist
-  async getWatchlist(supabase: SupabaseClient): Promise<UserMovie[]> {
-    const { data, error } = await supabase
-      .from('user_movies')
-      .select('*')
-      .eq('status', 'watchlist')
-      .order('created_at', { ascending: false });
-
-    if (error) {
-      console.error('Error fetching watchlist:', error);
-      throw error;
-    }
-
-    return data || [];
+  async getWatchlist(): Promise<UserMovie[]> {
+    const movies = await apiFetch<UserMovie[]>('/api/movies');
+    return movies.filter((m) => m.status === 'watchlist');
   },
 
-  // Vérifier si un film existe déjà pour l'utilisateur
-  async getMovieByTmdbId(
-    supabase: SupabaseClient,
-    tmdb_id: number,
-    media_type: 'movie' | 'tv'
-  ): Promise<UserMovie | null> {
-    const { data, error } = await supabase
-      .from('user_movies')
-      .select('*')
-      .eq('tmdb_id', tmdb_id)
-      .eq('media_type', media_type)
-      .single();
-
-    if (error && error.code !== 'PGRST116') {
-      // PGRST116 = no rows returned
-      console.error('Error fetching movie:', error);
-      throw error;
-    }
-
-    return data;
+  async getMovieByTmdbId(tmdb_id: number, media_type: 'movie' | 'tv'): Promise<UserMovie | null> {
+    return apiFetch(`/api/movies/by-tmdb/${tmdb_id}?media_type=${media_type}`);
   },
 
-  // Ajouter un film
-  async addMovie(supabase: SupabaseClient, params: AddMovieParams): Promise<UserMovie> {
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    if (!user) {
-      throw new Error('User not authenticated');
-    }
-
-    const { data, error } = await supabase
-      .from('user_movies')
-      .insert({
-        user_id: user.id,
-        ...params,
-      })
-      .select()
-      .single();
-
-    if (error) {
-      console.error('Error adding movie:', error);
-      throw error;
-    }
-
-    return data;
+  async addMovie(params: AddMovieParams): Promise<UserMovie> {
+    return apiFetch('/api/movies', {
+      method: 'POST',
+      body: JSON.stringify(params),
+    });
   },
 
-  // Mettre à jour un film
-  async updateMovie(
-    supabase: SupabaseClient,
-    id: string,
-    updates: Partial<Pick<UserMovie, 'status' | 'rating' | 'is_favorite'>>
-  ): Promise<UserMovie> {
-    const { data, error } = await supabase
-      .from('user_movies')
-      .update(updates)
-      .eq('id', id)
-      .select()
-      .single();
-
-    if (error) {
-      console.error('Error updating movie:', error);
-      throw error;
-    }
-
-    return data;
+  async updateMovie(id: string, updates: Partial<Pick<UserMovie, 'status' | 'rating' | 'is_favorite'>>): Promise<UserMovie> {
+    return apiFetch(`/api/movies/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(updates),
+    });
   },
 
-  // Supprimer un film
-  async deleteMovie(supabase: SupabaseClient, id: string): Promise<void> {
-    const { error } = await supabase
-      .from('user_movies')
-      .delete()
-      .eq('id', id);
-
-    if (error) {
-      console.error('Error deleting movie:', error);
-      throw error;
-    }
+  async deleteMovie(id: string): Promise<void> {
+    await apiFetch(`/api/movies/${id}`, { method: 'DELETE' });
   },
 
-  // Mettre à jour ou créer un film (upsert)
-  async upsertMovie(supabase: SupabaseClient, params: AddMovieParams): Promise<UserMovie> {
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    if (!user) {
-      throw new Error('User not authenticated');
-    }
-
-    // Vérifier si le film existe déjà
-    const existing = await this.getMovieByTmdbId(supabase, params.tmdb_id, params.media_type);
-
-    if (existing) {
-      // Mettre à jour
-      return this.updateMovie(supabase, existing.id, {
-        status: params.status,
-        rating: params.rating,
-      });
-    } else {
-      // Créer
-      return this.addMovie(supabase, params);
-    }
+  async upsertMovie(params: AddMovieParams): Promise<UserMovie> {
+    return apiFetch('/api/movies/upsert', {
+      method: 'POST',
+      body: JSON.stringify(params),
+    });
   },
 
-  // Obtenir les statistiques
-  async getStats(supabase: SupabaseClient) {
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    if (!user) {
-      throw new Error('User not authenticated');
-    }
-
-    // Nombre de films vus
-    const { count: watchedCount } = await supabase
-      .from('user_movies')
-      .select('*', { count: 'exact', head: true })
-      .eq('status', 'watched');
-
-    // Nombre dans la watchlist
-    const { count: watchlistCount } = await supabase
-      .from('user_movies')
-      .select('*', { count: 'exact', head: true })
-      .eq('status', 'watchlist');
-
-    // Films avec note 5
-    const { count: favoritesCount } = await supabase
-      .from('user_movies')
-      .select('*', { count: 'exact', head: true })
-      .eq('rating', 5);
-
-    // Films vus cette semaine
-    const oneWeekAgo = new Date();
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-
-    const { count: thisWeekCount } = await supabase
-      .from('user_movies')
-      .select('*', { count: 'exact', head: true })
-      .eq('status', 'watched')
-      .gte('created_at', oneWeekAgo.toISOString());
-
-    return {
-      watched: watchedCount || 0,
-      watchlist: watchlistCount || 0,
-      favorites: favoritesCount || 0,
-      thisWeek: thisWeekCount || 0,
-    };
+  async getStats() {
+    return apiFetch<{ watched: number; watchlist: number; favorites: number; thisWeek: number }>('/api/movies/stats');
   },
 
-  // Récupérer les films favoris
-  async getFavorites(supabase: SupabaseClient): Promise<UserMovie[]> {
-    const { data, error } = await supabase
-      .from('user_movies')
-      .select('*')
-      .eq('is_favorite', true)
-      .order('created_at', { ascending: false })
-      .limit(10);
-
-    if (error) {
-      console.error('Error fetching favorites:', error);
-      throw error;
-    }
-
-    return data || [];
+  async getFavorites(): Promise<UserMovie[]> {
+    return apiFetch('/api/movies/favorites');
   },
 
-  // Basculer le statut favori d'un film
-  async toggleFavorite(supabase: SupabaseClient, id: string): Promise<UserMovie> {
-    // Récupérer le film actuel
-    const { data: currentMovie, error: fetchError } = await supabase
-      .from('user_movies')
-      .select('is_favorite')
-      .eq('id', id)
-      .single();
-
-    if (fetchError) {
-      console.error('Error fetching movie:', fetchError);
-      throw fetchError;
-    }
-
-    // Inverser le statut
-    const newFavoriteStatus = !currentMovie.is_favorite;
-
-    const { data, error } = await supabase
-      .from('user_movies')
-      .update({ is_favorite: newFavoriteStatus })
-      .eq('id', id)
-      .select()
-      .single();
-
-    if (error) {
-      // Si l'erreur est due à la limite de favoris
-      if (error.message?.includes('10 films favoris maximum')) {
-        throw new Error('Vous ne pouvez avoir que 10 films favoris maximum');
-      }
-      console.error('Error toggling favorite:', error);
-      throw error;
-    }
-
-    return data;
+  async toggleFavorite(id: string): Promise<UserMovie> {
+    return apiFetch(`/api/movies/${id}/favorite`, { method: 'POST' });
   },
 
-  // Compter le nombre de favoris
-  async getFavoritesCount(supabase: SupabaseClient): Promise<number> {
-    const { count, error } = await supabase
-      .from('user_movies')
-      .select('*', { count: 'exact', head: true })
-      .eq('is_favorite', true);
-
-    if (error) {
-      console.error('Error counting favorites:', error);
-      throw error;
-    }
-
-    return count || 0;
+  async getFavoritesCount(): Promise<number> {
+    const data = await apiFetch<{ count: number }>('/api/movies/favorites/count');
+    return data.count;
   },
 
-  // Ajouter un film à la liste des skippés
-  async addSkippedMovie(
-    supabase: SupabaseClient,
-    tmdb_id: number,
-    media_type: 'movie' | 'tv'
-  ): Promise<void> {
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    if (!user) {
-      throw new Error('User not authenticated');
-    }
-
-    const { error } = await supabase
-      .from('skipped_movies')
-      .insert({
-        user_id: user.id,
-        tmdb_id,
-        media_type,
-      });
-
-    if (error && error.code !== '23505') {
-      // 23505 = duplicate key (déjà skippé)
-      console.error('Error adding skipped movie:', error);
-      throw error;
-    }
+  async addSkippedMovie(tmdb_id: number, media_type: 'movie' | 'tv'): Promise<void> {
+    await apiFetch('/api/movies/skipped', {
+      method: 'POST',
+      body: JSON.stringify({ tmdb_id, media_type }),
+    });
   },
 
-  // Récupérer tous les IDs de films skippés pour cet utilisateur
-  async getSkippedMovieIds(supabase: SupabaseClient): Promise<number[]> {
-    const { data, error } = await supabase
-      .from('skipped_movies')
-      .select('tmdb_id');
-
-    if (error) {
-      console.error('Error fetching skipped movies:', error);
-      throw error;
-    }
-
-    return data?.map((item) => item.tmdb_id) || [];
+  async getSkippedMovieIds(): Promise<number[]> {
+    return apiFetch('/api/movies/skipped');
   },
 
-  // Supprimer un film de la liste des skippés (pour le réinitialiser)
-  async removeSkippedMovie(
-    supabase: SupabaseClient,
-    tmdb_id: number,
-    media_type: 'movie' | 'tv'
-  ): Promise<void> {
-    const { error } = await supabase
-      .from('skipped_movies')
-      .delete()
-      .eq('tmdb_id', tmdb_id)
-      .eq('media_type', media_type);
-
-    if (error) {
-      console.error('Error removing skipped movie:', error);
-      throw error;
-    }
+  async removeSkippedMovie(tmdb_id: number, media_type: 'movie' | 'tv'): Promise<void> {
+    await apiFetch('/api/movies/skipped', {
+      method: 'DELETE',
+      body: JSON.stringify({ tmdb_id, media_type }),
+    });
   },
 };

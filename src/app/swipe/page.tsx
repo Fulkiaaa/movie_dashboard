@@ -30,7 +30,7 @@ interface SwipeFilter {
 }
 
 export default function SwipePage() {
-  const { user, loading, supabase } = useAuth();
+  const { user, loading } = useAuth();
   const [mode, setMode] = useState<SwipeMode>('selection');
   const [movies, setMovies] = useState<Movie[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -237,14 +237,13 @@ export default function SwipePage() {
   // Vérifier que le film actuel n'est pas déjà dans la base de données
   useEffect(() => {
     const checkCurrentMovie = async () => {
-      if (!currentMovie || !supabase || mode !== 'swipe') return;
+      if (!currentMovie || mode !== 'swipe') return;
       
       // Éviter de vérifier le même film plusieurs fois
       if (checkedMovieIds.has(currentMovie.id)) return;
 
       try {
         const existingMovie = await moviesService.getMovieByTmdbId(
-          supabase,
           currentMovie.id,
           currentMovie.media_type || 'movie'
         );
@@ -264,7 +263,7 @@ export default function SwipePage() {
         }
 
         // Vérifier aussi dans les skippés
-        const skippedIds = await moviesService.getSkippedMovieIds(supabase);
+        const skippedIds = await moviesService.getSkippedMovieIds();
         if (skippedIds.includes(currentMovie.id)) {
           console.log(`Film skippé détecté: ${currentMovie.title || currentMovie.name}`);
           setExcludedMovieIds(prev => new Set([...prev, currentMovie.id]));
@@ -279,11 +278,11 @@ export default function SwipePage() {
     };
 
     checkCurrentMovie();
-  }, [currentMovie?.id, supabase, mode]);
+  }, [currentMovie?.id, mode]);
 
   // Load movies based on selected filter
   const loadMoviesWithFilter = async (filter: SwipeFilter) => {
-    if (!user || !supabase) return;
+    if (!user) return;
 
     try {
       setLoadingMovies(true);
@@ -292,8 +291,8 @@ export default function SwipePage() {
       
       // Récupérer les films de l'utilisateur (vus et watchlist) pour les exclure
       const [userMovies, skippedIds] = await Promise.all([
-        moviesService.getUserMovies(supabase),
-        moviesService.getSkippedMovieIds(supabase),
+        moviesService.getUserMovies(),
+        moviesService.getSkippedMovieIds(),
       ]);
 
       const excludedIds = new Set([
@@ -437,13 +436,13 @@ export default function SwipePage() {
 
   // Load more movies when running low
   const loadMoreMovies = async () => {
-    if (!supabase || !currentFilter) return;
+    if (!currentFilter) return;
 
     try {
       // Rafraîchir la liste des films exclus avant de charger plus de films
       const [userMovies, skippedIds] = await Promise.all([
-        moviesService.getUserMovies(supabase),
-        moviesService.getSkippedMovieIds(supabase),
+        moviesService.getUserMovies(),
+        moviesService.getSkippedMovieIds(),
       ]);
 
       const refreshedExcludedIds = new Set([
@@ -562,14 +561,13 @@ export default function SwipePage() {
   };
 
   const handleDislike = async () => {
-    if (!supabase || !currentMovie) return;
+    if (!currentMovie) return;
 
     try {
       setSwipeDirection('left');
-      
+
       // Ajouter à la liste des films skippés
       await moviesService.addSkippedMovie(
-        supabase,
         currentMovie.id,
         currentMovie.media_type || 'movie'
       );
@@ -591,12 +589,12 @@ export default function SwipePage() {
   };
 
   const handleWatchlist = async () => {
-    if (!supabase || !currentMovie) return;
+    if (!currentMovie) return;
 
     try {
       setSwipeDirection('up');
-      
-      await moviesService.addMovie(supabase, {
+
+      await moviesService.addMovie({
         tmdb_id: currentMovie.id,
         media_type: currentMovie.media_type || 'movie',
         title: currentMovie.title || currentMovie.name || '',
@@ -620,10 +618,10 @@ export default function SwipePage() {
   };
 
   const handleAddWatched = async (withRating: boolean = false) => {
-    if (!supabase || !currentMovie) return;
+    if (!currentMovie) return;
 
     try {
-      await moviesService.addMovie(supabase, {
+      await moviesService.addMovie({
         tmdb_id: currentMovie.id,
         media_type: currentMovie.media_type || 'movie',
         title: currentMovie.title || currentMovie.name || '',

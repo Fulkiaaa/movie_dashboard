@@ -11,7 +11,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import Image from 'next/image';
 
 export default function Home() {
-  const { user, supabase } = useAuth();
+  const { user } = useAuth();
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
   const [trending, setTrending] = useState<Movie[]>([]);
   const [nowPlaying, setNowPlaying] = useState<Movie[]>([]);
@@ -20,7 +20,7 @@ export default function Home() {
 
   useEffect(() => {
     loadData();
-  }, [user, supabase]);
+  }, [user]);
 
   const loadData = async () => {
     setLoading(true);
@@ -34,7 +34,7 @@ export default function Home() {
       setNowPlaying(nowPlayingData.results.slice(0, 12));
 
       // Charger les recommandations basées sur le profil
-      if (user && supabase) {
+      if (user) {
         await loadRecommendations();
       } else {
         // Si pas connecté, afficher les films les mieux notés
@@ -49,17 +49,12 @@ export default function Home() {
   };
 
   const loadRecommendations = async () => {
-    if (!supabase) return;
-
     try {
       // Récupérer les films favoris de l'utilisateur (note >= 4)
-      const { data: favoriteMovies } = await supabase
-        .from('user_movies')
-        .select('tmdb_id, media_type')
-        .gte('rating', 4)
-        .limit(3);
+      const allMovies = await moviesService.getUserMovies();
+      const favoriteMovies = allMovies.filter((m) => m.rating && m.rating >= 4).slice(0, 3);
 
-      if (favoriteMovies && favoriteMovies.length > 0) {
+      if (favoriteMovies.length > 0) {
         // Obtenir des recommandations basées sur les films favoris
         const allRecommendations: Movie[] = [];
         
@@ -91,7 +86,7 @@ export default function Home() {
   };
 
   const handleMovieUpdate = () => {
-    if (user && supabase) {
+    if (user) {
       loadRecommendations();
     }
   };

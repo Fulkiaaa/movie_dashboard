@@ -1,15 +1,18 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { createClient, SupabaseClient, User } from '@supabase/supabase-js';
+
+export interface AppUser {
+  id: string;
+  email: string;
+}
 
 interface AuthContextType {
-  user: User | null;
+  user: AppUser | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
-  supabase: SupabaseClient | null;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -18,68 +21,53 @@ const AuthContext = createContext<AuthContextType>({
   signIn: async () => {},
   signUp: async () => {},
   signOut: async () => {},
-  supabase: null,
 });
 
 export const useAuth = () => useContext(AuthContext);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<AppUser | null>(null);
   const [loading, setLoading] = useState(true);
-  const [supabase] = useState(() => {
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    
-    if (!url || !key) {
-      console.warn('Supabase credentials not configured');
-      return null;
-    }
-    
-    return createClient(url, key);
-  });
 
   useEffect(() => {
-    if (!supabase) {
-      setLoading(false);
-      return;
-    }
-
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
-
-    return () => subscription.unsubscribe();
-  }, [supabase]);
+    fetch('/api/auth/session')
+      .then((res) => res.json())
+      .then(({ user }) => {
+        setUser(user ?? null);
+      })
+      .catch(() => setUser(null))
+      .finally(() => setLoading(false));
+  }, []);
 
   const signIn = async (email: string, password: string) => {
-    if (!supabase) throw new Error('Supabase not configured');
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) throw error;
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Erreur lors de la connexion');
+    setUser(data.user);
   };
 
   const signUp = async (email: string, password: string) => {
-    if (!supabase) throw new Error('Supabase not configured');
-    const { error } = await supabase.auth.signUp({ email, password });
-    if (error) throw error;
+    const res = await fetch('/api/auth/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Erreur lors de la création du compte');
+    setUser(data.user);
   };
 
   const signOut = async () => {
-    if (!supabase) throw new Error('Supabase not configured');
-    const { error } = await supabase.auth.signOut();
-    if (error) throw error;
+    await fetch('/api/auth/logout', { method: 'POST' });
+    setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut, supabase }}>
+    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut }}>
       {children}
     </AuthContext.Provider>
   );

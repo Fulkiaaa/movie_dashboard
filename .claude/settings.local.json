@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(mkdir -p \"g:/Visual Studio Code Projets/movie_dashboard/src/app/api/movies/by-tmdb/[tmdb_id]\")",
+      "Bash(mkdir -p \"g:/Visual Studio Code Projets/movie_dashboard/src/app/api/movies/[id]/favorite\")",
+      "Bash(npm uninstall:*)",
+      "Bash(npx tsc:*)"
+    ]
+  }
+}

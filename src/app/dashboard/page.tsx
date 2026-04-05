@@ -21,7 +21,7 @@ interface AdvancedStats {
 }
 
 export default function DashboardPage() {
-  const { user, loading, supabase } = useAuth();
+  const { user, loading } = useAuth();
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
   const [watchlistMovies, setWatchlistMovies] = useState<UserMovie[]>([]);
   const [watchedMovies, setWatchedMovies] = useState<UserMovie[]>([]);
@@ -38,25 +38,23 @@ export default function DashboardPage() {
   const [loadingStats, setLoadingStats] = useState(false);
 
   useEffect(() => {
-    if (user && supabase) {
+    if (user) {
       loadData();
     }
-  }, [user, supabase]);
+  }, [user]);
 
   const loadData = async () => {
-    if (!supabase) return;
-
     setLoadingStats(true);
     try {
       // Charger les stats de base
-      const basicStats = await moviesService.getStats(supabase);
-      
+      const basicStats = await moviesService.getStats();
+
       // Charger la watchlist
-      const watchlist = await moviesService.getWatchlist(supabase);
+      const watchlist = await moviesService.getWatchlist();
       setWatchlistMovies(watchlist);
 
       // Charger les films vus
-      const watched = await moviesService.getWatchedMovies(supabase);
+      const watched = await moviesService.getWatchedMovies();
       setWatchedMovies(watched);
 
       // Calculer les statistiques avancées
