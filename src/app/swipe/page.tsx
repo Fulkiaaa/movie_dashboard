@@ -665,26 +665,26 @@ export default function SwipePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
+      <div className="min-h-screen bg-[#F6F4F1] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#F95C4B]"></div>
       </div>
     );
   }
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="min-h-screen bg-[#F6F4F1] flex items-center justify-center">
         <div className="text-center">
-          <Heart className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-black mb-2">
+          <Heart className="w-16 h-16 text-[#B8B0A0] mx-auto mb-4" />
+          <h1 className="text-2xl font-bold text-[#0D0D0D] mb-2">
             Connexion requise
           </h1>
-          <p className="text-gray-600 mb-6">
+          <p className="text-[#B8B0A0] mb-6">
             Connectez-vous pour découvrir des films
           </p>
           <Link
             href="/auth/login"
-            className="px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-all"
+            className="px-6 py-3 bg-[#F95C4B] text-[#F6F4F1] rounded-lg hover:bg-[#C7392A] transition-all"
           >
             Se connecter
           </Link>
@@ -699,13 +699,13 @@ export default function SwipePage() {
     const years = Array.from({ length: 10 }, (_, i) => currentYear - i);
 
     return (
-      <div className="min-h-screen bg-gray-50 py-6 md:py-12 px-4">
+      <div className="min-h-screen bg-[#E4DED2] py-6 md:py-12 px-4">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-8 md:mb-12">
-            <h1 className="text-2xl md:text-4xl font-bold text-black mb-2 md:mb-3">
+            <h1 className="text-2xl md:text-4xl font-bold text-[#0D0D0D] mb-2 md:mb-3">
               Que voulez-vous découvrir ?
             </h1>
-            <p className="text-sm md:text-base text-gray-600">
+            <p className="text-sm md:text-base text-[#B8B0A0]">
               Choisissez une catégorie pour commencer à swiper
             </p>
           </div>
@@ -715,42 +715,42 @@ export default function SwipePage() {
             <div className="md:col-span-2">
               <button
                 onClick={() => setMode('customFilter')}
-                className="group w-full p-4 md:p-8 bg-white rounded-xl md:rounded-2xl shadow-sm hover:shadow-xl transition-all border-2 border-transparent hover:border-black"
+                className="group w-full p-4 md:p-8 bg-[#F6F4F1] rounded-xl md:rounded-2xl shadow-[0_1px_3px_rgba(13,13,13,0.06)] hover:shadow-[0_4px_12px_rgba(13,13,13,0.08)] transition-all border border-[#E4DED2] hover:border-[#F95C4B]"
               >
-                <Sliders className="w-10 h-10 md:w-12 md:h-12 text-black mb-3 md:mb-4 mx-auto" />
-                <h3 className="text-lg md:text-xl font-bold text-black mb-1 md:mb-2">Filtre personnalisé</h3>
-                <p className="text-gray-600 text-xs md:text-sm">Créez votre propre sélection sur mesure</p>
+                <Sliders className="w-10 h-10 md:w-12 md:h-12 text-[#0D0D0D] mb-3 md:mb-4 mx-auto" />
+                <h3 className="text-lg md:text-xl font-bold text-[#0D0D0D] mb-1 md:mb-2">Filtre personnalisé</h3>
+                <p className="text-[#B8B0A0] text-xs md:text-sm">Créez votre propre sélection sur mesure</p>
               </button>
             </div>
 
             {/* Popular */}
             <button
               onClick={() => loadMoviesWithFilter({ type: 'popular' })}
-              className="group p-4 md:p-8 bg-white rounded-xl md:rounded-2xl shadow-sm hover:shadow-xl transition-all border-2 border-transparent hover:border-blue-500"
+              className="group p-4 md:p-8 bg-[#F6F4F1] rounded-xl md:rounded-2xl shadow-[0_1px_3px_rgba(13,13,13,0.06)] hover:shadow-[0_4px_12px_rgba(13,13,13,0.08)] transition-all border border-[#E4DED2] hover:border-[#F95C4B]"
             >
-              <TrendingUp className="w-10 h-10 md:w-12 md:h-12 text-blue-500 mb-3 md:mb-4" />
-              <h3 className="text-lg md:text-xl font-bold text-black mb-1 md:mb-2">Les plus populaires</h3>
-              <p className="text-gray-600 text-xs md:text-sm">Films et séries les plus regardés</p>
+              <TrendingUp className="w-10 h-10 md:w-12 md:h-12 text-[#F95C4B] mb-3 md:mb-4" />
+              <h3 className="text-lg md:text-xl font-bold text-[#0D0D0D] mb-1 md:mb-2">Les plus populaires</h3>
+              <p className="text-[#B8B0A0] text-xs md:text-sm">Films et séries les plus regardés</p>
             </button>
 
             {/* Top Rated */}
             <button
               onClick={() => loadMoviesWithFilter({ type: 'topRated' })}
-              className="group p-4 md:p-8 bg-white rounded-xl md:rounded-2xl shadow-sm hover:shadow-xl transition-all border-2 border-transparent hover:border-yellow-500"
+              className="group p-4 md:p-8 bg-[#F6F4F1] rounded-xl md:rounded-2xl shadow-[0_1px_3px_rgba(13,13,13,0.06)] hover:shadow-[0_4px_12px_rgba(13,13,13,0.08)] transition-all border border-[#E4DED2] hover:border-[#D4A843]"
             >
-              <Star className="w-10 h-10 md:w-12 md:h-12 text-yellow-500 mb-3 md:mb-4" />
-              <h3 className="text-lg md:text-xl font-bold text-black mb-1 md:mb-2">Les mieux notés</h3>
-              <p className="text-gray-600 text-xs md:text-sm">Les meilleurs selon les critiques</p>
+              <Star className="w-10 h-10 md:w-12 md:h-12 text-[#D4A843] mb-3 md:mb-4" />
+              <h3 className="text-lg md:text-xl font-bold text-[#0D0D0D] mb-1 md:mb-2">Les mieux notés</h3>
+              <p className="text-[#B8B0A0] text-xs md:text-sm">Les meilleurs selon les critiques</p>
             </button>
 
             {/* Trending */}
             <button
               onClick={() => loadMoviesWithFilter({ type: 'trending' })}
-              className="group p-4 md:p-8 bg-white rounded-xl md:rounded-2xl shadow-sm hover:shadow-xl transition-all border-2 border-transparent hover:border-purple-500"
+              className="group p-4 md:p-8 bg-[#F6F4F1] rounded-xl md:rounded-2xl shadow-[0_1px_3px_rgba(13,13,13,0.06)] hover:shadow-[0_4px_12px_rgba(13,13,13,0.08)] transition-all border border-[#E4DED2] hover:border-[#F95C4B]"
             >
-              <Play className="w-10 h-10 md:w-12 md:h-12 text-purple-500 mb-3 md:mb-4" />
-              <h3 className="text-lg md:text-xl font-bold text-black mb-1 md:mb-2">Tendances</h3>
-              <p className="text-gray-600 text-xs md:text-sm">Ce qui cartonne en ce moment</p>
+              <Play className="w-10 h-10 md:w-12 md:h-12 text-[#F95C4B] mb-3 md:mb-4" />
+              <h3 className="text-lg md:text-xl font-bold text-[#0D0D0D] mb-1 md:mb-2">Tendances</h3>
+              <p className="text-[#B8B0A0] text-xs md:text-sm">Ce qui cartonne en ce moment</p>
             </button>
 
             {/* By Year */}
@@ -760,35 +760,33 @@ export default function SwipePage() {
                   setShowYearMenu(!showYearMenu);
                   if (showGenreMenu) setShowGenreMenu(false);
                 }}
-                className="group w-full p-4 md:p-8 bg-white rounded-xl md:rounded-2xl shadow-sm hover:shadow-xl transition-all border-2 border-transparent hover:border-green-500"
+                className="group w-full p-4 md:p-8 bg-[#F6F4F1] rounded-xl md:rounded-2xl shadow-[0_1px_3px_rgba(13,13,13,0.06)] hover:shadow-[0_4px_12px_rgba(13,13,13,0.08)] transition-all border border-[#E4DED2] hover:border-[#F95C4B]"
               >
-                <Calendar className="w-10 h-10 md:w-12 md:h-12 text-green-500 mb-3 md:mb-4" />
-                <h3 className="text-lg md:text-xl font-bold text-black mb-1 md:mb-2">Par année</h3>
-                <p className="text-gray-600 text-xs md:text-sm">Films et séries par période</p>
+                <Calendar className="w-10 h-10 md:w-12 md:h-12 text-[#F95C4B] mb-3 md:mb-4" />
+                <h3 className="text-lg md:text-xl font-bold text-[#0D0D0D] mb-1 md:mb-2">Par année</h3>
+                <p className="text-[#B8B0A0] text-xs md:text-sm">Films et séries par période</p>
               </button>
 
               {showYearMenu && (
                 <>
-                  {/* Backdrop */}
                   <div
                     className="fixed inset-0 z-10"
                     onClick={() => setShowYearMenu(false)}
                   />
-                  {/* Menu */}
-                  <div className="absolute top-full mt-2 w-full bg-white rounded-xl shadow-2xl p-3 md:p-4 grid grid-cols-2 gap-2 z-20 max-h-80 overflow-y-auto border border-gray-200">
-                  {years.map(year => (
-                    <button
-                      key={year}
-                      onClick={() => {
-                        loadMoviesWithFilter({ type: 'year', year });
-                        setShowYearMenu(false);
-                      }}
-                      className="px-3 md:px-4 py-2 md:py-2.5 hover:bg-green-50 rounded-lg text-black font-semibold transition-colors text-sm md:text-base"
-                    >
-                      {year}
-                    </button>
-                  ))}
-                </div>
+                  <div className="absolute top-full mt-2 w-full bg-[#F6F4F1] rounded-xl shadow-[0_8px_24px_rgba(13,13,13,0.12)] p-3 md:p-4 grid grid-cols-2 gap-2 z-20 max-h-80 overflow-y-auto border border-[#E4DED2]">
+                    {years.map(year => (
+                      <button
+                        key={year}
+                        onClick={() => {
+                          loadMoviesWithFilter({ type: 'year', year });
+                          setShowYearMenu(false);
+                        }}
+                        className="px-3 md:px-4 py-2 md:py-2.5 hover:bg-[#EBE7E0] rounded-lg text-[#0D0D0D] font-semibold transition-colors text-sm md:text-base"
+                      >
+                        {year}
+                      </button>
+                    ))}
+                  </div>
                 </>
               )}
             </div>
@@ -800,35 +798,33 @@ export default function SwipePage() {
                   setShowGenreMenu(!showGenreMenu);
                   if (showYearMenu) setShowYearMenu(false);
                 }}
-                className="group w-full p-4 md:p-8 bg-white rounded-xl md:rounded-2xl shadow-sm hover:shadow-xl transition-all border-2 border-transparent hover:border-pink-500"
+                className="group w-full p-4 md:p-8 bg-[#F6F4F1] rounded-xl md:rounded-2xl shadow-[0_1px_3px_rgba(13,13,13,0.06)] hover:shadow-[0_4px_12px_rgba(13,13,13,0.08)] transition-all border border-[#E4DED2] hover:border-[#F95C4B]"
               >
-                <Film className="w-10 h-10 md:w-12 md:h-12 text-pink-500 mb-3 md:mb-4" />
-                <h3 className="text-lg md:text-xl font-bold text-black mb-1 md:mb-2">Par genre</h3>
-                <p className="text-gray-600 text-xs md:text-sm">Action, Comédie, Drame...</p>
+                <Film className="w-10 h-10 md:w-12 md:h-12 text-[#F95C4B] mb-3 md:mb-4" />
+                <h3 className="text-lg md:text-xl font-bold text-[#0D0D0D] mb-1 md:mb-2">Par genre</h3>
+                <p className="text-[#B8B0A0] text-xs md:text-sm">Action, Comédie, Drame...</p>
               </button>
 
               {showGenreMenu && (
                 <>
-                  {/* Backdrop */}
                   <div
                     className="fixed inset-0 z-10"
                     onClick={() => setShowGenreMenu(false)}
                   />
-                  {/* Menu */}
-                  <div className="absolute top-full mt-2 w-full bg-white rounded-xl shadow-2xl p-3 md:p-4 grid grid-cols-2 md:grid-cols-3 gap-2 z-20 max-h-80 md:max-h-96 overflow-y-auto border border-gray-200">
-                  {genres.map(genre => (
-                    <button
-                      key={genre.id}
-                      onClick={() => {
-                        loadMoviesWithFilter({ type: 'genre', genre: genre.id });
-                        setShowGenreMenu(false);
-                      }}
-                      className="px-3 md:px-4 py-2 hover:bg-pink-50 rounded-lg text-black font-semibold transition-colors text-left text-sm md:text-base"
-                    >
-                      {genre.name}
-                    </button>
-                  ))}
-                </div>
+                  <div className="absolute top-full mt-2 w-full bg-[#F6F4F1] rounded-xl shadow-[0_8px_24px_rgba(13,13,13,0.12)] p-3 md:p-4 grid grid-cols-2 md:grid-cols-3 gap-2 z-20 max-h-80 md:max-h-96 overflow-y-auto border border-[#E4DED2]">
+                    {genres.map(genre => (
+                      <button
+                        key={genre.id}
+                        onClick={() => {
+                          loadMoviesWithFilter({ type: 'genre', genre: genre.id });
+                          setShowGenreMenu(false);
+                        }}
+                        className="px-3 md:px-4 py-2 hover:bg-[#EBE7E0] rounded-lg text-[#0D0D0D] font-semibold transition-colors text-left text-sm md:text-base"
+                      >
+                        {genre.name}
+                      </button>
+                    ))}
+                  </div>
                 </>
               )}
             </div>
@@ -837,7 +833,7 @@ export default function SwipePage() {
           <div className="text-center">
             <Link
               href="/dashboard"
-              className="text-gray-500 hover:text-black transition-colors"
+              className="text-[#B8B0A0] hover:text-[#0D0D0D] transition-colors"
             >
               Retour au dashboard
             </Link>
@@ -854,25 +850,25 @@ export default function SwipePage() {
     };
 
     return (
-      <div className="min-h-screen bg-gray-50 py-6 px-4 overflow-y-auto">
+      <div className="min-h-screen bg-[#E4DED2] py-6 px-4 overflow-y-auto">
         <div className="max-w-4xl mx-auto pb-24">
           <div className="flex items-center gap-4 mb-8">
             <button
               onClick={() => setMode('selection')}
-              className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
+              className="p-2 hover:bg-[#EBE7E0] rounded-lg transition-colors text-[#0D0D0D]"
             >
               ← Retour
             </button>
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-black">Filtre personnalisé</h1>
-              <p className="text-sm text-gray-600">Configurez vos critères de recherche</p>
+              <h1 className="text-2xl md:text-3xl font-bold text-[#0D0D0D]">Filtre personnalisé</h1>
+              <p className="text-sm text-[#B8B0A0]">Configurez vos critères de recherche</p>
             </div>
           </div>
 
           {/* Genres */}
-          <div className="bg-white rounded-xl p-6 mb-4 shadow-sm">
-            <h3 className="font-bold text-lg text-black mb-3 flex items-center gap-2">
-              <Film className="w-5 h-5" />
+          <div className="bg-[#F6F4F1] rounded-xl p-6 mb-4 shadow-[0_1px_3px_rgba(13,13,13,0.06)]">
+            <h3 className="font-bold text-lg text-[#0D0D0D] mb-3 flex items-center gap-2">
+              <Film className="w-5 h-5 text-[#F95C4B]" />
               Genres
             </h3>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
@@ -885,8 +881,8 @@ export default function SwipePage() {
                   }))}
                   className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
                     customFilter.genres.includes(genre.id)
-                      ? 'bg-black text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-[#F95C4B] text-[#F6F4F1]'
+                      : 'bg-[#E4DED2] text-[#0D0D0D] hover:bg-[#EBE7E0]'
                   }`}
                 >
                   {customFilter.genres.includes(genre.id) && <Check className="w-4 h-4 inline mr-1" />}
@@ -897,37 +893,37 @@ export default function SwipePage() {
           </div>
 
           {/* Date Range */}
-          <div className="bg-white rounded-xl p-6 mb-4 shadow-sm">
-            <h3 className="font-bold text-lg text-black mb-3 flex items-center gap-2">
-              <Calendar className="w-5 h-5" />
+          <div className="bg-[#F6F4F1] rounded-xl p-6 mb-4 shadow-[0_1px_3px_rgba(13,13,13,0.06)]">
+            <h3 className="font-bold text-lg text-[#0D0D0D] mb-3 flex items-center gap-2">
+              <Calendar className="w-5 h-5 text-[#F95C4B]" />
               Période de sortie
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Du</label>
+                <label className="block text-sm font-medium text-[#0D0D0D] mb-2">Du</label>
                 <input
                   type="date"
                   value={customFilter.releaseDateFrom || ''}
                   onChange={(e) => setCustomFilter(prev => ({ ...prev, releaseDateFrom: e.target.value }))}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                  className="w-full px-4 py-2 bg-[#F6F4F1] border border-[#B8B0A0] rounded-lg focus:outline-none focus:border-2 focus:border-[#F95C4B] text-[#0D0D0D]"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Au</label>
+                <label className="block text-sm font-medium text-[#0D0D0D] mb-2">Au</label>
                 <input
                   type="date"
                   value={customFilter.releaseDateTo || ''}
                   onChange={(e) => setCustomFilter(prev => ({ ...prev, releaseDateTo: e.target.value }))}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                  className="w-full px-4 py-2 bg-[#F6F4F1] border border-[#B8B0A0] rounded-lg focus:outline-none focus:border-2 focus:border-[#F95C4B] text-[#0D0D0D]"
                 />
               </div>
             </div>
           </div>
 
           {/* Languages */}
-          <div className="bg-white rounded-xl p-6 mb-4 shadow-sm">
-            <h3 className="font-bold text-lg text-black mb-3 flex items-center gap-2">
-              <Languages className="w-5 h-5" />
+          <div className="bg-[#F6F4F1] rounded-xl p-6 mb-4 shadow-[0_1px_3px_rgba(13,13,13,0.06)]">
+            <h3 className="font-bold text-lg text-[#0D0D0D] mb-3 flex items-center gap-2">
+              <Languages className="w-5 h-5 text-[#F95C4B]" />
               Langues originales
             </h3>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 max-h-48 overflow-y-auto">
@@ -940,8 +936,8 @@ export default function SwipePage() {
                   }))}
                   className={`px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
                     customFilter.languages.includes(lang.iso_639_1)
-                      ? 'bg-black text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-[#F95C4B] text-[#F6F4F1]'
+                      : 'bg-[#E4DED2] text-[#0D0D0D] hover:bg-[#EBE7E0]'
                   }`}
                 >
                   {customFilter.languages.includes(lang.iso_639_1) && <Check className="w-3 h-3 inline mr-1" />}
@@ -952,9 +948,9 @@ export default function SwipePage() {
           </div>
 
           {/* Countries */}
-          <div className="bg-white rounded-xl p-6 mb-4 shadow-sm">
-            <h3 className="font-bold text-lg text-black mb-3 flex items-center gap-2">
-              <Globe className="w-5 h-5" />
+          <div className="bg-[#F6F4F1] rounded-xl p-6 mb-4 shadow-[0_1px_3px_rgba(13,13,13,0.06)]">
+            <h3 className="font-bold text-lg text-[#0D0D0D] mb-3 flex items-center gap-2">
+              <Globe className="w-5 h-5 text-[#F95C4B]" />
               Pays de production
             </h3>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 max-h-48 overflow-y-auto">
@@ -967,8 +963,8 @@ export default function SwipePage() {
                   }))}
                   className={`px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
                     customFilter.countries.includes(country.iso_3166_1)
-                      ? 'bg-black text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-[#F95C4B] text-[#F6F4F1]'
+                      : 'bg-[#E4DED2] text-[#0D0D0D] hover:bg-[#EBE7E0]'
                   }`}
                 >
                   {customFilter.countries.includes(country.iso_3166_1) && <Check className="w-3 h-3 inline mr-1" />}
@@ -980,9 +976,9 @@ export default function SwipePage() {
 
           {/* Certifications */}
           {availableCertifications.length > 0 && (
-            <div className="bg-white rounded-xl p-6 mb-4 shadow-sm">
-              <h3 className="font-bold text-lg text-black mb-3 flex items-center gap-2">
-                <Star className="w-5 h-5" />
+            <div className="bg-[#F6F4F1] rounded-xl p-6 mb-4 shadow-[0_1px_3px_rgba(13,13,13,0.06)]">
+              <h3 className="font-bold text-lg text-[#0D0D0D] mb-3 flex items-center gap-2">
+                <Star className="w-5 h-5 text-[#D4A843]" />
                 Classification (France)
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
@@ -995,8 +991,8 @@ export default function SwipePage() {
                     }))}
                     className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${
                       customFilter.certifications.includes(cert.certification)
-                        ? 'bg-black text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        ? 'bg-[#F95C4B] text-[#F6F4F1]'
+                        : 'bg-[#E4DED2] text-[#0D0D0D] hover:bg-[#EBE7E0]'
                     }`}
                   >
                     {customFilter.certifications.includes(cert.certification) && <Check className="w-4 h-4 inline mr-1" />}
@@ -1009,9 +1005,9 @@ export default function SwipePage() {
 
           {/* Streaming Providers */}
           {availableProviders.length > 0 && (
-            <div className="bg-white rounded-xl p-6 mb-4 shadow-sm">
-              <h3 className="font-bold text-lg text-black mb-3 flex items-center gap-2">
-                <Play className="w-5 h-5" />
+            <div className="bg-[#F6F4F1] rounded-xl p-6 mb-4 shadow-[0_1px_3px_rgba(13,13,13,0.06)]">
+              <h3 className="font-bold text-lg text-[#0D0D0D] mb-3 flex items-center gap-2">
+                <Play className="w-5 h-5 text-[#F95C4B]" />
                 Plateformes de streaming
               </h3>
               <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
@@ -1024,8 +1020,8 @@ export default function SwipePage() {
                     }))}
                     className={`relative p-3 rounded-lg transition-all ${
                       customFilter.providers.includes(provider.provider_id)
-                        ? 'ring-4 ring-black bg-gray-100'
-                        : 'bg-gray-100 hover:bg-gray-200'
+                        ? 'ring-2 ring-[#F95C4B] bg-[#E4DED2]'
+                        : 'bg-[#E4DED2] hover:bg-[#EBE7E0]'
                     }`}
                     title={provider.provider_name}
                   >
@@ -1038,13 +1034,13 @@ export default function SwipePage() {
                         className="rounded-lg mx-auto"
                       />
                     ) : (
-                      <div className="w-15 h-15 bg-gray-300 rounded-lg flex items-center justify-center text-xs text-center">
+                      <div className="w-15 h-15 bg-[#B8B0A0] rounded-lg flex items-center justify-center text-xs text-center text-[#F6F4F1]">
                         {provider.provider_name}
                       </div>
                     )}
                     {customFilter.providers.includes(provider.provider_id) && (
-                      <div className="absolute -top-2 -right-2 bg-black rounded-full p-1">
-                        <Check className="w-4 h-4 text-white" />
+                      <div className="absolute -top-2 -right-2 bg-[#F95C4B] rounded-full p-1">
+                        <Check className="w-4 h-4 text-[#F6F4F1]" />
                       </div>
                     )}
                   </button>
@@ -1054,29 +1050,29 @@ export default function SwipePage() {
           )}
 
           {/* Fixed bottom action button */}
-          <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-lg">
+          <div className="fixed bottom-0 left-0 right-0 bg-[#F6F4F1] border-t border-[#E4DED2] p-4 shadow-[0_-4px_12px_rgba(13,13,13,0.08)]">
             <div className="max-w-4xl mx-auto">
               <button
                 onClick={() => {
-                  loadMoviesWithFilter({ 
-                    type: 'custom', 
-                    customParams: customFilter 
+                  loadMoviesWithFilter({
+                    type: 'custom',
+                    customParams: customFilter
                   });
                 }}
                 disabled={
-                  customFilter.genres.length === 0 && 
-                  customFilter.languages.length === 0 && 
-                  customFilter.countries.length === 0 && 
-                  customFilter.certifications.length === 0 && 
+                  customFilter.genres.length === 0 &&
+                  customFilter.languages.length === 0 &&
+                  customFilter.countries.length === 0 &&
+                  customFilter.certifications.length === 0 &&
                   customFilter.providers.length === 0 &&
                   !customFilter.releaseDateFrom &&
                   !customFilter.releaseDateTo
                 }
-                className="w-full py-4 bg-black text-white rounded-xl font-bold text-lg hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-xl"
+                className="w-full py-4 bg-[#F95C4B] text-[#F6F4F1] rounded-xl font-bold text-lg hover:bg-[#C7392A] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                🎬 Découvrir les films
+                Découvrir les films
               </button>
-              <p className="text-center text-xs text-gray-500 mt-2">
+              <p className="text-center text-xs text-[#B8B0A0] mt-2">
                 Sélectionnez au moins un critère pour commencer
               </p>
             </div>
@@ -1088,7 +1084,7 @@ export default function SwipePage() {
 
   // Swipe Screen
   return (
-    <div className="min-h-screen overflow-hidden bg-gray-50 flex items-start justify-center pt-6 md:pt-8 px-2 md:px-4 touch-none">
+    <div className="min-h-screen overflow-hidden bg-[#E4DED2] flex items-start justify-center pt-6 md:pt-8 px-2 md:px-4 touch-none">
       <div className="w-full max-w-5xl">
         {/* Back button */}
         <div className="absolute top-2 md:top-4 left-2 md:left-4 z-20">
@@ -1098,7 +1094,7 @@ export default function SwipePage() {
               setMovies([]);
               setCurrentIndex(0);
             }}
-            className="px-3 md:px-4 py-1.5 md:py-2 bg-white text-gray-700 rounded-lg hover:bg-gray-100 transition-colors shadow-md text-sm md:text-base"
+            className="px-3 md:px-4 py-1.5 md:py-2 bg-[#F6F4F1] text-[#0D0D0D] rounded-lg hover:bg-[#EBE7E0] transition-colors shadow-[0_1px_3px_rgba(13,13,13,0.06)] text-sm md:text-base"
           >
             ← <span className="hidden sm:inline">Changer de catégorie</span><span className="sm:hidden">Retour</span>
           </button>
@@ -1106,14 +1102,14 @@ export default function SwipePage() {
 
         {loadingMovies ? (
           <div className="flex items-center justify-center h-screen">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-black"></div>
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#F95C4B]"></div>
           </div>
         ) : !currentMovie ? (
-          <div className="bg-white rounded-2xl md:rounded-3xl p-8 md:p-12 text-center shadow-lg mx-4">
-            <h2 className="text-2xl md:text-3xl font-bold text-black mb-3 md:mb-4">
+          <div className="bg-[#F6F4F1] rounded-2xl md:rounded-3xl p-8 md:p-12 text-center shadow-[0_8px_24px_rgba(13,13,13,0.12)] mx-4">
+            <h2 className="text-2xl md:text-3xl font-bold text-[#0D0D0D] mb-3 md:mb-4">
               C'est tout pour aujourd'hui
             </h2>
-            <p className="text-sm md:text-base text-gray-600 mb-6 md:mb-8">
+            <p className="text-sm md:text-base text-[#B8B0A0] mb-6 md:mb-8">
               Revenez demain pour découvrir de nouveaux films
             </p>
             <button
@@ -1122,7 +1118,7 @@ export default function SwipePage() {
                 setMovies([]);
                 setCurrentIndex(0);
               }}
-              className="inline-block px-6 md:px-8 py-3 md:py-4 bg-black text-white rounded-full hover:bg-gray-800 transition-colors font-semibold text-sm md:text-base"
+              className="inline-block px-6 md:px-8 py-3 md:py-4 bg-[#F95C4B] text-[#F6F4F1] rounded-full hover:bg-[#C7392A] transition-colors font-semibold text-sm md:text-base"
             >
               Choisir une nouvelle catégorie
             </button>
@@ -1160,7 +1156,7 @@ export default function SwipePage() {
               }
             >
               {/* Title above poster */}
-              <h2 className="text-black text-lg md:text-2xl font-bold mb-2 md:mb-4 text-center px-4">
+              <h2 className="text-[#0D0D0D] text-lg md:text-2xl font-bold mb-2 md:mb-4 text-center px-4">
                 {currentMovie.title || currentMovie.name}
               </h2>
 
@@ -1183,8 +1179,8 @@ export default function SwipePage() {
                       draggable={false}
                     />
                   ) : (
-                    <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                      <span className="text-gray-400 text-2xl">Pas d'affiche</span>
+                    <div className="w-full h-full bg-[#E4DED2] flex items-center justify-center">
+                      <span className="text-[#B8B0A0] text-2xl">Pas d'affiche</span>
                     </div>
                   )}
 
@@ -1247,7 +1243,7 @@ export default function SwipePage() {
                               <Star
                                 className={`w-10 h-10 md:w-12 md:h-12 ${
                                   selectedRating && selectedRating >= star
-                                    ? 'text-yellow-400 fill-yellow-400'
+                                    ? 'text-[#D4A843] fill-[#D4A843]'
                                     : 'text-white/40 hover:text-white/60'
                                 }`}
                               />
@@ -1272,8 +1268,8 @@ export default function SwipePage() {
                     disabled={swipeDirection !== null}
                     className="group relative"
                   >
-                    <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-white/90 backdrop-blur-sm border border-gray-200 hover:border-red-500 flex items-center justify-center transition-all hover:scale-110 active:scale-95 disabled:opacity-30 shadow-lg">
-                      <X className="w-7 h-7 md:w-8 md:h-8 text-gray-600 group-hover:text-red-500 transition-colors" />
+                    <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-[#F6F4F1]/90 backdrop-blur-sm border border-[#E4DED2] hover:border-red-500 flex items-center justify-center transition-all hover:scale-110 active:scale-95 disabled:opacity-30 shadow-lg">
+                      <X className="w-7 h-7 md:w-8 md:h-8 text-[#B8B0A0] group-hover:text-red-500 transition-colors" />
                     </div>
                   </button>
 
@@ -1282,8 +1278,8 @@ export default function SwipePage() {
                     disabled={swipeDirection !== null}
                     className="group relative"
                   >
-                    <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-white/90 backdrop-blur-sm border border-gray-200 hover:border-blue-400 flex items-center justify-center transition-all hover:scale-110 active:scale-95 disabled:opacity-30 shadow-lg">
-                      <Bookmark className="w-6 h-6 md:w-7 md:h-7 text-gray-600 group-hover:text-blue-400 transition-colors" />
+                    <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-[#F6F4F1]/90 backdrop-blur-sm border border-[#E4DED2] hover:border-[#F95C4B] flex items-center justify-center transition-all hover:scale-110 active:scale-95 disabled:opacity-30 shadow-lg">
+                      <Bookmark className="w-6 h-6 md:w-7 md:h-7 text-[#B8B0A0] group-hover:text-[#F95C4B] transition-colors" />
                     </div>
                   </button>
 
@@ -1292,8 +1288,8 @@ export default function SwipePage() {
                     disabled={swipeDirection !== null || showRating}
                     className="group relative"
                   >
-                    <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-red-500/90 backdrop-blur-sm hover:bg-red-600 flex items-center justify-center transition-all hover:scale-110 active:scale-95 disabled:opacity-30 shadow-lg">
-                      <Heart className="w-7 h-7 md:w-8 md:h-8 text-white fill-white" />
+                    <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-[#F95C4B]/90 backdrop-blur-sm hover:bg-[#C7392A] flex items-center justify-center transition-all hover:scale-110 active:scale-95 disabled:opacity-30 shadow-lg">
+                      <Heart className="w-7 h-7 md:w-8 md:h-8 text-[#F6F4F1] fill-[#F6F4F1]" />
                     </div>
                   </button>
                 </div>

@@ -5,6 +5,7 @@ import { Film, Star, TrendingUp, Calendar } from "lucide-react";
 import { useState, useEffect } from 'react';
 import SearchBar from '@/components/SearchBar';
 import MovieModal from '@/components/MovieModal';
+import Footer from '@/components/Footer';
 import { Movie, tmdbService } from '@/services/tmdb';
 import { moviesService } from '@/services/movies';
 import { useAuth } from '@/contexts/AuthContext';
@@ -25,19 +26,15 @@ export default function Home() {
   const loadData = async () => {
     setLoading(true);
     try {
-      // Charger les tendances
       const trendingData = await tmdbService.getTrending('week', 1);
       setTrending(trendingData.results.slice(0, 12));
 
-      // Charger les films en salle
       const nowPlayingData = await tmdbService.getNowPlayingMovies(1);
       setNowPlaying(nowPlayingData.results.slice(0, 12));
 
-      // Charger les recommandations basées sur le profil
       if (user) {
         await loadRecommendations();
       } else {
-        // Si pas connecté, afficher les films les mieux notés
         const topRated = await tmdbService.getTopRatedMovies(1);
         setRecommendations(topRated.results.slice(0, 12));
       }
@@ -50,14 +47,12 @@ export default function Home() {
 
   const loadRecommendations = async () => {
     try {
-      // Récupérer les films favoris de l'utilisateur (note >= 4)
       const allMovies = await moviesService.getUserMovies();
       const favoriteMovies = allMovies.filter((m) => m.rating && m.rating >= 4).slice(0, 3);
 
       if (favoriteMovies.length > 0) {
-        // Obtenir des recommandations basées sur les films favoris
         const allRecommendations: Movie[] = [];
-        
+
         for (const movie of favoriteMovies) {
           const recs = await tmdbService.getRecommendations(
             movie.tmdb_id,
@@ -67,14 +62,12 @@ export default function Home() {
           allRecommendations.push(...recs.results.slice(0, 4));
         }
 
-        // Dédupliquer et limiter à 12 films
         const uniqueRecs = Array.from(
           new Map(allRecommendations.map(m => [m.id, m])).values()
         ).slice(0, 12);
 
         setRecommendations(uniqueRecs);
       } else {
-        // Pas de favoris, afficher les films les mieux notés
         const topRated = await tmdbService.getTopRatedMovies(1);
         setRecommendations(topRated.results.slice(0, 12));
       }
@@ -96,7 +89,7 @@ export default function Home() {
       onClick={() => setSelectedMovie(movie)}
       className="group relative"
     >
-      <div className="aspect-[2/3] bg-gray-200 rounded-lg overflow-hidden mb-2 border-2 border-transparent group-hover:border-black transition-colors">
+      <div className="aspect-2/3 bg-[#E4DED2] rounded-lg overflow-hidden mb-2 border border-[#E4DED2] group-hover:border-[#F95C4B] group-hover:shadow-[0_4px_12px_rgba(13,13,13,0.08)] transition-all duration-200 group-hover:scale-[1.02]">
         {movie.poster_path ? (
           <Image
             src={tmdbService.getImageUrl(movie.poster_path, 'w300')}
@@ -106,17 +99,17 @@ export default function Home() {
             className="w-full h-full object-cover"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-gray-400">
+          <div className="w-full h-full flex items-center justify-center text-[#B8B0A0]">
             <Film className="w-12 h-12" />
           </div>
         )}
       </div>
-      <h3 className="text-sm font-semibold text-black group-hover:underline line-clamp-2">
+      <h3 className="text-sm font-medium text-[#0D0D0D] line-clamp-2 px-0.5">
         {movie.title || movie.name}
       </h3>
       {movie.vote_average > 0 && (
-        <div className="flex items-center gap-1 text-xs text-gray-600 mt-1">
-          <Star className="w-3 h-3 fill-black text-black" />
+        <div className="flex items-center gap-1 text-xs text-[#B8B0A0] mt-1 px-0.5">
+          <Star className="w-3 h-3 fill-[#D4A843] text-[#D4A843]" />
           <span>{movie.vote_average.toFixed(1)}</span>
         </div>
       )}
@@ -124,23 +117,23 @@ export default function Home() {
   );
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#F6F4F1]">
       {/* Hero Section with Search */}
-      <section className="relative bg-gray-50">
-        <div className="relative max-w-7xl mx-auto px-3 md:px-4 lg:px-8 py-12 md:py-16 lg:py-24 pb-20 md:pb-24">
+      <section className="bg-[#E4DED2]">
+        <div className="max-w-7xl mx-auto px-3 md:px-4 lg:px-8 py-12 md:py-16 lg:py-24 pb-20 md:pb-24">
           <div className="text-center">
             {/* Logo */}
             <div className="flex justify-center mb-4 md:mb-6">
-              <div className="bg-black p-4 md:p-6 rounded-2xl md:rounded-3xl shadow-xl">
-                <Film className="w-12 h-12 md:w-16 md:h-16 text-white" />
+              <div className="bg-[#0D0D0D] p-4 md:p-6 rounded-2xl md:rounded-3xl shadow-[0_8px_24px_rgba(13,13,13,0.12)]">
+                <Film className="w-12 h-12 md:w-16 md:h-16 text-[#F6F4F1]" />
               </div>
             </div>
 
             {/* Title */}
-            <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold text-black mb-3 md:mb-4">
+            <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold text-[#0D0D0D] mb-3 md:mb-4">
               SeenIt
             </h1>
-            <p className="text-base md:text-xl lg:text-2xl text-gray-700 mb-6 md:mb-8 max-w-3xl mx-auto px-4">
+            <p className="text-base md:text-xl lg:text-2xl text-[#0D0D0D] mb-6 md:mb-8 max-w-3xl mx-auto px-4">
               Découvrez et organisez votre passion cinéma
             </p>
 
@@ -154,13 +147,13 @@ export default function Home() {
               <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center px-4">
                 <Link
                   href="/auth/signup"
-                  className="px-6 md:px-8 py-3 md:py-4 bg-black text-white rounded-xl font-semibold hover:bg-gray-800 transition-all text-sm md:text-base"
+                  className="px-6 md:px-8 py-3 md:py-4 bg-[#F95C4B] text-[#F6F4F1] rounded-xl font-semibold hover:bg-[#C7392A] transition-all text-sm md:text-base"
                 >
                   Commencer
                 </Link>
                 <Link
                   href="/dashboard"
-                  className="px-6 md:px-8 py-3 md:py-4 bg-white hover:bg-gray-100 text-black rounded-xl font-semibold transition-all border-2 border-black text-sm md:text-base"
+                  className="px-6 md:px-8 py-3 md:py-4 bg-[#F6F4F1] hover:bg-[#EBE7E0] text-[#0D0D0D] rounded-xl font-semibold transition-all border border-[#B8B0A0] text-sm md:text-base"
                 >
                   Explorer
                 </Link>
@@ -174,16 +167,17 @@ export default function Home() {
       <div className="max-w-7xl mx-auto px-3 md:px-4 lg:px-8 py-8 md:py-12">
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#F95C4B]"></div>
           </div>
         ) : (
           <>
             {/* Trending Section */}
             <section className="mb-12 md:mb-16">
-              <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
-                <TrendingUp className="w-6 h-6 md:w-8 md:h-8 text-black" />
-                <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-black">Tendances</h2>
+              <div className="flex items-center gap-2 md:gap-3 mb-2 md:mb-3">
+                <TrendingUp className="w-6 h-6 md:w-7 md:h-7 text-[#F95C4B]" />
+                <h2 className="text-xl md:text-2xl font-bold text-[#0D0D0D]">Tendances</h2>
               </div>
+              <div className="w-10 h-0.5 bg-[#F95C4B] mb-4 md:mb-6"></div>
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
                 {trending.map((movie) => (
                   <MovieCard key={movie.id} movie={movie} />
@@ -191,12 +185,13 @@ export default function Home() {
               </div>
             </section>
 
-            {/* Now Playing / New Releases Section */}
+            {/* Now Playing Section */}
             <section className="mb-12 md:mb-16">
-              <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
-                <Calendar className="w-6 h-6 md:w-8 md:h-8 text-black" />
-                <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-black">En salle</h2>
+              <div className="flex items-center gap-2 md:gap-3 mb-2 md:mb-3">
+                <Calendar className="w-6 h-6 md:w-7 md:h-7 text-[#F95C4B]" />
+                <h2 className="text-xl md:text-2xl font-bold text-[#0D0D0D]">En salle</h2>
               </div>
+              <div className="w-10 h-0.5 bg-[#F95C4B] mb-4 md:mb-6"></div>
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
                 {nowPlaying.map((movie) => (
                   <MovieCard key={movie.id} movie={movie} />
@@ -206,17 +201,15 @@ export default function Home() {
 
             {/* Recommendations Section */}
             <section className="mb-12 md:mb-16">
-              <div className="flex items-center gap-2 md:gap-3 mb-4 md:mb-6">
-                <Star className="w-6 h-6 md:w-8 md:h-8 text-black" />
-                <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-black">
+              <div className="flex items-center gap-2 md:gap-3 mb-2 md:mb-3">
+                <Star className="w-6 h-6 md:w-7 md:h-7 text-[#D4A843]" />
+                <h2 className="text-xl md:text-2xl font-bold text-[#0D0D0D]">
                   {user ? 'Pour vous' : 'Mieux notés'}
                 </h2>
               </div>
-              <p className="text-sm md:text-base text-gray-600 mb-4 md:mb-6">
-                {user 
-                  ? 'Basé sur vos favoris'
-                  : 'Les films les mieux notés'
-                }
+              <div className="w-10 h-0.5 bg-[#F95C4B] mb-2 md:mb-3"></div>
+              <p className="text-sm md:text-base text-[#B8B0A0] mb-4 md:mb-6">
+                {user ? 'Basé sur vos favoris' : 'Les films les mieux notés'}
               </p>
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
                 {recommendations.map((movie) => (
@@ -231,16 +224,16 @@ export default function Home() {
       {/* CTA Section */}
       {!user && (
         <section className="max-w-7xl mx-auto px-3 md:px-4 lg:px-8 py-12 md:py-16">
-          <div className="bg-black rounded-2xl md:rounded-3xl p-6 md:p-12 text-center">
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-3 md:mb-4">
+          <div className="bg-[#0D0D0D] rounded-2xl md:rounded-3xl p-6 md:p-12 text-center">
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#F6F4F1] mb-3 md:mb-4">
               Prêt à commencer ?
             </h2>
-            <p className="text-sm md:text-base lg:text-lg text-gray-300 mb-6 md:mb-8 max-w-2xl mx-auto">
+            <p className="text-sm md:text-base lg:text-lg text-[#E4DED2] mb-6 md:mb-8 max-w-2xl mx-auto">
               Rejoignez SeenIt dès aujourd'hui
             </p>
             <Link
               href="/auth/signup"
-              className="inline-block px-6 md:px-8 py-3 md:py-4 bg-white text-black rounded-xl font-semibold hover:bg-gray-100 transition-all text-sm md:text-base"
+              className="inline-block px-6 md:px-8 py-3 md:py-4 bg-[#F95C4B] text-[#F6F4F1] rounded-xl font-semibold hover:bg-[#C7392A] transition-all text-sm md:text-base"
             >
               Créer un compte
             </Link>
@@ -248,74 +241,7 @@ export default function Home() {
         </section>
       )}
 
-      {/* Footer */}
-      <footer className="border-t border-gray-200 bg-gray-50 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Main footer content */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
-            <div className="flex items-center gap-3">
-              <div className="bg-black p-2 rounded-lg">
-                <Film className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <span className="text-black font-bold block">SeenIt</span>
-                <span className="text-gray-500 text-sm">© 2026 Tous droits réservés</span>
-              </div>
-            </div>
-            <div className="flex flex-wrap gap-6">
-              <Link href="/dashboard" className="text-gray-600 hover:text-black transition-colors text-sm">
-                Dashboard
-              </Link>
-              <Link href="/swipe" className="text-gray-600 hover:text-black transition-colors text-sm">
-                Swipe
-              </Link>
-              <Link href="/profile" className="text-gray-600 hover:text-black transition-colors text-sm">
-                Profil
-              </Link>
-            </div>
-          </div>
-
-          {/* Legal links */}
-          <div className="border-t border-gray-300 pt-6 mb-6">
-            <div className="flex flex-wrap justify-center gap-4 text-sm">
-              <Link href="/legal/mentions" className="text-gray-600 hover:text-black transition-colors">
-                Mentions légales
-              </Link>
-              <span className="text-gray-400">•</span>
-              <Link href="/legal/privacy" className="text-gray-600 hover:text-black transition-colors">
-                Politique de confidentialité
-              </Link>
-              <span className="text-gray-400">•</span>
-              <Link href="/legal/terms" className="text-gray-600 hover:text-black transition-colors">
-                CGU
-              </Link>
-            </div>
-          </div>
-
-          {/* TMDB Attribution */}
-          <div className="bg-white border border-gray-200 rounded-lg p-4">
-            <div className="flex flex-col md:flex-row items-center justify-center gap-3 text-center">
-              <div className="flex items-center gap-2">
-                <svg className="w-16 h-auto" viewBox="0 0 273.42 35.52">
-                  <defs>
-                    <linearGradient id="tmdb-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" style={{stopColor: '#90cea1', stopOpacity: 1}} />
-                      <stop offset="100%" style={{stopColor: '#01b4e4', stopOpacity: 1}} />
-                    </linearGradient>
-                  </defs>
-                  <path fill="url(#tmdb-gradient)" d="M35.52 0a35.52 35.52 0 1 1 0 71 35.52 35.52 0 0 1 0-71zM20 34.77L22.8 25h5.12l2.76 9.77 2.92-9.77h5.48l-5.12 14.83h-4.96L25.6 30.6l-3.4 9.22h-4.96L12.12 25h5.48l2.92 9.77z" transform="scale(.5)"/>
-                </svg>
-              </div>
-              <div className="text-xs text-gray-600">
-                <p className="font-semibold text-black mb-1">Powered by TMDB</p>
-                <p>
-                  This product uses the TMDB API but is not endorsed or certified by TMDB.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
 
       {/* Movie Modal */}
       {selectedMovie && (

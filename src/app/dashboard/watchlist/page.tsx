@@ -1,7 +1,7 @@
 'use client';
 
 import { useAuth } from '@/contexts/AuthContext';
-import { Film, List, Search, ArrowLeft, Calendar, ChevronLeft, ChevronRight, Star, Heart } from 'lucide-react';
+import { Film, List, Search, ArrowLeft, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import MovieModal from '@/components/MovieModal';
@@ -17,7 +17,7 @@ export default function WatchlistPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [loadingMovies, setLoadingMovies] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const moviesPerPage = 15; // 3 lignes de 5 films
+  const moviesPerPage = 15;
 
   useEffect(() => {
     if (user) {
@@ -34,7 +34,7 @@ export default function WatchlistPage() {
       );
       setFilteredMovies(filtered);
     }
-    setCurrentPage(1); // Réinitialiser à la page 1 lors d'une recherche
+    setCurrentPage(1);
   }, [searchQuery, watchlistMovies]);
 
   const loadData = async () => {
@@ -59,7 +59,7 @@ export default function WatchlistPage() {
       const details = userMovie.media_type === 'movie'
         ? await tmdbService.getMovieDetails(userMovie.tmdb_id)
         : await tmdbService.getTVDetails(userMovie.tmdb_id);
-      
+
       setSelectedMovie(details as Movie);
     } catch (error) {
       console.error('Error loading movie details:', error);
@@ -68,27 +68,20 @@ export default function WatchlistPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
+      <div className="min-h-screen bg-[#F6F4F1] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#F95C4B]"></div>
       </div>
     );
   }
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="min-h-screen bg-[#F6F4F1] flex items-center justify-center">
         <div className="text-center">
-          <Film className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-black mb-2">
-            Connexion requise
-          </h1>
-          <p className="text-gray-600 mb-6">
-            Connectez-vous pour accéder à votre watchlist
-          </p>
-          <Link
-            href="/auth/login"
-            className="px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-all"
-          >
+          <Film className="w-16 h-16 text-[#B8B0A0] mx-auto mb-4" />
+          <h1 className="text-2xl font-bold text-[#0D0D0D] mb-2">Connexion requise</h1>
+          <p className="text-[#B8B0A0] mb-6">Connectez-vous pour accéder à votre watchlist</p>
+          <Link href="/auth/login" className="px-6 py-3 bg-[#F95C4B] text-[#F6F4F1] rounded-lg hover:bg-[#C7392A] transition-all">
             Se connecter
           </Link>
         </div>
@@ -97,28 +90,24 @@ export default function WatchlistPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#F6F4F1]">
       <div className="container mx-auto px-3 md:px-4 py-4 md:py-8 max-w-7xl">
         {/* Header */}
         <div className="mb-6 md:mb-8">
           <Link
             href="/dashboard"
-            className="inline-flex items-center gap-2 text-gray-600 hover:text-black mb-3 md:mb-4 transition-colors text-sm md:text-base"
+            className="inline-flex items-center gap-2 text-[#B8B0A0] hover:text-[#0D0D0D] mb-3 md:mb-4 transition-colors text-sm md:text-base"
           >
             <ArrowLeft className="w-4 h-4" />
             Retour
           </Link>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 md:gap-3">
-              <List className="w-6 h-6 md:w-8 md:h-8 text-black" />
-              <div>
-                <h1 className="text-2xl md:text-4xl font-bold text-black">
-                  Watchlist
-                </h1>
-                <p className="text-xs md:text-base text-gray-600 mt-0.5 md:mt-1">
-                  {watchlistMovies.length} film{watchlistMovies.length > 1 ? 's' : ''}
-                </p>
-              </div>
+          <div className="flex items-center gap-2 md:gap-3">
+            <List className="w-6 h-6 md:w-8 md:h-8 text-[#F95C4B]" />
+            <div>
+              <h1 className="text-2xl md:text-4xl font-bold text-[#0D0D0D]">Watchlist</h1>
+              <p className="text-xs md:text-base text-[#B8B0A0] mt-0.5">
+                {watchlistMovies.length} film{watchlistMovies.length > 1 ? 's' : ''}
+              </p>
             </div>
           </div>
         </div>
@@ -126,17 +115,17 @@ export default function WatchlistPage() {
         {/* Search Bar */}
         <div className="mb-4 md:mb-6">
           <div className="relative">
-            <Search className="absolute left-3 md:left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 md:w-5 md:h-5" />
+            <Search className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 text-[#B8B0A0] w-4 h-4 md:w-5 md:h-5" />
             <input
               type="text"
               placeholder="Rechercher..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 md:pl-12 pr-3 md:pr-4 py-2 md:py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-black transition-colors text-sm md:text-base"
+              className="w-full pl-10 md:pl-12 pr-3 md:pr-4 py-2 md:py-3 bg-[#F6F4F1] border border-[#B8B0A0] rounded-xl focus:outline-none focus:border-2 focus:border-[#F95C4B] transition-colors text-sm md:text-base text-[#0D0D0D] placeholder-[#B8B0A0] h-11"
             />
           </div>
           {searchQuery && (
-            <p className="text-xs md:text-sm text-gray-600 mt-2">
+            <p className="text-xs md:text-sm text-[#B8B0A0] mt-2">
               {filteredMovies.length} résultat{filteredMovies.length > 1 ? 's' : ''}
             </p>
           )}
@@ -145,23 +134,20 @@ export default function WatchlistPage() {
         {/* Movies Grid */}
         {loadingMovies ? (
           <div className="flex items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#F95C4B]"></div>
           </div>
         ) : filteredMovies.length === 0 ? (
           <div className="text-center py-12">
-            <List className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-500 mb-2">
+            <List className="w-16 h-16 text-[#B8B0A0] mx-auto mb-4" />
+            <p className="text-[#B8B0A0] mb-2">
               {searchQuery ? 'Aucun film trouvé' : 'Votre watchlist est vide'}
             </p>
             {!searchQuery && (
               <>
-                <p className="text-gray-400 text-sm mb-6">
+                <p className="text-[#B8B0A0] text-sm mb-6">
                   Ajoutez des films à votre liste à voir
                 </p>
-                <Link
-                  href="/"
-                  className="inline-block px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition-all"
-                >
+                <Link href="/" className="inline-block px-6 py-3 bg-[#F95C4B] text-[#F6F4F1] rounded-lg hover:bg-[#C7392A] transition-all">
                   Découvrir des films
                 </Link>
               </>
@@ -178,7 +164,7 @@ export default function WatchlistPage() {
                     onClick={() => handleMovieClick(movie)}
                     className="group"
                   >
-                    <div className="aspect-[2/3] bg-gray-200 rounded-lg overflow-hidden mb-2 border-2 border-transparent group-hover:border-black transition-colors relative">
+                    <div className="aspect-2/3 bg-[#E4DED2] rounded-lg overflow-hidden mb-2 border border-[#E4DED2] group-hover:border-[#F95C4B] group-hover:shadow-[0_4px_12px_rgba(13,13,13,0.08)] transition-all">
                       {movie.poster_path ? (
                         <Image
                           src={tmdbService.getImageUrl(movie.poster_path, 'w300')}
@@ -188,15 +174,15 @@ export default function WatchlistPage() {
                           className="w-full h-full object-cover"
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-400">
+                        <div className="w-full h-full flex items-center justify-center text-[#B8B0A0]">
                           <Film className="w-12 h-12" />
                         </div>
                       )}
                     </div>
-                    <h3 className="text-sm font-semibold text-black group-hover:underline line-clamp-2">
+                    <h3 className="text-sm font-medium text-[#0D0D0D] group-hover:underline line-clamp-2">
                       {movie.title}
                     </h3>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-[#B8B0A0] mt-1">
                       {new Date(movie.created_at).toLocaleDateString('fr-FR', {
                         day: 'numeric',
                         month: 'short',
@@ -213,7 +199,7 @@ export default function WatchlistPage() {
                 <button
                   onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
-                  className="px-4 py-2 border-2 border-gray-200 rounded-lg hover:border-black transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-gray-200"
+                  className="px-4 py-2 border border-[#E4DED2] rounded-lg hover:border-[#F95C4B] transition-all disabled:opacity-50 disabled:cursor-not-allowed text-[#0D0D0D]"
                 >
                   <ChevronLeft className="w-5 h-5" />
                 </button>
@@ -222,10 +208,10 @@ export default function WatchlistPage() {
                   <button
                     key={page}
                     onClick={() => setCurrentPage(page)}
-                    className={`px-4 py-2 border-2 rounded-lg transition-all ${
+                    className={`px-4 py-2 border rounded-lg transition-all ${
                       currentPage === page
-                        ? 'bg-black text-white border-black'
-                        : 'border-gray-200 hover:border-black'
+                        ? 'bg-[#F95C4B] text-[#F6F4F1] border-[#F95C4B]'
+                        : 'border-[#E4DED2] text-[#0D0D0D] hover:border-[#F95C4B]'
                     }`}
                   >
                     {page}
@@ -235,7 +221,7 @@ export default function WatchlistPage() {
                 <button
                   onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(filteredMovies.length / moviesPerPage)))}
                   disabled={currentPage === Math.ceil(filteredMovies.length / moviesPerPage)}
-                  className="px-4 py-2 border-2 border-gray-200 rounded-lg hover:border-black transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-gray-200"
+                  className="px-4 py-2 border border-[#E4DED2] rounded-lg hover:border-[#F95C4B] transition-all disabled:opacity-50 disabled:cursor-not-allowed text-[#0D0D0D]"
                 >
                   <ChevronRight className="w-5 h-5" />
                 </button>
@@ -245,7 +231,6 @@ export default function WatchlistPage() {
         )}
       </div>
 
-      {/* Movie Modal */}
       {selectedMovie && (
         <MovieModal
           movie={selectedMovie}

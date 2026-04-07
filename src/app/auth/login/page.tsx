@@ -30,45 +30,45 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[#E4DED2] flex items-center justify-center px-4">
       <div className="max-w-md w-full">
         {/* Logo */}
         <div className="flex justify-center mb-8">
-          <div className="bg-black p-4 rounded-2xl">
-            <Film className="w-10 h-10 text-white" />
+          <div className="bg-[#0D0D0D] p-4 rounded-2xl">
+            <Film className="w-10 h-10 text-[#F6F4F1]" />
           </div>
         </div>
 
         {/* Card */}
-        <div className="bg-white border-2 border-gray-200 rounded-2xl p-8 shadow-lg">
-          <h1 className="text-2xl font-bold text-black mb-2 text-center">
+        <div className="bg-[#F6F4F1] border border-[#E4DED2] rounded-2xl p-8 shadow-[0_8px_24px_rgba(13,13,13,0.12)]">
+          <h1 className="text-2xl font-bold text-[#0D0D0D] mb-2 text-center">
             Connexion
           </h1>
-          <p className="text-gray-600 text-center mb-6">
+          <p className="text-[#B8B0A0] text-center mb-6">
             Accédez à votre compte SeenIt
           </p>
 
           {/* Error Message */}
           {error && (
-            <div className="mb-4 p-4 bg-red-50 border-2 border-red-200 rounded-lg flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-red-800">{error}</p>
+            <div className="mb-4 p-4 bg-[#FDE8E5] border border-[#F95C4B] rounded-lg flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-[#C7392A] shrink-0 mt-0.5" />
+              <p className="text-sm text-[#C7392A]">{error}</p>
             </div>
           )}
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-[#0D0D0D] mb-2">
                 Email
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#B8B0A0]" />
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-white border-2 border-gray-200 rounded-lg text-black placeholder-gray-400 focus:outline-none focus:border-black transition-colors"
+                  className="w-full pl-10 pr-4 py-3 bg-[#F6F4F1] border border-[#B8B0A0] rounded-lg text-[#0D0D0D] placeholder-[#B8B0A0] focus:outline-none focus:border-2 focus:border-[#F95C4B] transition-colors h-11"
                   placeholder="vous@exemple.com"
                   required
                 />
@@ -76,16 +76,16 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-[#0D0D0D] mb-2">
                 Mot de passe
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#B8B0A0]" />
                 <input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-white border-2 border-gray-200 rounded-lg text-black placeholder-gray-400 focus:outline-none focus:border-black transition-colors"
+                  className="w-full pl-10 pr-4 py-3 bg-[#F6F4F1] border border-[#B8B0A0] rounded-lg text-[#0D0D0D] placeholder-[#B8B0A0] focus:outline-none focus:border-2 focus:border-[#F95C4B] transition-colors h-11"
                   placeholder="••••••••"
                   required
                 />
@@ -95,7 +95,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-black text-white rounded-lg font-semibold hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-3 bg-[#F95C4B] text-[#F6F4F1] rounded-lg font-semibold hover:bg-[#C7392A] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Connexion...' : 'Se connecter'}
             </button>
@@ -104,19 +104,19 @@ export default function LoginPage() {
           {/* Divider */}
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-200"></div>
+              <div className="w-full border-t border-[#E4DED2]"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">ou</span>
+              <span className="px-2 bg-[#F6F4F1] text-[#B8B0A0]">ou</span>
             </div>
           </div>
 
           {/* Sign up link */}
-          <p className="text-center text-gray-600 text-sm">
+          <p className="text-center text-[#B8B0A0] text-sm">
             Pas encore de compte ?{' '}
             <Link
               href="/auth/signup"
-              className="text-black hover:underline font-semibold"
+              className="text-[#C7392A] hover:underline font-semibold"
             >
               S'inscrire
             </Link>
@@ -125,7 +125,7 @@ export default function LoginPage() {
 
         {/* Back to home */}
         <div className="mt-6 text-center">
-          <Link href="/" className="text-gray-500 hover:text-gray-700 text-sm">
+          <Link href="/" className="text-[#B8B0A0] hover:text-[#0D0D0D] text-sm">
             ← Retour à l'accueil
           </Link>
         </div>
