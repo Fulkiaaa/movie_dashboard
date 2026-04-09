@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useAuth } from '@/contexts/AuthContext';
+import Link from "next/link";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   Film,
   Menu,
@@ -11,8 +11,8 @@ import {
   Heart,
   ChevronDown,
   Home,
-} from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 export default function Header() {
   const { user, signOut, loading } = useAuth();
@@ -25,7 +25,7 @@ export default function Header() {
       await signOut();
       setShowDropdown(false);
     } catch (error) {
-      console.error('Error signing out:', error);
+      console.error("Error signing out:", error);
     }
   };
 
@@ -41,14 +41,14 @@ export default function Header() {
     };
 
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setShowDropdown(false);
+      if (e.key === "Escape") setShowDropdown(false);
     };
 
-    document.addEventListener('mousedown', onClick);
-    document.addEventListener('keydown', onKeyDown);
+    document.addEventListener("mousedown", onClick);
+    document.addEventListener("keydown", onKeyDown);
     return () => {
-      document.removeEventListener('mousedown', onClick);
-      document.removeEventListener('keydown', onKeyDown);
+      document.removeEventListener("mousedown", onClick);
+      document.removeEventListener("keydown", onKeyDown);
     };
   }, [showDropdown]);
 
@@ -57,27 +57,23 @@ export default function Header() {
     if (!showMobileMenu) return;
 
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setShowMobileMenu(false);
+      if (e.key === "Escape") setShowMobileMenu(false);
     };
 
-    document.addEventListener('keydown', onKeyDown);
+    document.addEventListener("keydown", onKeyDown);
     return () => {
-      document.removeEventListener('keydown', onKeyDown);
+      document.removeEventListener("keydown", onKeyDown);
     };
   }, [showMobileMenu]);
 
-  const username =
-    user?.email?.split('@')[0]?.slice(0, 18) ?? 'Compte';
+  const username = user?.email?.split("@")[0]?.slice(0, 18) ?? "Compte";
 
   return (
-    <header className="sticky top-0 z-50 bg-[#F6F4F1]/90 backdrop-blur border-b border-[#E4DED2]">
+    <header className="sticky top-0 z-50 glass-warm border-b border-[#E4DED2]/60">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="bg-[#0D0D0D] p-2 rounded-xl group-hover:scale-105 transition-transform">
-              <Film className="w-6 h-6 text-[#F6F4F1]" />
-            </div>
             <span className="text-xl font-bold text-[#0D0D0D] tracking-tight">
               SeenIt
             </span>
@@ -127,11 +123,11 @@ export default function Header() {
                   aria-haspopup="menu"
                   aria-expanded={showDropdown}
                   className={[
-                    'inline-flex items-center gap-2 pl-2 pr-3 py-2 rounded-xl',
-                    'bg-[#E4DED2] hover:bg-[#EBE7E0] transition-colors',
-                    'border border-transparent hover:border-[#E4DED2]',
-                    'focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0D0D0D]/20',
-                  ].join(' ')}
+                    "inline-flex items-center gap-2 pl-2 pr-3 py-2 rounded-xl",
+                    "bg-[#E4DED2] hover:bg-[#EBE7E0] transition-colors",
+                    "border border-transparent hover:border-[#E4DED2]",
+                    "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0D0D0D]/20",
+                  ].join(" ")}
                 >
                   {/* Avatar simple */}
                   <span className="grid place-items-center w-7 h-7 rounded-lg bg-[#F6F4F1] border border-[#E4DED2]">
@@ -144,9 +140,9 @@ export default function Header() {
 
                   <ChevronDown
                     className={[
-                      'w-4 h-4 text-[#B8B0A0] transition-transform',
-                      showDropdown ? 'rotate-180' : '',
-                    ].join(' ')}
+                      "w-4 h-4 text-[#B8B0A0] transition-transform",
+                      showDropdown ? "rotate-180" : "",
+                    ].join(" ")}
                   />
                 </button>
 
@@ -155,14 +151,15 @@ export default function Header() {
                   <div
                     role="menu"
                     className={[
-                      'absolute right-0 mt-2 w-56 overflow-hidden',
-                      'rounded-xl border border-[#E4DED2] bg-[#F6F4F1]',
-                      'shadow-[0_8px_24px_rgba(13,13,13,0.12)]',
-                      'z-50',
-                    ].join(' ')}
+                      "absolute right-0 mt-2 w-56 overflow-hidden",
+                      "rounded-xl glass-warm",
+                      "z-50",
+                    ].join(" ")}
                   >
                     <div className="px-4 py-3 border-b border-[#E4DED2]">
-                      <p className="text-xs text-[#B8B0A0]">Connecté en tant que</p>
+                      <p className="text-xs text-[#B8B0A0]">
+                        Connecté en tant que
+                      </p>
                       <p className="text-sm font-medium text-[#0D0D0D] truncate">
                         {user.email}
                       </p>
@@ -173,10 +170,10 @@ export default function Header() {
                         href="/profile"
                         role="menuitem"
                         className={[
-                          'flex items-center gap-2 px-4 py-2.5 text-sm',
-                          'text-[#0D0D0D] hover:bg-[#EBE7E0]',
-                          'transition-colors',
-                        ].join(' ')}
+                          "flex items-center gap-2 px-4 py-2.5 text-sm",
+                          "text-[#0D0D0D] hover:bg-[#EBE7E0]",
+                          "transition-colors",
+                        ].join(" ")}
                         onClick={() => setShowDropdown(false)}
                       >
                         <User className="w-4 h-4" />
@@ -188,10 +185,10 @@ export default function Header() {
                         role="menuitem"
                         onClick={handleSignOut}
                         className={[
-                          'w-full flex items-center gap-2 px-4 py-2.5 text-sm text-left',
-                          'text-[#C7392A] hover:bg-[#FDE8E5]',
-                          'transition-colors',
-                        ].join(' ')}
+                          "w-full flex items-center gap-2 px-4 py-2.5 text-sm text-left",
+                          "text-[#C7392A] hover:bg-[#FDE8E5]",
+                          "transition-colors",
+                        ].join(" ")}
                       >
                         <LogOut className="w-4 h-4" />
                         Se déconnecter

@@ -6,6 +6,9 @@ CREATE TABLE IF NOT EXISTS users (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   email VARCHAR(255) UNIQUE NOT NULL,
   password_hash TEXT NOT NULL,
+  gdpr_consent_date          TIMESTAMPTZ,
+  gdpr_restrict_processing   BOOLEAN DEFAULT FALSE NOT NULL,
+  gdpr_opt_out_automated     BOOLEAN DEFAULT FALSE NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );

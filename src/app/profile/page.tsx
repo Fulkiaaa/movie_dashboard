@@ -1,7 +1,7 @@
 'use client';
 
 import { useAuth } from '@/contexts/AuthContext';
-import { User, Mail, Calendar, Star, Heart, Film, X, Download } from 'lucide-react';
+import { User, Mail, Calendar, Star, Heart, Film, X, Download, Shield } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { moviesService, UserMovie } from '@/services/movies';
@@ -180,6 +180,14 @@ export default function ProfilePage() {
                     {exportingData ? 'Export en cours...' : 'Exporter mes données'}
                   </span>
                 </button>
+
+                <Link
+                  href="/profile/donnees"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#E4DED2] hover:bg-[#D6CFBF] text-[#0D0D0D] rounded-lg transition-all"
+                >
+                  <Shield className="w-4 h-4 text-[#F95C4B]" />
+                  <span className="text-sm font-medium">Mes données &amp; droits RGPD</span>
+                </Link>
 
                 <Link
                   href="/dashboard"

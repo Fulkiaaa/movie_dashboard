@@ -10,6 +10,7 @@ export default function SignUpPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [consent, setConsent] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -28,6 +29,11 @@ export default function SignUpPage() {
 
     if (password.length < 8) {
       setError('Le mot de passe doit contenir au moins 8 caractères');
+      return;
+    }
+
+    if (!consent) {
+      setError('Vous devez accepter la politique de confidentialité et les CGU pour créer un compte.');
       return;
     }
 
@@ -136,9 +142,30 @@ export default function SignUpPage() {
               </div>
             </div>
 
+            {/* Consentement RGPD */}
+            <label className="flex items-start gap-3 cursor-pointer group">
+              <input
+                type="checkbox"
+                checked={consent}
+                onChange={(e) => setConsent(e.target.checked)}
+                className="mt-1 w-4 h-4 accent-[#F95C4B] shrink-0"
+              />
+              <span className="text-xs text-[#B8B0A0] leading-relaxed">
+                J'ai lu et j'accepte la{' '}
+                <Link href="/legal/privacy" target="_blank" className="text-[#C7392A] underline hover:no-underline font-medium">
+                  politique de confidentialité
+                </Link>{' '}
+                et les{' '}
+                <Link href="/legal/terms" target="_blank" className="text-[#C7392A] underline hover:no-underline font-medium">
+                  conditions d'utilisation
+                </Link>
+                . Je consens au traitement de mes données personnelles pour le fonctionnement du service.
+              </span>
+            </label>
+
             <button
               type="submit"
-              disabled={loading || success}
+              disabled={loading || success || !consent}
               className="w-full py-3 bg-[#F95C4B] text-[#F6F4F1] rounded-lg font-semibold hover:bg-[#C7392A] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Inscription...' : success ? 'Compte créé !' : 'S\'inscrire'}
