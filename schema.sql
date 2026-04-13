@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS user_movies (
   poster_path VARCHAR(500),
   release_date VARCHAR(50),
   status VARCHAR(20) NOT NULL CHECK (status IN ('watched', 'watchlist')),
-  rating INTEGER CHECK (rating >= 1 AND rating <= 5),
+  rating NUMERIC(3,1) CHECK (rating >= 0 AND rating <= 5 AND MOD(rating * 2, 1) = 0),
   is_favorite BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),

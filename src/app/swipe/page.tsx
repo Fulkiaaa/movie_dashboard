@@ -2,6 +2,7 @@
 
 import { useAuth } from '@/contexts/AuthContext';
 import { Heart, X, Bookmark, Star, TrendingUp, Calendar, Film, Globe, Languages, Play, Sliders, Check } from 'lucide-react';
+import HalfStarRating from '@/components/HalfStarRating';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { tmdbService, Movie } from '@/services/tmdb';
@@ -1233,22 +1234,16 @@ export default function SwipePage() {
                     <div className="absolute inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center animate-in fade-in duration-300">
                       <div className="text-center px-4">
                         <p className="text-white text-base md:text-lg mb-4 md:mb-6">Votre note</p>
-                        <div className="flex gap-2 md:gap-4 mb-4 md:mb-6">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <button
-                              key={star}
-                              onClick={() => handleRatingClick(star)}
-                              className="transition-all hover:scale-125 active:scale-110"
-                            >
-                              <Star
-                                className={`w-10 h-10 md:w-12 md:h-12 ${
-                                  selectedRating && selectedRating >= star
-                                    ? 'text-[#D4A843] fill-[#D4A843]'
-                                    : 'text-white/40 hover:text-white/60'
-                                }`}
-                              />
-                            </button>
-                          ))}
+                        <div className="flex justify-center mb-4 md:mb-6">
+                          <HalfStarRating
+                            value={selectedRating}
+                            onChange={(rating) => {
+                              if (rating !== null) handleRatingClick(rating);
+                            }}
+                            variant="dark"
+                            starSize="w-10 h-10 md:w-12 md:h-12"
+                            showLabel={false}
+                          />
                         </div>
                         <button
                           onClick={() => handleAddWatched(false)}

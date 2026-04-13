@@ -403,15 +403,15 @@ export default function DashboardPage() {
             <div className="flex items-center justify-center py-12">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#F95C4B]"></div>
             </div>
-          ) : watchedMovies.filter(m => m.rating === 5).length === 0 ? (
+          ) : watchedMovies.filter(m => m.rating !== null && m.rating >= 4.5).length === 0 ? (
             <div className="text-center py-12">
               <Trophy className="w-16 h-16 text-[#B8B0A0] mx-auto mb-4" />
-              <p className="text-[#B8B0A0]">Aucun film noté 5 étoiles pour le moment</p>
+              <p className="text-[#B8B0A0]">Aucun film noté 4,5 étoiles ou plus pour le moment</p>
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
               {watchedMovies
-                .filter(m => m.rating === 5)
+                .filter(m => m.rating !== null && m.rating >= 4.5)
                 .slice(0, 6)
                 .map((movie) => (
                   <button

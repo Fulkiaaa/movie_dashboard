@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { X, Star, Eye, Clock, Calendar, Film as FilmIcon, Heart } from 'lucide-react';
+import HalfStarRating from '@/components/HalfStarRating';
 import { tmdbService, Movie, MovieDetails } from '@/services/tmdb';
 import { moviesService, UserMovie } from '@/services/movies';
 import { useAuth } from '@/contexts/AuthContext';
@@ -267,50 +268,34 @@ export default function MovieModal({ movie, onClose, onUpdate }: MovieModalProps
                 <label className="block text-xs md:text-sm font-medium text-[#0D0D0D] mb-1.5 md:mb-2">
                   Ma note
                 </label>
-                <div className="flex gap-1 md:gap-2">
-                  {[1, 2, 3, 4, 5].map((rating) => (
-                    <button
-                      key={rating}
-                      onClick={async () => {
-                        const newRating = rating === selectedRating ? null : rating;
-                        setSelectedRating(newRating);
-                        if (newRating !== null) {
-                          setSaving(true);
-                          try {
-                            const params = {
-                              tmdb_id: movie.id,
-                              media_type: movie.media_type,
-                              title: movie.title || movie.name || '',
-                              poster_path: movie.poster_path,
-                              release_date: movie.release_date || movie.first_air_date || null,
-                              status: 'watched' as const,
-                              rating: newRating,
-                            };
-                            const savedMovie = await moviesService.upsertMovie(params);
-                            setUserMovie(savedMovie);
-                            setStatus('watched');
-                            if (onUpdate) onUpdate();
-                          } catch (error) {
-                            console.error('Error saving rating:', error);
-                          } finally {
-                            setSaving(false);
-                          }
-                        }
-                      }}
-                      className={`w-8 h-8 md:w-10 md:h-10 rounded-lg border-2 transition-all active:scale-90 ${
-                        selectedRating && selectedRating >= rating
-                          ? 'bg-[#D4A843] text-[#F6F4F1] border-[#D4A843]'
-                          : 'bg-[#F6F4F1] text-[#B8B0A0] border-[#E4DED2] hover:border-[#D4A843]'
-                      }`}
-                    >
-                      <Star
-                        className={`w-4 h-4 md:w-5 md:h-5 mx-auto ${
-                          selectedRating && selectedRating >= rating ? 'fill-[#F6F4F1]' : ''
-                        }`}
-                      />
-                    </button>
-                  ))}
-                </div>
+                <HalfStarRating
+                  value={selectedRating}
+                  onChange={async (newRating) => {
+                    setSelectedRating(newRating);
+                    if (newRating !== null) {
+                      setSaving(true);
+                      try {
+                        const params = {
+                          tmdb_id: movie.id,
+                          media_type: movie.media_type,
+                          title: movie.title || movie.name || '',
+                          poster_path: movie.poster_path,
+                          release_date: movie.release_date || movie.first_air_date || null,
+                          status: 'watched' as const,
+                          rating: newRating,
+                        };
+                        const savedMovie = await moviesService.upsertMovie(params);
+                        setUserMovie(savedMovie);
+                        setStatus('watched');
+                        if (onUpdate) onUpdate();
+                      } catch (error) {
+                        console.error('Error saving rating:', error);
+                      } finally {
+                        setSaving(false);
+                      }
+                    }
+                  }}
+                />
               </div>
 
               <div className="grid grid-cols-2 gap-2">
