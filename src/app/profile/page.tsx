@@ -3,9 +3,11 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { User, Mail, Calendar, Star, Film, X, Download, Shield, Plus } from 'lucide-react';
 import Link from 'next/link';
+import FavoriteSearchModal from '@/components/FavoriteSearchModal';
 import { useState, useEffect } from 'react';
 import { moviesService, UserMovie } from '@/services/movies';
-import { tmdbService } from '@/services/tmdb';
+import { tmdbService, Movie } from '@/services/tmdb';
+import MovieModal from '@/components/MovieModal';
 import Image from 'next/image';
 
 export default function ProfilePage() {
@@ -14,6 +16,19 @@ export default function ProfilePage() {
   const [favoritesCount, setFavoritesCount] = useState(0);
   const [loadingFavorites, setLoadingFavorites] = useState(true);
   const [exportingData, setExportingData] = useState(false);
+
+  const handleMovieClick = async (movie: UserMovie) => {
+    try {
+      const details = movie.media_type === 'movie'
+        ? await tmdbService.getMovieDetails(movie.tmdb_id)
+        : await tmdbService.getTVDetails(movie.tmdb_id);
+      setSelectedMovie(details as Movie);
+    } catch (error) {
+      console.error('Error loading movie details:', error);
+    }
+  };
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
   useEffect(() => {
     if (user) {
@@ -111,6 +126,20 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-[#F6F4F1] py-4 md:py-8">
+      {selectedMovie && (
+        <MovieModal
+          movie={selectedMovie}
+          onClose={() => setSelectedMovie(null)}
+          onUpdate={loadFavorites}
+        />
+      )}
+      {showAddModal && (
+        <FavoriteSearchModal
+          currentCount={favoritesCount}
+          onClose={() => setShowAddModal(false)}
+          onFavoriteAdded={() => { loadFavorites(); }}
+        />
+      )}
       <div className="max-w-6xl mx-auto px-3 md:px-4 lg:px-8">
         {/* Header */}
         <div className="mb-6 md:mb-8">
@@ -215,13 +244,13 @@ export default function ProfilePage() {
                     {favoritesCount} / 10
                   </span>
                   {favoritesCount < 10 && (
-                    <Link
-                      href="/dashboard"
+                    <button
+                      onClick={() => setShowAddModal(true)}
                       className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0D0D0D] text-[#F6F4F1] rounded-lg hover:bg-[#2A2A2A] transition-all text-xs font-medium"
                     >
                       <Plus className="w-3.5 h-3.5" />
                       Ajouter
-                    </Link>
+                    </button>
                   )}
                 </div>
               </div>
@@ -264,7 +293,10 @@ export default function ProfilePage() {
                         </button>
 
                         {/* Movie Card */}
-                        <div className="aspect-2/3 bg-[#E4DED2] rounded-lg overflow-hidden border border-[#E4DED2] group-hover:border-[#F95C4B] transition-colors">
+                        <div
+                          className="aspect-2/3 bg-[#E4DED2] rounded-lg overflow-hidden border border-[#E4DED2] group-hover:border-[#F95C4B] transition-colors cursor-pointer"
+                          onClick={() => handleMovieClick(movie)}
+                        >
                           {movie.poster_path ? (
                             <Image
                               src={tmdbService.getImageUrl(movie.poster_path, 'w300')}
