@@ -1,8 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { Film, Star, TrendingUp, Calendar, Info } from "lucide-react";
-import { useState, useEffect } from "react";
+import {
+  Film,
+  Star,
+  TrendingUp,
+  Calendar,
+  Info,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+import { useState, useEffect, useRef } from "react";
 import SearchBar from "@/components/SearchBar";
 import MovieModal from "@/components/MovieModal";
 import Footer from "@/components/Footer";
@@ -151,27 +159,85 @@ export default function Home() {
     icon: React.ElementType;
     iconColor?: string;
     subtitle?: string;
-  }) => (
-    <section className="mb-10 md:mb-14">
-      <div className="px-4 md:px-6 lg:px-8 mb-4 md:mb-5">
-        <div className="flex items-center gap-2 mb-1.5">
-          <Icon className="w-5 h-5" style={{ color: iconColor }} />
-          <h2 className="text-lg md:text-xl font-bold text-[#0D0D0D]">
-            {title}
-          </h2>
+  }) => {
+    const scrollRef = useRef<HTMLDivElement>(null);
+    const [canScrollLeft, setCanScrollLeft] = useState(false);
+    const [canScrollRight, setCanScrollRight] = useState(true);
+
+    const updateArrows = () => {
+      const el = scrollRef.current;
+      if (!el) return;
+      setCanScrollLeft(el.scrollLeft > 8);
+      setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 8);
+    };
+
+    const scroll = (direction: "left" | "right") => {
+      const el = scrollRef.current;
+      if (!el) return;
+      el.scrollBy({
+        left: direction === "right" ? 520 : -520,
+        behavior: "smooth",
+      });
+    };
+
+    return (
+      <section className="mb-10 md:mb-14">
+        <div className="px-4 md:px-6 lg:px-8 mb-4 md:mb-5">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="flex items-center gap-2 mb-1.5">
+                <Icon className="w-5 h-5" style={{ color: iconColor }} />
+                <h2 className="text-lg md:text-xl font-bold text-[#0D0D0D]">
+                  {title}
+                </h2>
+              </div>
+              <div className="w-8 h-0.5 rounded-full bg-[#F95C4B]" />
+              {subtitle && (
+                <p className="text-sm text-[#B8B0A0] mt-1.5">{subtitle}</p>
+              )}
+            </div>
+            <div className="flex items-center gap-1.5 shrink-0">
+              <button
+                onClick={() => scroll("left")}
+                disabled={!canScrollLeft}
+                aria-label="Précédent"
+                className="w-8 h-8 flex items-center justify-center rounded-full border border-[#E4DED2]
+                           bg-[#F6F4F1] text-[#0D0D0D] transition-all
+                           hover:bg-[#EBE7E0] hover:border-[#B8B0A0]
+                           disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => scroll("right")}
+                disabled={!canScrollRight}
+                aria-label="Suivant"
+                className="w-8 h-8 flex items-center justify-center rounded-full border border-[#E4DED2]
+                           bg-[#F6F4F1] text-[#0D0D0D] transition-all
+                           hover:bg-[#EBE7E0] hover:border-[#B8B0A0]
+                           disabled:opacity-30 disabled:cursor-not-allowed"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
         </div>
-        <div className="w-8 h-0.5 rounded-full bg-[#F95C4B]" />
-        {subtitle && (
-          <p className="text-sm text-[#B8B0A0] mt-1.5">{subtitle}</p>
-        )}
-      </div>
-      <div className="flex gap-3 md:gap-4 overflow-x-auto pb-3 px-4 md:px-6 lg:px-8 scrollbar-hide">
-        {movies.map((movie) => (
-          <MovieCard key={movie.id} movie={movie} />
-        ))}
-      </div>
-    </section>
-  );
+        <div
+          ref={scrollRef}
+          onScroll={updateArrows}
+          className="flex gap-3 md:gap-4 overflow-x-auto pb-3 scrollbar-hide"
+        >
+          {/* Spacer gauche — plus fiable que padding-left sur un conteneur overflow */}
+          <div className="shrink-0 w-4 md:w-6 lg:w-8" aria-hidden="true" />
+          {movies.map((movie) => (
+            <MovieCard key={movie.id} movie={movie} />
+          ))}
+          {/* Spacer droit symétrique */}
+          <div className="shrink-0 w-4 md:w-6 lg:w-8" aria-hidden="true" />
+        </div>
+      </section>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-[#F6F4F1]">
