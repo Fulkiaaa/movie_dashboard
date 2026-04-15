@@ -11,6 +11,7 @@ import {
   Heart,
   ChevronDown,
   Home,
+  GalleryHorizontal,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
@@ -99,7 +100,7 @@ export default function Header() {
               href="/swipe"
               className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-[#0D0D0D] hover:bg-[#EBE7E0] transition-colors"
             >
-              <Heart className="w-4 h-4" />
+              <GalleryHorizontal className="w-4 h-4" />
               Swipe
             </Link>
             <Link
