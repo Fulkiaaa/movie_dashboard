@@ -2,7 +2,7 @@
 
 import { useAuth } from "@/contexts/AuthContext";
 import {
-  Heart,
+  Eye,
   X,
   Bookmark,
   Star,
@@ -772,7 +772,7 @@ export default function SwipePage() {
     return (
       <div className="min-h-screen bg-[#F6F4F1] flex items-center justify-center">
         <div className="text-center">
-          <Heart className="w-16 h-16 text-[#B8B0A0] mx-auto mb-4" />
+          <Eye className="w-16 h-16 text-[#B8B0A0] mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-[#0D0D0D] mb-2">
             Connexion requise
           </h1>
@@ -1394,8 +1394,8 @@ export default function SwipePage() {
                         }`}
                       >
                         <div className="bg-[#F95C4B]/90 rounded-full p-4 shadow-2xl">
-                          <Heart
-                            className="w-12 h-12 text-white fill-white"
+                          <Eye
+                            className="w-12 h-12 text-white"
                             strokeWidth={3}
                           />
                         </div>
@@ -1477,7 +1477,7 @@ export default function SwipePage() {
                     className="group relative"
                   >
                     <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-[#F95C4B]/90 backdrop-blur-sm hover:bg-[#C7392A] flex items-center justify-center transition-all hover:scale-110 active:scale-95 disabled:opacity-30 shadow-lg">
-                      <Heart className="w-7 h-7 md:w-8 md:h-8 text-[#F6F4F1] fill-[#F6F4F1]" />
+                      <Eye className="w-7 h-7 md:w-8 md:h-8 text-[#F6F4F1]" />
                     </div>
                   </button>
                 </div>

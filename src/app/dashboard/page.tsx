@@ -1,7 +1,7 @@
 'use client';
 
 import { useAuth } from '@/contexts/AuthContext';
-import { Film, Clock, Star, Eye, List, Heart, BarChart3, Trophy, Percent } from 'lucide-react';
+import { Film, Clock, Star, Eye, List, BarChart3, Trophy, Percent } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import MovieModal from '@/components/MovieModal';
@@ -180,7 +180,7 @@ export default function DashboardPage() {
         )}
         {movie.is_favorite && (
           <div className="absolute top-2 left-2 bg-[#F95C4B] text-[#F6F4F1] rounded-full w-7 h-7 flex items-center justify-center">
-            <Heart className="w-4 h-4 fill-[#F6F4F1]" />
+            <Star className="w-4 h-4 fill-[#F6F4F1]" />
           </div>
         )}
       </div>

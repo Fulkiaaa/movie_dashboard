@@ -8,7 +8,6 @@ import {
   Clock,
   Calendar,
   Film as FilmIcon,
-  Heart,
 } from "lucide-react";
 import HalfStarRating from "@/components/HalfStarRating";
 import { tmdbService, Movie, MovieDetails } from "@/services/tmdb";
@@ -378,7 +377,7 @@ export default function MovieModal({
                         : "bg-[#E4DED2] text-[#0D0D0D] hover:bg-[#EBE7E0]"
                     } disabled:opacity-50`}
                   >
-                    <Heart
+                    <Star
                       className={`w-3.5 h-3.5 md:w-4 md:h-4 ${isFavorite ? "fill-[#F6F4F1]" : ""}`}
                     />
                     <span className="truncate">Favori</span>

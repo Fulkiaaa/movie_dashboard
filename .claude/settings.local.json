@@ -5,7 +5,11 @@
       "Bash(mkdir -p \"g:/Visual Studio Code Projets/movie_dashboard/src/app/api/movies/by-tmdb/[tmdb_id]\")",
       "Bash(mkdir -p \"g:/Visual Studio Code Projets/movie_dashboard/src/app/api/movies/[id]/favorite\")",
       "Bash(npm uninstall:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(sed -n '1393,1403p' \"g:/Visual Studio Code Projets/movie_dashboard/src/app/swipe/page.tsx\")",
+      "Bash(sed -n '1476,1485p' \"g:/Visual Studio Code Projets/movie_dashboard/src/app/swipe/page.tsx\")",
+      "Bash(sed -n '773,777p' \"g:/Visual Studio Code Projets/movie_dashboard/src/app/swipe/page.tsx\")",
+      "Bash(sed -n '844,848p' \"g:/Visual Studio Code Projets/movie_dashboard/src/app/swipe/page.tsx\")"
     ]
   }
 }

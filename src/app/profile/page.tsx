@@ -1,7 +1,7 @@
 'use client';
 
 import { useAuth } from '@/contexts/AuthContext';
-import { User, Mail, Calendar, Star, Heart, Film, X, Download, Shield } from 'lucide-react';
+import { User, Mail, Calendar, Star, Film, X, Download, Shield, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { moviesService, UserMovie } from '@/services/movies';
@@ -158,7 +158,7 @@ export default function ProfilePage() {
                 </div>
 
                 <div className="flex items-start gap-3 p-3 bg-[#E4DED2] rounded-lg">
-                  <Heart className="w-5 h-5 text-[#F95C4B] mt-0.5 fill-[#F95C4B]" />
+                  <Star className="w-5 h-5 text-[#D4A843] mt-0.5 fill-[#D4A843]" />
                   <div className="flex-1">
                     <p className="text-xs text-[#B8B0A0] mb-1">Favoris</p>
                     <p className="text-sm text-[#0D0D0D] font-medium">
@@ -204,15 +204,26 @@ export default function ProfilePage() {
             <div className="bg-[#F6F4F1] border border-[#E4DED2] rounded-2xl p-4 md:p-6 shadow-[0_1px_3px_rgba(13,13,13,0.06)]">
               <div className="flex items-center justify-between mb-4 md:mb-6">
                 <div className="flex items-center gap-2 md:gap-3">
-                  <Heart className="w-5 h-5 md:w-6 md:h-6 text-[#F95C4B] fill-[#F95C4B]" />
+                  <Star className="w-5 h-5 md:w-6 md:h-6 text-[#D4A843] fill-[#D4A843]" />
                   <div>
                     <h2 className="text-lg md:text-2xl font-bold text-[#0D0D0D]">Mes Favoris</h2>
                     <div className="w-8 h-0.5 bg-[#F95C4B] mt-1"></div>
                   </div>
                 </div>
-                <span className="text-xs md:text-sm text-[#B8B0A0]">
-                  {favoritesCount} / 10
-                </span>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs md:text-sm text-[#B8B0A0]">
+                    {favoritesCount} / 10
+                  </span>
+                  {favoritesCount < 10 && (
+                    <Link
+                      href="/dashboard"
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0D0D0D] text-[#F6F4F1] rounded-lg hover:bg-[#2A2A2A] transition-all text-xs font-medium"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      Ajouter
+                    </Link>
+                  )}
+                </div>
               </div>
 
               {loadingFavorites ? (
