@@ -1,16 +1,36 @@
-'use client';
+"use client";
 
-import { useAuth } from '@/contexts/AuthContext';
-import { Heart, X, Bookmark, Star, TrendingUp, Calendar, Film, Globe, Languages, Play, Sliders, Check } from 'lucide-react';
-import HalfStarRating from '@/components/HalfStarRating';
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
-import { tmdbService, Movie } from '@/services/tmdb';
-import { moviesService } from '@/services/movies';
-import Image from 'next/image';
+import { useAuth } from "@/contexts/AuthContext";
+import {
+  Heart,
+  X,
+  Bookmark,
+  Star,
+  TrendingUp,
+  Calendar,
+  Film,
+  Globe,
+  Languages,
+  Play,
+  Sliders,
+  Check,
+} from "lucide-react";
+import HalfStarRating from "@/components/HalfStarRating";
+import SwipeTutorial from "@/components/SwipeTutorial";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { tmdbService, Movie } from "@/services/tmdb";
+import { moviesService } from "@/services/movies";
+import Image from "next/image";
 
-type SwipeMode = 'selection' | 'swipe' | 'customFilter';
-type FilterType = 'popular' | 'topRated' | 'year' | 'genre' | 'trending' | 'custom';
+type SwipeMode = "selection" | "swipe" | "customFilter";
+type FilterType =
+  | "popular"
+  | "topRated"
+  | "year"
+  | "genre"
+  | "trending"
+  | "custom";
 
 interface CustomFilterParams {
   genres: number[];
@@ -32,19 +52,23 @@ interface SwipeFilter {
 
 export default function SwipePage() {
   const { user, loading } = useAuth();
-  const [mode, setMode] = useState<SwipeMode>('selection');
+  const [mode, setMode] = useState<SwipeMode>("selection");
   const [movies, setMovies] = useState<Movie[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loadingMovies, setLoadingMovies] = useState(false);
   const [showRating, setShowRating] = useState(false);
   const [selectedRating, setSelectedRating] = useState<number | null>(null);
-  const [excludedMovieIds, setExcludedMovieIds] = useState<Set<number>>(new Set());
-  const [swipeDirection, setSwipeDirection] = useState<'left' | 'right' | 'up' | null>(null);
+  const [excludedMovieIds, setExcludedMovieIds] = useState<Set<number>>(
+    new Set(),
+  );
+  const [swipeDirection, setSwipeDirection] = useState<
+    "left" | "right" | "up" | null
+  >(null);
   const [genres, setGenres] = useState<{ id: number; name: string }[]>([]);
   const [showYearMenu, setShowYearMenu] = useState(false);
   const [showGenreMenu, setShowGenreMenu] = useState(false);
   const [currentFilter, setCurrentFilter] = useState<SwipeFilter | null>(null);
-  
+
   // Custom filter states
   const [customFilter, setCustomFilter] = useState<CustomFilterParams>({
     genres: [],
@@ -52,20 +76,31 @@ export default function SwipePage() {
     countries: [],
     certifications: [],
     providers: [],
-    watchRegion: 'FR',
+    watchRegion: "FR",
   });
-  const [availableLanguages, setAvailableLanguages] = useState<{ iso_639_1: string; english_name: string }[]>([]);
-  const [availableCountries, setAvailableCountries] = useState<{ iso_3166_1: string; english_name: string }[]>([]);
-  const [availableProviders, setAvailableProviders] = useState<{ provider_id: number; provider_name: string; logo_path: string }[]>([]);
-  const [availableCertifications, setAvailableCertifications] = useState<{ certification: string }[]>([]);
-  
+  const [availableLanguages, setAvailableLanguages] = useState<
+    { iso_639_1: string; english_name: string }[]
+  >([]);
+  const [availableCountries, setAvailableCountries] = useState<
+    { iso_3166_1: string; english_name: string }[]
+  >([]);
+  const [availableProviders, setAvailableProviders] = useState<
+    { provider_id: number; provider_name: string; logo_path: string }[]
+  >([]);
+  const [availableCertifications, setAvailableCertifications] = useState<
+    { certification: string }[]
+  >([]);
+
   // Drag states
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-  
+
   // État pour éviter les vérifications multiples du même film
-  const [checkedMovieIds, setCheckedMovieIds] = useState<Set<number>>(new Set());
+  const [checkedMovieIds, setCheckedMovieIds] = useState<Set<number>>(
+    new Set(),
+  );
+  const [showTutorial, setShowTutorial] = useState(false);
 
   const currentMovie = movies[currentIndex];
 
@@ -159,29 +194,41 @@ export default function SwipePage() {
       handleDragEnd();
     };
 
-    document.addEventListener('mousemove', handleGlobalMouseMove);
-    document.addEventListener('mouseup', handleGlobalMouseUp);
+    document.addEventListener("mousemove", handleGlobalMouseMove);
+    document.addEventListener("mouseup", handleGlobalMouseUp);
 
     return () => {
-      document.removeEventListener('mousemove', handleGlobalMouseMove);
-      document.removeEventListener('mouseup', handleGlobalMouseUp);
+      document.removeEventListener("mousemove", handleGlobalMouseMove);
+      document.removeEventListener("mouseup", handleGlobalMouseUp);
     };
   }, [isDragging, dragStart, dragOffset]);
 
+  // Show tutorial on first swipe session
+  useEffect(() => {
+    if (mode === "swipe" && !loadingMovies && movies.length > 0) {
+      if (
+        typeof window !== "undefined" &&
+        !localStorage.getItem("swipe_tutorial_seen")
+      ) {
+        setShowTutorial(true);
+      }
+    }
+  }, [mode, loadingMovies, movies.length]);
+
   // Prevent body scroll when in swipe mode
   useEffect(() => {
-    if (mode === 'swipe') {
+    if (mode === "swipe") {
       // Prevent scrolling and pull-to-refresh on mobile
-      document.body.style.overflow = 'hidden';
-      document.body.style.position = 'fixed';
-      document.body.style.width = '100%';
-      document.body.style.height = '100%';
-      
+      document.body.style.overflow = "hidden";
+      document.body.style.position = "fixed";
+      document.body.style.width = "100%";
+      document.body.style.height = "100%";
+
       return () => {
-        document.body.style.overflow = '';
-        document.body.style.position = '';
-        document.body.style.width = '';
-        document.body.style.height = '';
+        document.body.style.overflow = "";
+        document.body.style.position = "";
+        document.body.style.width = "";
+        document.body.style.height = "";
       };
     }
   }, [mode]);
@@ -190,24 +237,40 @@ export default function SwipePage() {
   useEffect(() => {
     const loadFilterOptions = async () => {
       try {
-        const [movieGenres, tvGenres, languages, countries, providers, certifications] = await Promise.all([
+        const [
+          movieGenres,
+          tvGenres,
+          languages,
+          countries,
+          providers,
+          certifications,
+        ] = await Promise.all([
           tmdbService.getMovieGenres(),
           tmdbService.getTVGenres(),
           tmdbService.getLanguages(),
           tmdbService.getCountries(),
-          tmdbService.getWatchProviders('FR'),
+          tmdbService.getWatchProviders("FR"),
           tmdbService.getMovieCertifications(),
         ]);
-        
+
         // Combiner et dédupliquer les genres
         const allGenres = [...movieGenres, ...tvGenres];
         const uniqueGenres = Array.from(
-          new Map(allGenres.map(g => [g.id, g])).values()
+          new Map(allGenres.map((g) => [g.id, g])).values(),
         );
         setGenres(uniqueGenres.sort((a, b) => a.name.localeCompare(b.name)));
-        
+
         // Langues populaires en priorité
-        const popularLanguages = ['fr', 'en', 'es', 'de', 'it', 'ja', 'ko', 'zh'];
+        const popularLanguages = [
+          "fr",
+          "en",
+          "es",
+          "de",
+          "it",
+          "ja",
+          "ko",
+          "zh",
+        ];
         const sortedLanguages = languages.sort((a, b) => {
           const aIndex = popularLanguages.indexOf(a.iso_639_1);
           const bIndex = popularLanguages.indexOf(b.iso_639_1);
@@ -217,18 +280,22 @@ export default function SwipePage() {
           return a.english_name.localeCompare(b.english_name);
         });
         setAvailableLanguages(sortedLanguages);
-        
+
         // Pays
-        setAvailableCountries(countries.sort((a, b) => a.english_name.localeCompare(b.english_name)));
-        
+        setAvailableCountries(
+          countries.sort((a, b) =>
+            a.english_name.localeCompare(b.english_name),
+          ),
+        );
+
         // Providers
         setAvailableProviders(providers.results || []);
-        
+
         // Certifications françaises
         const frCerts = certifications.certifications?.FR || [];
         setAvailableCertifications(frCerts);
       } catch (error) {
-        console.error('Error loading filter options:', error);
+        console.error("Error loading filter options:", error);
       }
     };
 
@@ -238,24 +305,26 @@ export default function SwipePage() {
   // Vérifier que le film actuel n'est pas déjà dans la base de données
   useEffect(() => {
     const checkCurrentMovie = async () => {
-      if (!currentMovie || mode !== 'swipe') return;
-      
+      if (!currentMovie || mode !== "swipe") return;
+
       // Éviter de vérifier le même film plusieurs fois
       if (checkedMovieIds.has(currentMovie.id)) return;
 
       try {
         const existingMovie = await moviesService.getMovieByTmdbId(
           currentMovie.id,
-          currentMovie.media_type || 'movie'
+          currentMovie.media_type || "movie",
         );
 
         // Marquer ce film comme vérifié
-        setCheckedMovieIds(prev => new Set([...prev, currentMovie.id]));
+        setCheckedMovieIds((prev) => new Set([...prev, currentMovie.id]));
 
         // Si le film existe déjà (watchlist ou watched), passer au suivant
         if (existingMovie) {
-          console.log(`Film déjà présent détecté: ${currentMovie.title || currentMovie.name}, status: ${existingMovie.status}`);
-          setExcludedMovieIds(prev => new Set([...prev, currentMovie.id]));
+          console.log(
+            `Film déjà présent détecté: ${currentMovie.title || currentMovie.name}, status: ${existingMovie.status}`,
+          );
+          setExcludedMovieIds((prev) => new Set([...prev, currentMovie.id]));
           const nextIndex = currentIndex + 1;
           if (nextIndex < movies.length) {
             setCurrentIndex(nextIndex);
@@ -266,15 +335,17 @@ export default function SwipePage() {
         // Vérifier aussi dans les skippés
         const skippedIds = await moviesService.getSkippedMovieIds();
         if (skippedIds.includes(currentMovie.id)) {
-          console.log(`Film skippé détecté: ${currentMovie.title || currentMovie.name}`);
-          setExcludedMovieIds(prev => new Set([...prev, currentMovie.id]));
+          console.log(
+            `Film skippé détecté: ${currentMovie.title || currentMovie.name}`,
+          );
+          setExcludedMovieIds((prev) => new Set([...prev, currentMovie.id]));
           const nextIndex = currentIndex + 1;
           if (nextIndex < movies.length) {
             setCurrentIndex(nextIndex);
           }
         }
       } catch (error) {
-        console.error('Error checking current movie:', error);
+        console.error("Error checking current movie:", error);
       }
     };
 
@@ -287,9 +358,9 @@ export default function SwipePage() {
 
     try {
       setLoadingMovies(true);
-      setMode('swipe');
+      setMode("swipe");
       setCurrentFilter(filter); // Sauvegarder le filtre actuel
-      
+
       // Récupérer les films de l'utilisateur (vus et watchlist) pour les exclure
       const [userMovies, skippedIds] = await Promise.all([
         moviesService.getUserMovies(),
@@ -297,7 +368,7 @@ export default function SwipePage() {
       ]);
 
       const excludedIds = new Set([
-        ...userMovies.map(m => m.tmdb_id),
+        ...userMovies.map((m) => m.tmdb_id),
         ...skippedIds,
       ]);
       setExcludedMovieIds(excludedIds);
@@ -306,60 +377,66 @@ export default function SwipePage() {
 
       // Charger différentes catégories selon le filtre
       switch (filter.type) {
-        case 'popular':
+        case "popular":
           const [popularMovies, popularTV] = await Promise.all([
             tmdbService.getPopularMovies(1),
             tmdbService.getPopularTV(1),
           ]);
           allMovies = [
-            ...popularMovies.results.map(m => ({ ...m, media_type: 'movie' as const })),
-            ...popularTV.results.map(m => ({ ...m, media_type: 'tv' as const})),
+            ...popularMovies.results.map((m) => ({
+              ...m,
+              media_type: "movie" as const,
+            })),
+            ...popularTV.results.map((m) => ({
+              ...m,
+              media_type: "tv" as const,
+            })),
           ];
           break;
 
-        case 'topRated':
+        case "topRated":
           const [topRatedMovies, topRatedTV] = await Promise.all([
             tmdbService.getTopRatedMovies(1),
             tmdbService.getTopRatedTV(1),
           ]);
           allMovies = [
-            ...topRatedMovies.results.map(m => ({ ...m, media_type: 'movie' as const })),
-            ...topRatedTV.results.map(m => ({ ...m, media_type: 'tv' as const })),
+            ...topRatedMovies.results.map((m) => ({
+              ...m,
+              media_type: "movie" as const,
+            })),
+            ...topRatedTV.results.map((m) => ({
+              ...m,
+              media_type: "tv" as const,
+            })),
           ];
           break;
 
-        case 'trending':
-          const trending = await tmdbService.getTrending('week', 1);
+        case "trending":
+          const trending = await tmdbService.getTrending("week", 1);
           allMovies = trending.results;
           break;
 
-        case 'year':
+        case "year":
           if (filter.year) {
             const [moviesByYear, tvByYear] = await Promise.all([
               tmdbService.discoverMovies({ year: filter.year, page: 1 }),
               tmdbService.discoverTV({ year: filter.year, page: 1 }),
             ]);
-            allMovies = [
-              ...moviesByYear.results,
-              ...tvByYear.results,
-            ];
+            allMovies = [...moviesByYear.results, ...tvByYear.results];
           }
           break;
 
-        case 'genre':
+        case "genre":
           if (filter.genre) {
             const [moviesByGenre, tvByGenre] = await Promise.all([
               tmdbService.discoverMovies({ genre: filter.genre, page: 1 }),
               tmdbService.discoverTV({ genre: filter.genre, page: 1 }),
             ]);
-            allMovies = [
-              ...moviesByGenre.results,
-              ...tvByGenre.results,
-            ];
+            allMovies = [...moviesByGenre.results, ...tvByGenre.results];
           }
           break;
 
-        case 'custom':
+        case "custom":
           if (filter.customParams) {
             const params = filter.customParams;
             const discoverParams: any = {
@@ -388,12 +465,12 @@ export default function SwipePage() {
 
             if (params.certifications.length > 0) {
               discoverParams.certification = params.certifications[0];
-              discoverParams.certificationCountry = 'FR';
+              discoverParams.certificationCountry = "FR";
             }
 
             if (params.providers.length > 0) {
-              discoverParams.withWatchProviders = params.providers.join('|');
-              discoverParams.watchRegion = params.watchRegion || 'FR';
+              discoverParams.withWatchProviders = params.providers.join("|");
+              discoverParams.watchRegion = params.watchRegion || "FR";
             }
 
             const [customMovies, customTV] = await Promise.all([
@@ -409,27 +486,24 @@ export default function SwipePage() {
               }),
             ]);
 
-            allMovies = [
-              ...customMovies.results,
-              ...customTV.results,
-            ];
+            allMovies = [...customMovies.results, ...customTV.results];
           }
           break;
       }
 
       // Filtrer les doublons et les films déjà vus/watchlist/skippés
       const uniqueMovies = Array.from(
-        new Map(allMovies.map(m => [m.id, m])).values()
-      ).filter(m => !excludedIds.has(m.id));
+        new Map(allMovies.map((m) => [m.id, m])).values(),
+      ).filter((m) => !excludedIds.has(m.id));
 
       // Mélanger les films
       const shuffled = uniqueMovies.sort(() => Math.random() - 0.5);
-      
+
       setMovies(shuffled);
       setCurrentIndex(0);
       setCheckedMovieIds(new Set()); // Réinitialiser les films vérifiés
     } catch (error) {
-      console.error('Error loading movies:', error);
+      console.error("Error loading movies:", error);
     } finally {
       setLoadingMovies(false);
     }
@@ -447,7 +521,7 @@ export default function SwipePage() {
       ]);
 
       const refreshedExcludedIds = new Set([
-        ...userMovies.map(m => m.tmdb_id),
+        ...userMovies.map((m) => m.tmdb_id),
         ...skippedIds,
       ]);
       setExcludedMovieIds(refreshedExcludedIds);
@@ -457,76 +531,99 @@ export default function SwipePage() {
 
       // Charger la MÊME catégorie que le filtre initial
       switch (currentFilter.type) {
-        case 'popular':
+        case "popular":
           const [popularMovies, popularTV] = await Promise.all([
             tmdbService.getPopularMovies(nextPage),
             tmdbService.getPopularTV(nextPage),
           ]);
           newMovies = [
-            ...popularMovies.results.map(m => ({ ...m, media_type: 'movie' as const })),
-            ...popularTV.results.map(m => ({ ...m, media_type: 'tv' as const })),
+            ...popularMovies.results.map((m) => ({
+              ...m,
+              media_type: "movie" as const,
+            })),
+            ...popularTV.results.map((m) => ({
+              ...m,
+              media_type: "tv" as const,
+            })),
           ];
           break;
 
-        case 'topRated':
+        case "topRated":
           const [topRatedMovies, topRatedTV] = await Promise.all([
             tmdbService.getTopRatedMovies(nextPage),
             tmdbService.getTopRatedTV(nextPage),
           ]);
           newMovies = [
-            ...topRatedMovies.results.map(m => ({ ...m, media_type: 'movie' as const })),
-            ...topRatedTV.results.map(m => ({ ...m, media_type: 'tv' as const })),
+            ...topRatedMovies.results.map((m) => ({
+              ...m,
+              media_type: "movie" as const,
+            })),
+            ...topRatedTV.results.map((m) => ({
+              ...m,
+              media_type: "tv" as const,
+            })),
           ];
           break;
 
-        case 'trending':
-          const trending = await tmdbService.getTrending('week', nextPage);
+        case "trending":
+          const trending = await tmdbService.getTrending("week", nextPage);
           newMovies = trending.results;
           break;
 
-        case 'year':
+        case "year":
           if (currentFilter.year) {
             const [moviesByYear, tvByYear] = await Promise.all([
-              tmdbService.discoverMovies({ year: currentFilter.year, page: nextPage }),
-              tmdbService.discoverTV({ year: currentFilter.year, page: nextPage }),
+              tmdbService.discoverMovies({
+                year: currentFilter.year,
+                page: nextPage,
+              }),
+              tmdbService.discoverTV({
+                year: currentFilter.year,
+                page: nextPage,
+              }),
             ]);
-            newMovies = [
-              ...moviesByYear.results,
-              ...tvByYear.results,
-            ];
+            newMovies = [...moviesByYear.results, ...tvByYear.results];
           }
           break;
 
-        case 'genre':
+        case "genre":
           if (currentFilter.genre) {
             const [moviesByGenre, tvByGenre] = await Promise.all([
-              tmdbService.discoverMovies({ genre: currentFilter.genre, page: nextPage }),
-              tmdbService.discoverTV({ genre: currentFilter.genre, page: nextPage }),
+              tmdbService.discoverMovies({
+                genre: currentFilter.genre,
+                page: nextPage,
+              }),
+              tmdbService.discoverTV({
+                genre: currentFilter.genre,
+                page: nextPage,
+              }),
             ]);
-            newMovies = [
-              ...moviesByGenre.results,
-              ...tvByGenre.results,
-            ];
+            newMovies = [...moviesByGenre.results, ...tvByGenre.results];
           }
           break;
 
-        case 'custom':
+        case "custom":
           if (currentFilter.customParams) {
             const params = currentFilter.customParams;
             const discoverParams: any = { page: nextPage };
 
-            if (params.genres.length > 0) discoverParams.genre = params.genres[0];
-            if (params.releaseDateFrom) discoverParams.releaseDateGte = params.releaseDateFrom;
-            if (params.releaseDateTo) discoverParams.releaseDateLte = params.releaseDateTo;
-            if (params.languages.length > 0) discoverParams.language = params.languages[0];
-            if (params.countries.length > 0) discoverParams.region = params.countries[0];
+            if (params.genres.length > 0)
+              discoverParams.genre = params.genres[0];
+            if (params.releaseDateFrom)
+              discoverParams.releaseDateGte = params.releaseDateFrom;
+            if (params.releaseDateTo)
+              discoverParams.releaseDateLte = params.releaseDateTo;
+            if (params.languages.length > 0)
+              discoverParams.language = params.languages[0];
+            if (params.countries.length > 0)
+              discoverParams.region = params.countries[0];
             if (params.certifications.length > 0) {
               discoverParams.certification = params.certifications[0];
-              discoverParams.certificationCountry = 'FR';
+              discoverParams.certificationCountry = "FR";
             }
             if (params.providers.length > 0) {
-              discoverParams.withWatchProviders = params.providers.join('|');
-              discoverParams.watchRegion = params.watchRegion || 'FR';
+              discoverParams.withWatchProviders = params.providers.join("|");
+              discoverParams.watchRegion = params.watchRegion || "FR";
             }
 
             const [customMovies, customTV] = await Promise.all([
@@ -542,22 +639,19 @@ export default function SwipePage() {
               }),
             ]);
 
-            newMovies = [
-              ...customMovies.results,
-              ...customTV.results,
-            ];
+            newMovies = [...customMovies.results, ...customTV.results];
           }
           break;
       }
 
       const uniqueNewMovies = Array.from(
-        new Map(newMovies.map(m => [m.id, m])).values()
-      ).filter(m => !refreshedExcludedIds.has(m.id));
+        new Map(newMovies.map((m) => [m.id, m])).values(),
+      ).filter((m) => !refreshedExcludedIds.has(m.id));
 
       const shuffled = uniqueNewMovies.sort(() => Math.random() - 0.5);
-      setMovies(prev => [...prev, ...shuffled]);
+      setMovies((prev) => [...prev, ...shuffled]);
     } catch (error) {
-      console.error('Error loading more movies:', error);
+      console.error("Error loading more movies:", error);
     }
   };
 
@@ -565,22 +659,22 @@ export default function SwipePage() {
     if (!currentMovie) return;
 
     try {
-      setSwipeDirection('left');
+      setSwipeDirection("left");
 
       // Ajouter à la liste des films skippés
       await moviesService.addSkippedMovie(
         currentMovie.id,
-        currentMovie.media_type || 'movie'
+        currentMovie.media_type || "movie",
       );
 
-      setExcludedMovieIds(prev => new Set([...prev, currentMovie.id]));
-      
+      setExcludedMovieIds((prev) => new Set([...prev, currentMovie.id]));
+
       setTimeout(() => {
         moveToNext();
         setSwipeDirection(null);
       }, 300);
     } catch (error) {
-      console.error('Error skipping movie:', error);
+      console.error("Error skipping movie:", error);
       setSwipeDirection(null);
     }
   };
@@ -593,19 +687,20 @@ export default function SwipePage() {
     if (!currentMovie) return;
 
     try {
-      setSwipeDirection('up');
+      setSwipeDirection("up");
 
       await moviesService.addMovie({
         tmdb_id: currentMovie.id,
-        media_type: currentMovie.media_type || 'movie',
-        title: currentMovie.title || currentMovie.name || '',
+        media_type: currentMovie.media_type || "movie",
+        title: currentMovie.title || currentMovie.name || "",
         poster_path: currentMovie.poster_path,
-        release_date: currentMovie.release_date || currentMovie.first_air_date || null,
-        status: 'watchlist',
+        release_date:
+          currentMovie.release_date || currentMovie.first_air_date || null,
+        status: "watchlist",
       });
 
-      setExcludedMovieIds(prev => new Set([...prev, currentMovie.id]));
-      
+      setExcludedMovieIds((prev) => new Set([...prev, currentMovie.id]));
+
       setTimeout(() => {
         moveToNext();
         setSwipeDirection(null);
@@ -613,7 +708,7 @@ export default function SwipePage() {
         setSelectedRating(null);
       }, 300);
     } catch (error) {
-      console.error('Error adding to watchlist:', error);
+      console.error("Error adding to watchlist:", error);
       setSwipeDirection(null);
     }
   };
@@ -624,17 +719,18 @@ export default function SwipePage() {
     try {
       await moviesService.addMovie({
         tmdb_id: currentMovie.id,
-        media_type: currentMovie.media_type || 'movie',
-        title: currentMovie.title || currentMovie.name || '',
+        media_type: currentMovie.media_type || "movie",
+        title: currentMovie.title || currentMovie.name || "",
         poster_path: currentMovie.poster_path,
-        release_date: currentMovie.release_date || currentMovie.first_air_date || null,
-        status: 'watched',
+        release_date:
+          currentMovie.release_date || currentMovie.first_air_date || null,
+        status: "watched",
         rating: withRating && selectedRating ? selectedRating : null,
       });
 
-      setExcludedMovieIds(prev => new Set([...prev, currentMovie.id]));
-      setSwipeDirection('right');
-      
+      setExcludedMovieIds((prev) => new Set([...prev, currentMovie.id]));
+      setSwipeDirection("right");
+
       setTimeout(() => {
         moveToNext();
         setSwipeDirection(null);
@@ -642,14 +738,14 @@ export default function SwipePage() {
         setSelectedRating(null);
       }, 300);
     } catch (error) {
-      console.error('Error adding movie:', error);
+      console.error("Error adding movie:", error);
     }
   };
 
   const moveToNext = () => {
     const nextIndex = currentIndex + 1;
     setCurrentIndex(nextIndex);
-    
+
     // Load more movies if running low
     if (nextIndex >= movies.length - 5) {
       loadMoreMovies();
@@ -695,7 +791,7 @@ export default function SwipePage() {
   }
 
   // Selection Screen
-  if (mode === 'selection') {
+  if (mode === "selection") {
     const currentYear = new Date().getFullYear();
     const years = Array.from({ length: 10 }, (_, i) => currentYear - i);
 
@@ -715,43 +811,59 @@ export default function SwipePage() {
             {/* Custom Filter */}
             <div className="md:col-span-2">
               <button
-                onClick={() => setMode('customFilter')}
+                onClick={() => setMode("customFilter")}
                 className="group w-full p-4 md:p-8 bg-[#F6F4F1] rounded-xl md:rounded-2xl shadow-[0_1px_3px_rgba(13,13,13,0.06)] hover:shadow-[0_4px_12px_rgba(13,13,13,0.08)] transition-all border border-[#E4DED2] hover:border-[#F95C4B]"
               >
                 <Sliders className="w-10 h-10 md:w-12 md:h-12 text-[#0D0D0D] mb-3 md:mb-4 mx-auto" />
-                <h3 className="text-lg md:text-xl font-bold text-[#0D0D0D] mb-1 md:mb-2">Filtre personnalisé</h3>
-                <p className="text-[#B8B0A0] text-xs md:text-sm">Créez votre propre sélection sur mesure</p>
+                <h3 className="text-lg md:text-xl font-bold text-[#0D0D0D] mb-1 md:mb-2">
+                  Filtre personnalisé
+                </h3>
+                <p className="text-[#B8B0A0] text-xs md:text-sm">
+                  Créez votre propre sélection sur mesure
+                </p>
               </button>
             </div>
 
             {/* Popular */}
             <button
-              onClick={() => loadMoviesWithFilter({ type: 'popular' })}
+              onClick={() => loadMoviesWithFilter({ type: "popular" })}
               className="group p-4 md:p-8 bg-[#F6F4F1] rounded-xl md:rounded-2xl shadow-[0_1px_3px_rgba(13,13,13,0.06)] hover:shadow-[0_4px_12px_rgba(13,13,13,0.08)] transition-all border border-[#E4DED2] hover:border-[#F95C4B]"
             >
               <TrendingUp className="w-10 h-10 md:w-12 md:h-12 text-[#F95C4B] mb-3 md:mb-4" />
-              <h3 className="text-lg md:text-xl font-bold text-[#0D0D0D] mb-1 md:mb-2">Les plus populaires</h3>
-              <p className="text-[#B8B0A0] text-xs md:text-sm">Films et séries les plus regardés</p>
+              <h3 className="text-lg md:text-xl font-bold text-[#0D0D0D] mb-1 md:mb-2">
+                Les plus populaires
+              </h3>
+              <p className="text-[#B8B0A0] text-xs md:text-sm">
+                Films et séries les plus regardés
+              </p>
             </button>
 
             {/* Top Rated */}
             <button
-              onClick={() => loadMoviesWithFilter({ type: 'topRated' })}
+              onClick={() => loadMoviesWithFilter({ type: "topRated" })}
               className="group p-4 md:p-8 bg-[#F6F4F1] rounded-xl md:rounded-2xl shadow-[0_1px_3px_rgba(13,13,13,0.06)] hover:shadow-[0_4px_12px_rgba(13,13,13,0.08)] transition-all border border-[#E4DED2] hover:border-[#D4A843]"
             >
               <Star className="w-10 h-10 md:w-12 md:h-12 text-[#D4A843] mb-3 md:mb-4" />
-              <h3 className="text-lg md:text-xl font-bold text-[#0D0D0D] mb-1 md:mb-2">Les mieux notés</h3>
-              <p className="text-[#B8B0A0] text-xs md:text-sm">Les meilleurs selon les critiques</p>
+              <h3 className="text-lg md:text-xl font-bold text-[#0D0D0D] mb-1 md:mb-2">
+                Les mieux notés
+              </h3>
+              <p className="text-[#B8B0A0] text-xs md:text-sm">
+                Les meilleurs selon les critiques
+              </p>
             </button>
 
             {/* Trending */}
             <button
-              onClick={() => loadMoviesWithFilter({ type: 'trending' })}
+              onClick={() => loadMoviesWithFilter({ type: "trending" })}
               className="group p-4 md:p-8 bg-[#F6F4F1] rounded-xl md:rounded-2xl shadow-[0_1px_3px_rgba(13,13,13,0.06)] hover:shadow-[0_4px_12px_rgba(13,13,13,0.08)] transition-all border border-[#E4DED2] hover:border-[#F95C4B]"
             >
               <Play className="w-10 h-10 md:w-12 md:h-12 text-[#F95C4B] mb-3 md:mb-4" />
-              <h3 className="text-lg md:text-xl font-bold text-[#0D0D0D] mb-1 md:mb-2">Tendances</h3>
-              <p className="text-[#B8B0A0] text-xs md:text-sm">Ce qui cartonne en ce moment</p>
+              <h3 className="text-lg md:text-xl font-bold text-[#0D0D0D] mb-1 md:mb-2">
+                Tendances
+              </h3>
+              <p className="text-[#B8B0A0] text-xs md:text-sm">
+                Ce qui cartonne en ce moment
+              </p>
             </button>
 
             {/* By Year */}
@@ -764,8 +876,12 @@ export default function SwipePage() {
                 className="group w-full p-4 md:p-8 bg-[#F6F4F1] rounded-xl md:rounded-2xl shadow-[0_1px_3px_rgba(13,13,13,0.06)] hover:shadow-[0_4px_12px_rgba(13,13,13,0.08)] transition-all border border-[#E4DED2] hover:border-[#F95C4B]"
               >
                 <Calendar className="w-10 h-10 md:w-12 md:h-12 text-[#F95C4B] mb-3 md:mb-4" />
-                <h3 className="text-lg md:text-xl font-bold text-[#0D0D0D] mb-1 md:mb-2">Par année</h3>
-                <p className="text-[#B8B0A0] text-xs md:text-sm">Films et séries par période</p>
+                <h3 className="text-lg md:text-xl font-bold text-[#0D0D0D] mb-1 md:mb-2">
+                  Par année
+                </h3>
+                <p className="text-[#B8B0A0] text-xs md:text-sm">
+                  Films et séries par période
+                </p>
               </button>
 
               {showYearMenu && (
@@ -775,11 +891,11 @@ export default function SwipePage() {
                     onClick={() => setShowYearMenu(false)}
                   />
                   <div className="absolute top-full mt-2 w-full bg-[#F6F4F1] rounded-xl shadow-[0_8px_24px_rgba(13,13,13,0.12)] p-3 md:p-4 grid grid-cols-2 gap-2 z-20 max-h-80 overflow-y-auto border border-[#E4DED2]">
-                    {years.map(year => (
+                    {years.map((year) => (
                       <button
                         key={year}
                         onClick={() => {
-                          loadMoviesWithFilter({ type: 'year', year });
+                          loadMoviesWithFilter({ type: "year", year });
                           setShowYearMenu(false);
                         }}
                         className="px-3 md:px-4 py-2 md:py-2.5 hover:bg-[#EBE7E0] rounded-lg text-[#0D0D0D] font-semibold transition-colors text-sm md:text-base"
@@ -802,8 +918,12 @@ export default function SwipePage() {
                 className="group w-full p-4 md:p-8 bg-[#F6F4F1] rounded-xl md:rounded-2xl shadow-[0_1px_3px_rgba(13,13,13,0.06)] hover:shadow-[0_4px_12px_rgba(13,13,13,0.08)] transition-all border border-[#E4DED2] hover:border-[#F95C4B]"
               >
                 <Film className="w-10 h-10 md:w-12 md:h-12 text-[#F95C4B] mb-3 md:mb-4" />
-                <h3 className="text-lg md:text-xl font-bold text-[#0D0D0D] mb-1 md:mb-2">Par genre</h3>
-                <p className="text-[#B8B0A0] text-xs md:text-sm">Action, Comédie, Drame...</p>
+                <h3 className="text-lg md:text-xl font-bold text-[#0D0D0D] mb-1 md:mb-2">
+                  Par genre
+                </h3>
+                <p className="text-[#B8B0A0] text-xs md:text-sm">
+                  Action, Comédie, Drame...
+                </p>
               </button>
 
               {showGenreMenu && (
@@ -813,11 +933,14 @@ export default function SwipePage() {
                     onClick={() => setShowGenreMenu(false)}
                   />
                   <div className="absolute top-full mt-2 w-full bg-[#F6F4F1] rounded-xl shadow-[0_8px_24px_rgba(13,13,13,0.12)] p-3 md:p-4 grid grid-cols-2 md:grid-cols-3 gap-2 z-20 max-h-80 md:max-h-96 overflow-y-auto border border-[#E4DED2]">
-                    {genres.map(genre => (
+                    {genres.map((genre) => (
                       <button
                         key={genre.id}
                         onClick={() => {
-                          loadMoviesWithFilter({ type: 'genre', genre: genre.id });
+                          loadMoviesWithFilter({
+                            type: "genre",
+                            genre: genre.id,
+                          });
                           setShowGenreMenu(false);
                         }}
                         className="px-3 md:px-4 py-2 hover:bg-[#EBE7E0] rounded-lg text-[#0D0D0D] font-semibold transition-colors text-left text-sm md:text-base"
@@ -845,9 +968,11 @@ export default function SwipePage() {
   }
 
   // Custom Filter Configuration Screen
-  if (mode === 'customFilter') {
+  if (mode === "customFilter") {
     const toggleArrayItem = (array: any[], item: any) => {
-      return array.includes(item) ? array.filter(i => i !== item) : [...array, item];
+      return array.includes(item)
+        ? array.filter((i) => i !== item)
+        : [...array, item];
     };
 
     return (
@@ -855,14 +980,18 @@ export default function SwipePage() {
         <div className="max-w-4xl mx-auto pb-24">
           <div className="flex items-center gap-4 mb-8">
             <button
-              onClick={() => setMode('selection')}
+              onClick={() => setMode("selection")}
               className="p-2 hover:bg-[#EBE7E0] rounded-lg transition-colors text-[#0D0D0D]"
             >
               ← Retour
             </button>
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-[#0D0D0D]">Filtre personnalisé</h1>
-              <p className="text-sm text-[#B8B0A0]">Configurez vos critères de recherche</p>
+              <h1 className="text-2xl md:text-3xl font-bold text-[#0D0D0D]">
+                Filtre personnalisé
+              </h1>
+              <p className="text-sm text-[#B8B0A0]">
+                Configurez vos critères de recherche
+              </p>
             </div>
           </div>
 
@@ -873,20 +1002,24 @@ export default function SwipePage() {
               Genres
             </h3>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-              {genres.map(genre => (
+              {genres.map((genre) => (
                 <button
                   key={genre.id}
-                  onClick={() => setCustomFilter(prev => ({
-                    ...prev,
-                    genres: toggleArrayItem(prev.genres, genre.id),
-                  }))}
+                  onClick={() =>
+                    setCustomFilter((prev) => ({
+                      ...prev,
+                      genres: toggleArrayItem(prev.genres, genre.id),
+                    }))
+                  }
                   className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
                     customFilter.genres.includes(genre.id)
-                      ? 'bg-[#F95C4B] text-[#F6F4F1]'
-                      : 'bg-[#E4DED2] text-[#0D0D0D] hover:bg-[#EBE7E0]'
+                      ? "bg-[#F95C4B] text-[#F6F4F1]"
+                      : "bg-[#E4DED2] text-[#0D0D0D] hover:bg-[#EBE7E0]"
                   }`}
                 >
-                  {customFilter.genres.includes(genre.id) && <Check className="w-4 h-4 inline mr-1" />}
+                  {customFilter.genres.includes(genre.id) && (
+                    <Check className="w-4 h-4 inline mr-1" />
+                  )}
                   {genre.name}
                 </button>
               ))}
@@ -901,20 +1034,34 @@ export default function SwipePage() {
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-[#0D0D0D] mb-2">Du</label>
+                <label className="block text-sm font-medium text-[#0D0D0D] mb-2">
+                  Du
+                </label>
                 <input
                   type="date"
-                  value={customFilter.releaseDateFrom || ''}
-                  onChange={(e) => setCustomFilter(prev => ({ ...prev, releaseDateFrom: e.target.value }))}
+                  value={customFilter.releaseDateFrom || ""}
+                  onChange={(e) =>
+                    setCustomFilter((prev) => ({
+                      ...prev,
+                      releaseDateFrom: e.target.value,
+                    }))
+                  }
                   className="w-full px-4 py-2 bg-[#F6F4F1] border border-[#B8B0A0] rounded-lg focus:outline-none focus:border-2 focus:border-[#F95C4B] text-[#0D0D0D]"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-[#0D0D0D] mb-2">Au</label>
+                <label className="block text-sm font-medium text-[#0D0D0D] mb-2">
+                  Au
+                </label>
                 <input
                   type="date"
-                  value={customFilter.releaseDateTo || ''}
-                  onChange={(e) => setCustomFilter(prev => ({ ...prev, releaseDateTo: e.target.value }))}
+                  value={customFilter.releaseDateTo || ""}
+                  onChange={(e) =>
+                    setCustomFilter((prev) => ({
+                      ...prev,
+                      releaseDateTo: e.target.value,
+                    }))
+                  }
                   className="w-full px-4 py-2 bg-[#F6F4F1] border border-[#B8B0A0] rounded-lg focus:outline-none focus:border-2 focus:border-[#F95C4B] text-[#0D0D0D]"
                 />
               </div>
@@ -928,20 +1075,27 @@ export default function SwipePage() {
               Langues originales
             </h3>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 max-h-48 overflow-y-auto">
-              {availableLanguages.slice(0, 20).map(lang => (
+              {availableLanguages.slice(0, 20).map((lang) => (
                 <button
                   key={lang.iso_639_1}
-                  onClick={() => setCustomFilter(prev => ({
-                    ...prev,
-                    languages: toggleArrayItem(prev.languages, lang.iso_639_1),
-                  }))}
+                  onClick={() =>
+                    setCustomFilter((prev) => ({
+                      ...prev,
+                      languages: toggleArrayItem(
+                        prev.languages,
+                        lang.iso_639_1,
+                      ),
+                    }))
+                  }
                   className={`px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
                     customFilter.languages.includes(lang.iso_639_1)
-                      ? 'bg-[#F95C4B] text-[#F6F4F1]'
-                      : 'bg-[#E4DED2] text-[#0D0D0D] hover:bg-[#EBE7E0]'
+                      ? "bg-[#F95C4B] text-[#F6F4F1]"
+                      : "bg-[#E4DED2] text-[#0D0D0D] hover:bg-[#EBE7E0]"
                   }`}
                 >
-                  {customFilter.languages.includes(lang.iso_639_1) && <Check className="w-3 h-3 inline mr-1" />}
+                  {customFilter.languages.includes(lang.iso_639_1) && (
+                    <Check className="w-3 h-3 inline mr-1" />
+                  )}
                   {lang.english_name}
                 </button>
               ))}
@@ -955,20 +1109,27 @@ export default function SwipePage() {
               Pays de production
             </h3>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 max-h-48 overflow-y-auto">
-              {availableCountries.slice(0, 30).map(country => (
+              {availableCountries.slice(0, 30).map((country) => (
                 <button
                   key={country.iso_3166_1}
-                  onClick={() => setCustomFilter(prev => ({
-                    ...prev,
-                    countries: toggleArrayItem(prev.countries, country.iso_3166_1),
-                  }))}
+                  onClick={() =>
+                    setCustomFilter((prev) => ({
+                      ...prev,
+                      countries: toggleArrayItem(
+                        prev.countries,
+                        country.iso_3166_1,
+                      ),
+                    }))
+                  }
                   className={`px-3 py-2 rounded-lg text-sm font-semibold transition-all ${
                     customFilter.countries.includes(country.iso_3166_1)
-                      ? 'bg-[#F95C4B] text-[#F6F4F1]'
-                      : 'bg-[#E4DED2] text-[#0D0D0D] hover:bg-[#EBE7E0]'
+                      ? "bg-[#F95C4B] text-[#F6F4F1]"
+                      : "bg-[#E4DED2] text-[#0D0D0D] hover:bg-[#EBE7E0]"
                   }`}
                 >
-                  {customFilter.countries.includes(country.iso_3166_1) && <Check className="w-3 h-3 inline mr-1" />}
+                  {customFilter.countries.includes(country.iso_3166_1) && (
+                    <Check className="w-3 h-3 inline mr-1" />
+                  )}
                   {country.english_name}
                 </button>
               ))}
@@ -983,20 +1144,27 @@ export default function SwipePage() {
                 Classification (France)
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                {availableCertifications.map(cert => (
+                {availableCertifications.map((cert) => (
                   <button
                     key={cert.certification}
-                    onClick={() => setCustomFilter(prev => ({
-                      ...prev,
-                      certifications: toggleArrayItem(prev.certifications, cert.certification),
-                    }))}
+                    onClick={() =>
+                      setCustomFilter((prev) => ({
+                        ...prev,
+                        certifications: toggleArrayItem(
+                          prev.certifications,
+                          cert.certification,
+                        ),
+                      }))
+                    }
                     className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${
                       customFilter.certifications.includes(cert.certification)
-                        ? 'bg-[#F95C4B] text-[#F6F4F1]'
-                        : 'bg-[#E4DED2] text-[#0D0D0D] hover:bg-[#EBE7E0]'
+                        ? "bg-[#F95C4B] text-[#F6F4F1]"
+                        : "bg-[#E4DED2] text-[#0D0D0D] hover:bg-[#EBE7E0]"
                     }`}
                   >
-                    {customFilter.certifications.includes(cert.certification) && <Check className="w-4 h-4 inline mr-1" />}
+                    {customFilter.certifications.includes(
+                      cert.certification,
+                    ) && <Check className="w-4 h-4 inline mr-1" />}
                     {cert.certification}
                   </button>
                 ))}
@@ -1012,17 +1180,22 @@ export default function SwipePage() {
                 Plateformes de streaming
               </h3>
               <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
-                {availableProviders.slice(0, 18).map(provider => (
+                {availableProviders.slice(0, 18).map((provider) => (
                   <button
                     key={provider.provider_id}
-                    onClick={() => setCustomFilter(prev => ({
-                      ...prev,
-                      providers: toggleArrayItem(prev.providers, provider.provider_id),
-                    }))}
+                    onClick={() =>
+                      setCustomFilter((prev) => ({
+                        ...prev,
+                        providers: toggleArrayItem(
+                          prev.providers,
+                          provider.provider_id,
+                        ),
+                      }))
+                    }
                     className={`relative p-3 rounded-lg transition-all ${
                       customFilter.providers.includes(provider.provider_id)
-                        ? 'ring-2 ring-[#F95C4B] bg-[#E4DED2]'
-                        : 'bg-[#E4DED2] hover:bg-[#EBE7E0]'
+                        ? "ring-2 ring-[#F95C4B] bg-[#E4DED2]"
+                        : "bg-[#E4DED2] hover:bg-[#EBE7E0]"
                     }`}
                     title={provider.provider_name}
                   >
@@ -1056,8 +1229,8 @@ export default function SwipePage() {
               <button
                 onClick={() => {
                   loadMoviesWithFilter({
-                    type: 'custom',
-                    customParams: customFilter
+                    type: "custom",
+                    customParams: customFilter,
                   });
                 }}
                 disabled={
@@ -1086,18 +1259,22 @@ export default function SwipePage() {
   // Swipe Screen
   return (
     <div className="min-h-screen overflow-hidden bg-[#E4DED2] flex items-start justify-center pt-6 md:pt-8 px-2 md:px-4 touch-none">
+      {showTutorial && (
+        <SwipeTutorial onDismiss={() => setShowTutorial(false)} />
+      )}
       <div className="w-full max-w-5xl">
         {/* Back button */}
         <div className="absolute top-2 md:top-4 left-2 md:left-4 z-20">
           <button
             onClick={() => {
-              setMode('selection');
+              setMode("selection");
               setMovies([]);
               setCurrentIndex(0);
             }}
             className="px-3 md:px-4 py-1.5 md:py-2 bg-[#F6F4F1] text-[#0D0D0D] rounded-lg hover:bg-[#EBE7E0] transition-colors shadow-[0_1px_3px_rgba(13,13,13,0.06)] text-sm md:text-base"
           >
-            ← <span className="hidden sm:inline">Changer de catégorie</span><span className="sm:hidden">Retour</span>
+            ← <span className="hidden sm:inline">Changer de catégorie</span>
+            <span className="sm:hidden">Retour</span>
           </button>
         </div>
 
@@ -1115,7 +1292,7 @@ export default function SwipePage() {
             </p>
             <button
               onClick={() => {
-                setMode('selection');
+                setMode("selection");
                 setMovies([]);
                 setCurrentIndex(0);
               }}
@@ -1129,31 +1306,31 @@ export default function SwipePage() {
             {/* Movie Card */}
             <div
               className={`relative w-[85vw] max-w-[340px] md:max-w-[420px] ${
-                swipeDirection === 'left'
-                  ? 'opacity-0 -translate-x-[200px] -rotate-45 scale-75 transition-all duration-500 ease-out'
-                  : swipeDirection === 'right'
-                  ? 'opacity-0 translate-x-[200px] rotate-45 scale-75 transition-all duration-500 ease-out'
-                  : swipeDirection === 'up'
-                  ? 'opacity-0 -translate-y-[200px] scale-75 transition-all duration-500 ease-out'
-                  : 'opacity-100'
+                swipeDirection === "left"
+                  ? "opacity-0 -translate-x-[200px] -rotate-45 scale-75 transition-all duration-500 ease-out"
+                  : swipeDirection === "right"
+                    ? "opacity-0 translate-x-[200px] rotate-45 scale-75 transition-all duration-500 ease-out"
+                    : swipeDirection === "up"
+                      ? "opacity-0 -translate-y-[200px] scale-75 transition-all duration-500 ease-out"
+                      : "opacity-100"
               }`}
               style={
                 isDragging
                   ? {
                       transform: `translate(${dragOffset.x}px, ${dragOffset.y}px) rotate(${dragOffset.x * 0.1}deg)`,
-                      transition: 'none',
+                      transition: "none",
                     }
                   : swipeDirection
-                  ? {}
-                  : dragOffset.x !== 0 || dragOffset.y !== 0
-                  ? {
-                      transform: `translate(${dragOffset.x}px, ${dragOffset.y}px) rotate(${dragOffset.x * 0.1}deg)`,
-                      transition: 'transform 0.3s ease-out',
-                    }
-                  : {
-                      transform: 'translate(0px, 0px) rotate(0deg)',
-                      transition: 'transform 0.3s ease-out',
-                    }
+                    ? {}
+                    : dragOffset.x !== 0 || dragOffset.y !== 0
+                      ? {
+                          transform: `translate(${dragOffset.x}px, ${dragOffset.y}px) rotate(${dragOffset.x * 0.1}deg)`,
+                          transition: "transform 0.3s ease-out",
+                        }
+                      : {
+                          transform: "translate(0px, 0px) rotate(0deg)",
+                          transition: "transform 0.3s ease-out",
+                        }
               }
             >
               {/* Title above poster */}
@@ -1161,7 +1338,7 @@ export default function SwipePage() {
                 {currentMovie.title || currentMovie.name}
               </h2>
 
-              <div 
+              <div
                 className="relative rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl w-[85vw] max-w-[340px] md:max-w-[420px]"
                 onMouseDown={onMouseDown}
                 onTouchStart={onTouchStart}
@@ -1172,7 +1349,7 @@ export default function SwipePage() {
                   {currentMovie.poster_path ? (
                     <Image
                       src={`https://image.tmdb.org/t/p/w780${currentMovie.poster_path}`}
-                      alt={currentMovie.title || currentMovie.name || ''}
+                      alt={currentMovie.title || currentMovie.name || ""}
                       fill
                       sizes="(max-width: 768px) 85vw, 420px"
                       className="object-cover pointer-events-none"
@@ -1181,7 +1358,9 @@ export default function SwipePage() {
                     />
                   ) : (
                     <div className="w-full h-full bg-[#E4DED2] flex items-center justify-center">
-                      <span className="text-[#B8B0A0] text-2xl">Pas d'affiche</span>
+                      <span className="text-[#B8B0A0] text-2xl">
+                        Pas d'affiche
+                      </span>
                     </div>
                   )}
 
@@ -1191,39 +1370,51 @@ export default function SwipePage() {
                       {/* Left indicator - Dislike */}
                       <div
                         className={`absolute left-8 top-1/2 -translate-y-1/2 transition-opacity ${
-                          dragOffset.x < -50 && Math.abs(dragOffset.x) > Math.abs(dragOffset.y)
-                            ? 'opacity-100'
-                            : 'opacity-0'
+                          dragOffset.x < -50 &&
+                          Math.abs(dragOffset.x) > Math.abs(dragOffset.y)
+                            ? "opacity-100"
+                            : "opacity-0"
                         }`}
                       >
-                        <div className="bg-red-500 rounded-full p-4 shadow-2xl">
-                          <X className="w-12 h-12 text-white" strokeWidth={3} />
+                        <div className="bg-[#F6F4F1]/90 rounded-full p-4 shadow-2xl">
+                          <X
+                            className="w-12 h-12 text-[#B8B0A0]"
+                            strokeWidth={3}
+                          />
                         </div>
                       </div>
 
                       {/* Right indicator - Like */}
                       <div
                         className={`absolute right-8 top-1/2 -translate-y-1/2 transition-opacity ${
-                          dragOffset.x > 50 && Math.abs(dragOffset.x) > Math.abs(dragOffset.y)
-                            ? 'opacity-100'
-                            : 'opacity-0'
+                          dragOffset.x > 50 &&
+                          Math.abs(dragOffset.x) > Math.abs(dragOffset.y)
+                            ? "opacity-100"
+                            : "opacity-0"
                         }`}
                       >
-                        <div className="bg-green-500 rounded-full p-4 shadow-2xl">
-                          <Heart className="w-12 h-12 text-white fill-white" strokeWidth={3} />
+                        <div className="bg-[#F95C4B]/90 rounded-full p-4 shadow-2xl">
+                          <Heart
+                            className="w-12 h-12 text-white fill-white"
+                            strokeWidth={3}
+                          />
                         </div>
                       </div>
 
                       {/* Up indicator - Watchlist */}
                       <div
                         className={`absolute left-1/2 -translate-x-1/2 top-8 transition-opacity ${
-                          dragOffset.y < -50 && Math.abs(dragOffset.y) > Math.abs(dragOffset.x)
-                            ? 'opacity-100'
-                            : 'opacity-0'
+                          dragOffset.y < -50 &&
+                          Math.abs(dragOffset.y) > Math.abs(dragOffset.x)
+                            ? "opacity-100"
+                            : "opacity-0"
                         }`}
                       >
-                        <div className="bg-blue-500 rounded-full p-4 shadow-2xl">
-                          <Bookmark className="w-12 h-12 text-white" strokeWidth={3} />
+                        <div className="bg-[#D4A843]/90 rounded-full p-4 shadow-2xl">
+                          <Bookmark
+                            className="w-12 h-12 text-white"
+                            strokeWidth={3}
+                          />
                         </div>
                       </div>
                     </>
@@ -1233,7 +1424,9 @@ export default function SwipePage() {
                   {showRating && (
                     <div className="absolute inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center animate-in fade-in duration-300">
                       <div className="text-center px-4">
-                        <p className="text-white text-base md:text-lg mb-4 md:mb-6">Votre note</p>
+                        <p className="text-white text-base md:text-lg mb-4 md:mb-6">
+                          Votre note
+                        </p>
                         <div className="flex justify-center mb-4 md:mb-6">
                           <HalfStarRating
                             value={selectedRating}
@@ -1273,8 +1466,8 @@ export default function SwipePage() {
                     disabled={swipeDirection !== null}
                     className="group relative"
                   >
-                    <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-[#F6F4F1]/90 backdrop-blur-sm border border-[#E4DED2] hover:border-[#F95C4B] flex items-center justify-center transition-all hover:scale-110 active:scale-95 disabled:opacity-30 shadow-lg">
-                      <Bookmark className="w-6 h-6 md:w-7 md:h-7 text-[#B8B0A0] group-hover:text-[#F95C4B] transition-colors" />
+                    <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-[#F6F4F1]/90 backdrop-blur-sm border border-[#E4DED2] hover:border-[#D4A843] flex items-center justify-center transition-all hover:scale-110 active:scale-95 disabled:opacity-30 shadow-lg">
+                      <Bookmark className="w-6 h-6 md:w-7 md:h-7 text-[#B8B0A0] group-hover:text-[#D4A843] transition-colors" />
                     </div>
                   </button>
 
