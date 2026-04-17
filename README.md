@@ -6,19 +6,19 @@ Application Next.js pour découvrir, organiser et suivre vos films et séries, p
 
 ## Fonctionnalités
 
-### Page d'accueil
+### 🏠 Page d'accueil
 - Recherche de films et séries en temps réel avec suggestions
 - Films tendances de la semaine
 - Films actuellement en salle
 - Recommandations personnalisées
 
-### Dashboard
+### 📊 Dashboard
 - Statistiques complètes : films vus, watchlist, favoris, note moyenne, temps total de visionnage, taux de notation
 - Aperçu des films récemment vus (lien vers la liste complète)
 - Aperçu de la watchlist (lien vers la liste complète)
 - Accès rapide au top films (5 étoiles)
 
-### Swipe — Découverte de films
+### 🃏 Swipe — Découverte de films
 Interface de découverte type carte à swiper, entièrement fonctionnelle :
 - **Swipe droite** — Marquer comme vu (avec notation optionnelle demi-étoile)
 - **Swipe gauche** — Ignorer (film ajouté à une liste de films skippés)
@@ -37,26 +37,26 @@ Interface de découverte type carte à swiper, entièrement fonctionnelle :
 
 **Tutoriel interactif** — Affiché automatiquement à la première session, avec animation des trois directions de swipe et barre de progression. Ignorable à tout moment via le bouton "Passer".
 
-### Profil
+### 👤 Profil
 - Liste des favoris (10 maximum) avec accès au détail de chaque film
 - Ajout de favoris via une modale de recherche intégrée — seuls les films déjà marqués comme vus peuvent être ajoutés en favori
 - Retrait d'un favori directement depuis le profil
 - Export des données personnelles (JSON)
 - Gestion du compte et des préférences RGPD
 
-### Gestion de films (via modal)
+### 🎬 Gestion de films (via modal)
 - Marquer comme vu ou ajouter à la watchlist
 - Notation en demi-étoiles (0,5 à 5)
 - Ajouter/retirer des favoris (accessible uniquement si le film est marqué comme vu)
 - Retirer un film de la collection
 - Synopsis expansible sur mobile
 
-### Authentification
+### 🔐 Authentification
 - Inscription et connexion par email/mot de passe
 - Session persistante via cookie httpOnly (7 jours)
 - Auth entièrement custom (JWT + bcrypt) — aucune dépendance externe
 
-### Interface
+### 🎨 Interface
 - Design system cohérent avec palette de couleurs sémantique (voir ci-dessous)
 - Responsive mobile, tablette, desktop
 - Navigation bas de page sur mobile
