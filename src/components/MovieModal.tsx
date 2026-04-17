@@ -1,7 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, Star, Eye, Clock, Calendar, Film as FilmIcon } from "lucide-react";
+import {
+  X,
+  Star,
+  Eye,
+  Clock,
+  Calendar,
+  Film as FilmIcon,
+  Check,
+} from "lucide-react";
 import HalfStarRating from "@/components/HalfStarRating";
 import { tmdbService, Movie, MovieDetails } from "@/services/tmdb";
 import { moviesService, UserMovie } from "@/services/movies";
@@ -29,6 +37,9 @@ export default function MovieModal({
   const [status, setStatus] = useState<"watched" | "watchlist" | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
   const [synopsisExpanded, setSynopsisExpanded] = useState(false);
+  const [comment, setComment] = useState("");
+  const [savingComment, setSavingComment] = useState(false);
+  const [commentSaved, setCommentSaved] = useState(false);
 
   useEffect(() => {
     loadMovieData();
@@ -55,6 +66,7 @@ export default function MovieModal({
           setStatus(existingMovie.status);
           setSelectedRating(existingMovie.rating);
           setIsFavorite(existingMovie.is_favorite || false);
+          setComment(existingMovie.comment || "");
         }
       }
     } catch (error) {
@@ -104,6 +116,7 @@ export default function MovieModal({
       setStatus(null);
       setSelectedRating(null);
       setIsFavorite(false);
+      setComment("");
 
       if (onUpdate) onUpdate();
     } catch (error) {
@@ -142,6 +155,24 @@ export default function MovieModal({
       }
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleSaveComment = async () => {
+    if (!user || !userMovie) return;
+    setSavingComment(true);
+    try {
+      const updated = await moviesService.updateMovie(userMovie.id, {
+        comment: comment.trim() || null,
+      });
+      setUserMovie(updated);
+      setCommentSaved(true);
+      setTimeout(() => setCommentSaved(false), 2000);
+      if (onUpdate) onUpdate();
+    } catch (error) {
+      console.error("Error saving comment:", error);
+    } finally {
+      setSavingComment(false);
     }
   };
 
@@ -330,6 +361,52 @@ export default function MovieModal({
                   }}
                 />
               </div>
+
+              {status === "watched" && userMovie && (
+                <div className="mb-3 md:mb-4">
+                  <label className="block text-xs md:text-sm font-medium text-[#0D0D0D] mb-1.5 md:mb-2">
+                    Mon avis
+                  </label>
+                  <div className="relative">
+                    <textarea
+                      value={comment}
+                      onChange={(e) => {
+                        setComment(e.target.value);
+                        setCommentSaved(false);
+                      }}
+                      placeholder="Vos impressions, anecdotes, contexte du visionnage..."
+                      rows={3}
+                      maxLength={1000}
+                      className="w-full px-3 py-2 text-xs md:text-sm text-[#0D0D0D] placeholder-[#B8B0A0] bg-[#F6F4F1] border border-[#B8B0A0] rounded-lg focus:outline-none focus:border-[#F95C4B] resize-none transition-colors"
+                    />
+                    <div className="flex items-center justify-between mt-1.5">
+                      <span className="text-xs text-[#B8B0A0]">
+                        {comment.length}/1000
+                      </span>
+                      <button
+                        onClick={handleSaveComment}
+                        disabled={savingComment || commentSaved}
+                        className={`flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-medium transition-all active:scale-95 ${
+                          commentSaved
+                            ? "bg-[#6B9472] text-[#F6F4F1]"
+                            : "bg-[#0D0D0D] text-[#F6F4F1] hover:bg-[#2A2A2A]"
+                        } disabled:opacity-50`}
+                      >
+                        {commentSaved ? (
+                          <>
+                            <Check className="w-3 h-3" />
+                            Enregistré
+                          </>
+                        ) : savingComment ? (
+                          <div className="w-3 h-3 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                        ) : (
+                          "Enregistrer"
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               <div className="grid grid-cols-2 gap-2">
                 <button

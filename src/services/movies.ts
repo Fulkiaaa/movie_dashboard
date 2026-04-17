@@ -11,6 +11,7 @@ export interface UserMovie {
   status: 'watched' | 'watchlist';
   rating: number | null;
   is_favorite: boolean;
+  comment: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -23,6 +24,7 @@ export interface AddMovieParams {
   release_date: string | null;
   status: 'watched' | 'watchlist';
   rating?: number | null;
+  comment?: string | null;
 }
 
 async function apiFetch<T>(url: string, options?: RequestInit): Promise<T> {
@@ -63,7 +65,7 @@ export const moviesService = {
     });
   },
 
-  async updateMovie(id: string, updates: Partial<Pick<UserMovie, 'status' | 'rating' | 'is_favorite'>>): Promise<UserMovie> {
+  async updateMovie(id: string, updates: Partial<Pick<UserMovie, 'status' | 'rating' | 'is_favorite' | 'comment'>>): Promise<UserMovie> {
     return apiFetch(`/api/movies/${id}`, {
       method: 'PUT',
       body: JSON.stringify(updates),

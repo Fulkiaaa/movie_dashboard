@@ -16,6 +16,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   if (updates.status !== undefined) { fields.push(`status = $${idx++}`); values.push(updates.status); }
   if (updates.rating !== undefined) { fields.push(`rating = $${idx++}`); values.push(updates.rating); }
   if (updates.is_favorite !== undefined) { fields.push(`is_favorite = $${idx++}`); values.push(updates.is_favorite); }
+  if (updates.comment !== undefined) { fields.push(`comment = $${idx++}`); values.push(updates.comment); }
 
   if (fields.length === 0) return NextResponse.json({ error: 'Aucun champ à mettre à jour' }, { status: 400 });
 
