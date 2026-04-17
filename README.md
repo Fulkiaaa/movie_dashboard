@@ -1,57 +1,99 @@
-# 🎬 SeenIt - Dashboard de Films
+# SeenIt — Dashboard de Films
 
-Application Next.js pour découvrir, organiser et suivre vos films avec statistiques détaillées, propulsée par TMDB et Supabase.
+Application Next.js pour découvrir, organiser et suivre vos films et séries, propulsée par l'API TMDB et une base de données PostgreSQL locale.
 
-## ✨ Fonctionnalités
+---
 
-### 🏠 Page d'accueil
-- 🔍 **Recherche avancée** - Recherchez des films et séries en temps réel
-- 🔥 **Films tendances** - Découvrez les films populaires de la semaine
-- 🎬 **Films en salle** - Films actuellement au cinéma
-- ⭐ **Recommandations** - Suggestions personnalisées basées sur vos goûts
+## Fonctionnalités
 
-### 📊 Dashboard Statistiques
-- 📈 **Statistiques complètes** - Suivez votre activité cinéma en détail
-  - Nombre total de films vus, en watchlist et favoris
-  - Films vus cette semaine et ce mois
-  - Note moyenne de vos films
-  - Temps total de visionnage (jours/heures/minutes)
-  - Taux de notation avec barre de progression
-- 🎞️ **Liste complète des films vus** - Avec notes, favoris et dates
-- 📝 **Watchlist** - Films à voir avec prévisualisation (5 films affichés, "Voir plus" si nécessaire)
-- 🏆 **Top Films** - Vos films notés 5 étoiles
+### Page d'accueil
+- Recherche de films et séries en temps réel avec suggestions
+- Films tendances de la semaine
+- Films actuellement en salle
+- Recommandations personnalisées
 
-### 👤 Profil Utilisateur
-- ❤️ **Gestion des favoris** - Collection de vos films préférés
-- 📊 **Statistiques personnelles** - Vue d'ensemble de votre activité
-- ✏️ **Modification rapide** - Retirez des favoris directement depuis le profil
+### Dashboard
+- Statistiques complètes : films vus, watchlist, favoris, note moyenne, temps total de visionnage, taux de notation
+- Aperçu des films récemment vus (lien vers la liste complète)
+- Aperçu de la watchlist (lien vers la liste complète)
+- Accès rapide au top films (5 étoiles)
 
-### 🎯 Gestion de Films
-- ✅ **Marquer comme vu** - Ajoutez des films à votre historique
-- 📌 **Watchlist** - Créez votre liste de films à voir
-- ⭐ **Système de notation** - Notez vos films de 1 à 5 étoiles
-- ❤️ **Favoris** - Marquez vos films préférés
-- 🗑️ **Suppression** - Retirez des films de votre collection
+### Swipe — Découverte de films
+Interface de découverte type carte à swiper, entièrement fonctionnelle :
+- **Swipe droite** — Marquer comme vu (avec notation optionnelle demi-étoile)
+- **Swipe gauche** — Ignorer (film ajouté à une liste de films skippés)
+- **Swipe haut** — Ajouter à la watchlist
+- Drag souris et touch mobile supportés
+- Les films déjà présents dans votre collection ou déjà skippés sont automatiquement exclus
+- Chargement dynamique de nouvelles pages quand la liste s'épuise
 
-### 🔐 Authentification
-- 📧 **Connexion/Inscription** - Système sécurisé avec Supabase Auth
-- 🔒 **Sessions persistantes** - Restez connecté automatiquement
-- 👤 **Profils utilisateurs** - Données personnalisées par compte
+**Filtres de découverte :**
+- Les plus populaires
+- Les mieux notés
+- Tendances de la semaine
+- Par année de sortie
+- Par genre
+- Filtre personnalisé : genres, langue originale, pays de production, classification (France), plateformes de streaming, période de sortie
 
-### 🎨 Interface
-- 🖤 **Design épuré** - Interface noir et blanc moderne avec Tailwind CSS
-- 📱 **Responsive** - Adapté mobile, tablette et desktop
-- ⚡ **Modal interactive** - Détails complets des films avec actions rapides
-- 🎭 **Badges visuels** - Notes et favoris directement sur les affiches
+**Tutoriel interactif** — Affiché automatiquement à la première session, avec animation des trois directions de swipe et barre de progression. Ignorable à tout moment via le bouton "Passer".
 
-## 🚀 Démarrage rapide
+### Profil
+- Liste des favoris (10 maximum) avec accès au détail de chaque film
+- Ajout de favoris via une modale de recherche intégrée — seuls les films déjà marqués comme vus peuvent être ajoutés en favori
+- Retrait d'un favori directement depuis le profil
+- Export des données personnelles (JSON)
+- Gestion du compte et des préférences RGPD
+
+### Gestion de films (via modal)
+- Marquer comme vu ou ajouter à la watchlist
+- Notation en demi-étoiles (0,5 à 5)
+- Ajouter/retirer des favoris (accessible uniquement si le film est marqué comme vu)
+- Retirer un film de la collection
+- Synopsis expansible sur mobile
+
+### Authentification
+- Inscription et connexion par email/mot de passe
+- Session persistante via cookie httpOnly (7 jours)
+- Auth entièrement custom (JWT + bcrypt) — aucune dépendance externe
+
+### Interface
+- Design system cohérent avec palette de couleurs sémantique (voir ci-dessous)
+- Responsive mobile, tablette, desktop
+- Navigation bas de page sur mobile
+- Pages légales : CGU, mentions légales, politique de confidentialité
+- Bannière de consentement cookie
+
+---
+
+## Design System
+
+Palette de couleurs principale :
+
+| Nom       | Hex       | Rôle                                         |
+| --------- | --------- | -------------------------------------------- |
+| Paper     | `#F6F4F1` | Fond principal, surfaces claires             |
+| Stone     | `#E4DED2` | Fond secondaire, séparateurs                 |
+| Coral     | `#F95C4B` | Accent principal — boutons, actions          |
+| Eclipse   | `#0D0D0D` | Texte principal, fonds sombres               |
+| Gold Reel | `#D4A843` | Notation, badges, highlights                 |
+| Sage      | `#6B9472` | Statut "Déjà vu" — vert désaturé             |
+
+Couleurs sémantiques des statuts :
+
+| Statut    | Couleur   | Hex       |
+| --------- | --------- | --------- |
+| Déjà vu   | Sage      | `#6B9472` |
+| À voir    | Gold Reel | `#D4A843` |
+| Pas vu    | Stone     | `#E4DED2` |
+
+---
+
+## Démarrage rapide
 
 ### Prérequis
 
 - Node.js 18+
-- npm ou yarn
-- Compte TMDB
-- Compte Supabase
+- PostgreSQL (local — géré via DBeaver ou équivalent)
 
 ### Installation
 
@@ -67,42 +109,36 @@ Application Next.js pour découvrir, organiser et suivre vos films avec statisti
    ```
 
 3. **Configurer les variables d'environnement**
-   
-   Copiez `.env.example` vers `.env.local` et remplissez vos clés :
-   
+
+   Créez un fichier `.env.local` à la racine :
+
    ```env
    # TMDB
    NEXT_PUBLIC_TMDB_API_KEY=votre_clé_tmdb
    NEXT_PUBLIC_TMDB_BASE_URL=https://api.themoviedb.org/3
    NEXT_PUBLIC_TMDB_IMAGE_BASE_URL=https://image.tmdb.org/t/p
 
-   # Supabase
-   NEXT_PUBLIC_SUPABASE_URL=votre_url_supabase
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=votre_clé_publique
+   # Base de données PostgreSQL locale
+   DATABASE_URL=postgresql://postgres:password@localhost:5432/movie_dashboard
+
+   # JWT
+   JWT_SECRET=une_clé_secrète_longue_et_aléatoire
    ```
 
-4. **Obtenir les clés API**
+4. **Créer la base de données**
 
-   **TMDB :**
+   Exécutez `schema.sql` dans DBeaver (ou tout client PostgreSQL) sur votre base `movie_dashboard`.
+
+   Ce script crée :
+   - `users` — comptes utilisateurs
+   - `user_movies` — films/séries avec statut, note, favori
+   - `skipped_movies` — films ignorés dans le swipe
+   - Les index et triggers associés
+
+5. **Obtenir une clé TMDB**
+
    - Créez un compte sur [TMDB](https://www.themoviedb.org/)
-   - Allez dans [Paramètres > API](https://www.themoviedb.org/settings/api)
-   - Demandez une clé API (gratuit)
-
-   **Supabase :**
-   - Créez un compte sur [Supabase](https://supabase.com/)
-   - Créez un nouveau projet
-   - Exécutez les scripts SQL fournis :
-     - `supabase_schema.sql` (table user_movies)
-     - `supabase_favorites_migration.sql` (colonne favoris)
-   - Allez dans Settings > API
-   - Copiez l'URL et la clé `anon/public`
-
-5. **Configuration Supabase**
-
-   Dans les paramètres Supabase, ajoutez les URLs autorisées :
-   - Allez dans `Authentication > URL Configuration`
-   - Ajoutez `http://localhost:3000` dans "Redirect URLs"
-   - Ajoutez `http://localhost:3000/**` dans "Site URL"
+   - Allez dans Paramètres > API et demandez une clé (gratuit)
 
 6. **Lancer le serveur de développement**
    ```bash
@@ -110,196 +146,145 @@ Application Next.js pour découvrir, organiser et suivre vos films avec statisti
    ```
 
 7. **Ouvrir l'application**
-   
-   Visitez [http://localhost:3000](http://localhost:3000)
 
-## 📁 Structure du projet
+   [http://localhost:3000](http://localhost:3000)
+
+---
+
+## Structure du projet
 
 ```
 src/
 ├── app/
+│   ├── api/
+│   │   ├── auth/              # signup, login, logout, session
+│   │   └── movies/            # CRUD films, stats, favoris, skipped
 │   ├── auth/
-│   │   ├── login/          # Page de connexion
-│   │   └── signup/         # Page d'inscription
-│   ├── dashboard/          # Dashboard statistiques complet
-│   ├── profile/            # Profil utilisateur avec favoris
-│   ├── swipe/              # Page de swipe (placeholder)
-│   ├── layout.tsx          # Layout principal avec Header
-│   ├── page.tsx            # Page d'accueil avec recherche et découverte
-│   └── globals.css         # Styles globaux et polices
+│   │   ├── login/
+│   │   └── signup/
+│   ├── dashboard/
+│   │   ├── page.tsx           # Dashboard principal avec statistiques
+│   │   ├── watched/           # Liste complète des films vus
+│   │   └── watchlist/         # Liste complète de la watchlist
+│   ├── legal/
+│   │   ├── mentions/
+│   │   ├── privacy/
+│   │   └── terms/
+│   ├── profile/
+│   │   ├── page.tsx           # Profil avec favoris
+│   │   └── donnees/           # Gestion des données personnelles (RGPD)
+│   ├── swipe/                 # Découverte par swipe
+│   ├── layout.tsx
+│   ├── page.tsx               # Page d'accueil
+│   └── globals.css
 ├── components/
-│   ├── Header.tsx          # Header avec navigation
-│   ├── MovieModal.tsx      # Modal détaillée avec actions (vue/watchlist/favoris/notes)
-│   └── SearchBar.tsx       # Barre de recherche avec suggestions
+│   ├── CookieBanner.tsx       # Bannière consentement cookie
+│   ├── FavoriteSearchModal.tsx # Modale de recherche pour ajouter un favori
+│   ├── Footer.tsx
+│   ├── HalfStarRating.tsx     # Notation en demi-étoiles (interactif)
+│   ├── Header.tsx
+│   ├── MovieModal.tsx         # Modal détaillée avec toutes les actions
+│   ├── SearchBar.tsx
+│   └── SwipeTutorial.tsx      # Tutoriel animé du système de swipe
 ├── contexts/
-│   └── AuthContext.tsx     # Contexte d'authentification Supabase
+│   └── AuthContext.tsx        # Auth custom JWT
+├── lib/
+│   ├── auth.ts                # signToken, verifyToken, gestion cookie
+│   └── db.ts                  # Pool PostgreSQL (pg)
 └── services/
-    ├── tmdb.ts             # Service API TMDB (films, séries, recherche)
-    └── movies.ts           # Service Supabase (CRUD user_movies, stats)
+    ├── tmdb.ts                # API TMDB
+    └── movies.ts              # Appels aux routes API Next.js
 ```
 
-## 🗄️ Base de données Supabase
+---
+
+## Base de données
 
 ### Table `user_movies`
 
 ```sql
 CREATE TABLE user_movies (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  user_id UUID REFERENCES auth.users NOT NULL,
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL,
   tmdb_id INTEGER NOT NULL,
-  media_type TEXT NOT NULL CHECK (media_type IN ('movie', 'tv')),
-  title TEXT NOT NULL,
-  poster_path TEXT,
-  release_date TEXT,
-  status TEXT NOT NULL CHECK (status IN ('watched', 'watchlist')),
-  rating INTEGER CHECK (rating >= 1 AND rating <= 5),
-  is_favorite BOOLEAN DEFAULT false,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  media_type VARCHAR(10) NOT NULL CHECK (media_type IN ('movie', 'tv')),
+  title VARCHAR(500) NOT NULL,
+  poster_path VARCHAR(500),
+  release_date VARCHAR(50),
+  status VARCHAR(20) NOT NULL CHECK (status IN ('watched', 'watchlist')),
+  rating NUMERIC(3,1) CHECK (rating >= 0 AND rating <= 5),
+  is_favorite BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
   UNIQUE(user_id, tmdb_id, media_type)
 );
 ```
 
-### Fonctionnalités de la base
-- **Row Level Security (RLS)** - Chaque utilisateur accède uniquement à ses données
-- **Triggers automatiques** - Mise à jour de `updated_at` lors des modifications
-- **Index optimisés** - Requêtes rapides sur user_id, status, is_favorite
-- **Contraintes** - Validation des données (ratings 1-5, status, media_type)
+### Table `skipped_movies`
 
-### Scripts SQL fournis
-- `supabase_schema.sql` - Création de la table et des policies RLS
-- `supabase_favorites_migration.sql` - Migration pour ajouter la colonne favoris
+Films ignorés lors du swipe, pour éviter de les reproposer.
 
-## 🎨 Technologies utilisées
+```sql
+CREATE TABLE skipped_movies (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+  tmdb_id INTEGER NOT NULL,
+  media_type VARCHAR(10) NOT NULL CHECK (media_type IN ('movie', 'tv')),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(user_id, tmdb_id, media_type)
+);
+```
 
-- **Framework** : Next.js 16 (App Router) avec React 19
-- **Langage** : TypeScript
-- **Styling** : Tailwind CSS 4
-- **Authentification** : Supabase Auth
-- **Base de données** : Supabase (PostgreSQL)
-- **API Films** : The Movie Database (TMDB)
-- **Icons** : Lucide React
-- **Images** : Next.js Image avec optimisation automatique
-- **Animations** : Framer Motion, GSAP (préparées pour futures animations)
-- **3D** : Three.js, React Three Fiber (préparées pour futures fonctionnalités)
-
-## � Fonctionnalités clés du code
-
-### Services
-- **`tmdbService`** - Interaction avec l'API TMDB
-  - Recherche de films et séries
-  - Récupération des tendances, films en salle, top rated
-  - Détails complets avec cast, genres, runtime
-  - Gestion des URLs d'images optimisées
-  
-- **`moviesService`** - Gestion des données utilisateur via Supabase
-  - CRUD complet (Create, Read, Update, Delete)
-  - Statistiques avancées (compteurs, moyennes, filtres temporels)
-  - Gestion des favoris, watchlist, films vus
-  - Calcul du temps de visionnage cumulé
-
-### Composants
-- **`MovieModal`** - Modal interactive pour chaque film
-  - Affichage des détails TMDB (synopsis, cast, genres, runtime)
-  - Actions rapides : Marquer vu/À voir, Noter, Favoris
-  - Synchronisation en temps réel avec Supabase
-  - Gestion des états (loading, saving, error)
-  
-- **`SearchBar`** - Recherche en temps réel
-  - Debounce pour optimiser les requêtes API
-  - Suggestions avec affiches
-  - Navigation au clavier
-  
-- **`Header`** - Navigation responsive
-  - Authentification contextuelle
-  - Menu adaptatif selon l'état de connexion
-
-### Contexte
-- **`AuthContext`** - Gestion globale de l'authentification
-  - Session Supabase persistante
-  - Hook `useAuth()` pour accès global
-  - Protection des routes privées
-
-## �📝 Pages disponibles
-
-- `/` - Page d'accueil avec recherche et découverte
-  - Barre de recherche en temps réel
-  - Films tendances de la semaine
-  - Films actuellement en salle
-  - Recommandations personnalisées
-- `/dashboard` - Dashboard statistiques complètes (authentification requise)
-  - Statistiques détaillées (vus, watchlist, favoris, temps total)
-  - Liste complète des films vus avec preview (5 films affichés)
-  - Watchlist avec preview
-  - Top films (5 étoiles)
-- `/profile` - Profil utilisateur (authentification requise)
-  - Gestion des favoris
-  - Statistiques personnelles
-- `/swipe` - Découverte de films par swipe (placeholder - en développement)
-- `/auth/login` - Connexion
-- `/auth/signup` - Inscription
-
-##  Prochaines fonctionnalités
-
-- [ ] **Système de swipe** - Interface de découverte type Tinder pour les films
-  - Animations fluides avec Framer Motion
-  - Algorithme de recommandation basé sur les préférences
-- [ ] **Statistiques avancées** - Graphiques et visualisations
-  - Évolution temporelle de l'activité
-  - Genres préférés
-  - Acteurs/réalisateurs favoris
-- [ ] **Filtres et tri** - Options avancées de filtrage
-  - Par genre, année, note
-  - Tri multiple (date, note, titre)
-- [ ] **Listes personnalisées** - Créer des collections thématiques
-  - Listes publiques/privées
-  - Partage de listes
-- [ ] **Social** - Fonctionnalités communautaires
-  - Suivre d'autres utilisateurs
-  - Voir les films populaires parmi vos amis
-  - Recommandations sociales
-- [ ] **Export de données** - Exporter ses statistiques et listes
-- [ ] **Mode sombre** - Alternative au thème actuel
-- [ ] **PWA** - Application web progressive avec mode hors ligne
-
-## 🤝 Contribuer
-
-Les contributions sont les bienvenues ! N'hésitez pas à :
-1. Fork le projet
-2. Créer une branche pour votre fonctionnalité (`git checkout -b feature/AmazingFeature`)
-3. Commit vos changements (`git commit -m 'Add some AmazingFeature'`)
-4. Push vers la branche (`git push origin feature/AmazingFeature`)
-5. Ouvrir une Pull Request
-
-### Guidelines
-- Respecter la structure TypeScript existante
-- Suivre les conventions de nommage
-- Documenter les nouvelles fonctionnalités
-- Tester en local avant de soumettre
-
-## 🐛 Problèmes connus
-
-- La page Swipe est actuellement un placeholder
-- Les animations Framer Motion et GSAP ne sont pas encore pleinement utilisées
-- Three.js est installé mais pas encore intégré
-
-## 📄 License
-
-MIT
-
-## 👤 Auteur
-
-**Clara Morin**
-
-## 🔗 Liens utiles
-
-- [Documentation TMDB API](https://developer.themoviedb.org/docs)
-- [Documentation Supabase](https://supabase.com/docs)
-- [Documentation Next.js](https://nextjs.org/docs)
-- [Tailwind CSS](https://tailwindcss.com/docs)
+### Règles métier
+- Un film ne peut être ajouté en favori que s'il est marqué comme vu
+- Maximum 10 favoris par utilisateur
+- La notation accepte les demi-points (0,5 à 5,0)
+- Un film skippé n'apparaît plus dans le swipe
 
 ---
 
-⭐ Si ce projet vous plaît, n'hésitez pas à lui donner une étoile !
+## Technologies
 
+| Catégorie        | Outil                           |
+| ---------------- | ------------------------------- |
+| Framework        | Next.js 16 — App Router         |
+| Langage          | TypeScript                      |
+| Styling          | Tailwind CSS 4                  |
+| Authentification | JWT custom + bcrypt             |
+| Base de données  | PostgreSQL local (pg)           |
+| API Films        | TMDB                            |
+| Icons            | Lucide React                    |
+| Images           | Next.js Image                   |
 
+---
+
+## Pages disponibles
+
+| Route                  | Description                                  | Auth |
+| ---------------------- | -------------------------------------------- | ---- |
+| `/`                    | Accueil — recherche, tendances, en salle     | Non  |
+| `/dashboard`           | Statistiques et aperçu de la collection      | Oui  |
+| `/dashboard/watched`   | Liste complète des films vus                 | Oui  |
+| `/dashboard/watchlist` | Liste complète de la watchlist               | Oui  |
+| `/swipe`               | Découverte de films par swipe                | Oui  |
+| `/profile`             | Favoris et informations du compte            | Oui  |
+| `/profile/donnees`     | Gestion des données personnelles (RGPD)      | Oui  |
+| `/auth/login`          | Connexion                                    | Non  |
+| `/auth/signup`         | Inscription                                  | Non  |
+| `/legal/terms`         | Conditions générales d'utilisation           | Non  |
+| `/legal/privacy`       | Politique de confidentialité                 | Non  |
+| `/legal/mentions`      | Mentions légales                             | Non  |
+
+---
+
+## Auteur
+
+**Clara Morin**
+
+---
+
+## Liens utiles
+
+- [Documentation TMDB API](https://developer.themoviedb.org/docs)
+- [Documentation Next.js](https://nextjs.org/docs)
+- [Tailwind CSS](https://tailwindcss.com/docs)
