@@ -9,7 +9,11 @@
       "Bash(sed -n '1393,1403p' \"g:/Visual Studio Code Projets/movie_dashboard/src/app/swipe/page.tsx\")",
       "Bash(sed -n '1476,1485p' \"g:/Visual Studio Code Projets/movie_dashboard/src/app/swipe/page.tsx\")",
       "Bash(sed -n '773,777p' \"g:/Visual Studio Code Projets/movie_dashboard/src/app/swipe/page.tsx\")",
-      "Bash(sed -n '844,848p' \"g:/Visual Studio Code Projets/movie_dashboard/src/app/swipe/page.tsx\")"
+      "Bash(sed -n '844,848p' \"g:/Visual Studio Code Projets/movie_dashboard/src/app/swipe/page.tsx\")",
+      "Bash(sed -n '1358,1390p' \"g:/Visual Studio Code Projets/movie_dashboard/src/app/swipe/page.tsx\")",
+      "Bash(sed -n '1450,1490p' \"g:/Visual Studio Code Projets/movie_dashboard/src/app/swipe/page.tsx\")",
+      "Bash(sed -n '265,275p' \"g:/Visual Studio Code Projets/movie_dashboard/src/app/dashboard/page.tsx\")",
+      "Bash(sed -n '421,432p' \"g:/Visual Studio Code Projets/movie_dashboard/src/app/dashboard/page.tsx\")"
     ]
   }
 }

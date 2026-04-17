@@ -713,9 +713,10 @@ export default function SwipePage() {
     }
   };
 
-  const handleAddWatched = async (withRating: boolean = false) => {
+  const handleAddWatched = async (withRating: boolean = false, ratingOverride?: number) => {
     if (!currentMovie) return;
 
+    const ratingValue = ratingOverride ?? selectedRating;
     try {
       await moviesService.addMovie({
         tmdb_id: currentMovie.id,
@@ -725,7 +726,7 @@ export default function SwipePage() {
         release_date:
           currentMovie.release_date || currentMovie.first_air_date || null,
         status: "watched",
-        rating: withRating && selectedRating ? selectedRating : null,
+        rating: withRating && ratingValue ? ratingValue : null,
       });
 
       setExcludedMovieIds((prev) => new Set([...prev, currentMovie.id]));
@@ -755,8 +756,9 @@ export default function SwipePage() {
   const handleRatingClick = (rating: number) => {
     setSelectedRating(rating);
     // Valider automatiquement après avoir sélectionné une note
+    // Passer le rating explicitement pour éviter la closure périmée sur selectedRating
     setTimeout(() => {
-      handleAddWatched(true);
+      handleAddWatched(true, rating);
     }, 400);
   };
 
@@ -1393,7 +1395,7 @@ export default function SwipePage() {
                             : "opacity-0"
                         }`}
                       >
-                        <div className="bg-[#F95C4B]/90 rounded-full p-4 shadow-2xl">
+                        <div className="bg-[#6B9472]/90 rounded-full p-4 shadow-2xl">
                           <Eye
                             className="w-12 h-12 text-white"
                             strokeWidth={3}
@@ -1456,8 +1458,8 @@ export default function SwipePage() {
                     disabled={swipeDirection !== null}
                     className="group relative"
                   >
-                    <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-[#F6F4F1]/90 backdrop-blur-sm border border-[#E4DED2] hover:border-red-500 flex items-center justify-center transition-all hover:scale-110 active:scale-95 disabled:opacity-30 shadow-lg">
-                      <X className="w-7 h-7 md:w-8 md:h-8 text-[#B8B0A0] group-hover:text-red-500 transition-colors" />
+                    <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-[#F6F4F1]/90 backdrop-blur-sm border border-[#E4DED2] hover:border-[#B8B0A0] flex items-center justify-center transition-all hover:scale-110 active:scale-95 disabled:opacity-30 shadow-lg">
+                      <X className="w-7 h-7 md:w-8 md:h-8 text-[#B8B0A0] transition-colors" />
                     </div>
                   </button>
 
@@ -1476,7 +1478,7 @@ export default function SwipePage() {
                     disabled={swipeDirection !== null || showRating}
                     className="group relative"
                   >
-                    <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-[#F95C4B]/90 backdrop-blur-sm hover:bg-[#C7392A] flex items-center justify-center transition-all hover:scale-110 active:scale-95 disabled:opacity-30 shadow-lg">
+                    <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-[#6B9472]/90 backdrop-blur-sm hover:bg-[#4A7055] flex items-center justify-center transition-all hover:scale-110 active:scale-95 disabled:opacity-30 shadow-lg">
                       <Eye className="w-7 h-7 md:w-8 md:h-8 text-[#F6F4F1]" />
                     </div>
                   </button>

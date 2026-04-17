@@ -30,6 +30,7 @@ Principes directeurs :
 | Coral     | `#F95C4B` | Accent principal — boutons, liens actifs, actions           |
 | Eclipse   | `#0D0D0D` | Texte principal, fonds sombres, barres de navigation        |
 | Gold Reel | `#D4A843` | Accent secondaire — étoiles de notation, badges, highlights |
+| Sage      | `#6B9472` | Statut "Déjà vu" — vert désaturé vintage, positif/accompli  |
 
 ### Variantes fonctionnelles
 
@@ -41,8 +42,24 @@ Dériver ces variantes pour les états interactifs et les retours utilisateur :
 | Coral Dark  | `#C7392A` | Texte Coral accessible sur fond Paper/Stone |
 | Gold Light  | `#F5E6C4` | Fond de badge doré, highlight léger         |
 | Gold Dark   | `#8C6D2A` | Texte doré accessible sur fond Paper/Stone  |
+| Sage Light  | `#D4E8D9` | Fond de badge Sage, highlight "vu"          |
+| Sage Dark   | `#4A7055` | Texte Sage accessible sur fond Paper/Stone  |
 | Stone Dark  | `#B8B0A0` | Bordures, éléments désactivés               |
 | Paper Dark  | `#EBE7E0` | Hover sur fond Paper                        |
+
+---
+
+## Système sémantique des statuts de films
+
+Les trois statuts d'un film ont une couleur sémantique dédiée, inspirée du code trafic :
+
+| Statut      | Couleur   | Hex       | Logique                                              |
+| ----------- | --------- | --------- | ---------------------------------------------------- |
+| Déjà vu     | Sage      | `#6B9472` | Vert désaturé = accompli, positif, "checked"         |
+| À voir      | Gold Reel | `#D4A843` | Ambre = en attente, "bientôt", file d'attente        |
+| Pas vu      | Stone     | `#E4DED2` | Neutre = non classé, aucune valeur positive/négative |
+
+Ces couleurs s'appliquent aux : badges de statut sur les cards, indicateurs de swipe, labels du tutoriel, et tout élément UI signalant le statut d'un film.
 
 ---
 

@@ -25,12 +25,17 @@ export default function FavoriteSearchModal({
   const [addingId, setAddingId] = useState<number | null>(null);
   const [addedIds, setAddedIds] = useState<Set<number>>(new Set());
   const [existingFavoriteIds, setExistingFavoriteIds] = useState<Set<number>>(new Set());
+  const [watchedTmdbIds, setWatchedTmdbIds] = useState<Set<number>>(new Set());
   const [slotsLeft, setSlotsLeft] = useState(maxCount - currentCount);
 
-  // Load existing favorites on mount
+  // Load existing favorites and watched movies on mount
   useEffect(() => {
-    moviesService.getFavorites().then((favs) => {
+    Promise.all([
+      moviesService.getFavorites(),
+      moviesService.getWatchedMovies(),
+    ]).then(([favs, watched]) => {
       setExistingFavoriteIds(new Set(favs.map((f) => f.tmdb_id)));
+      setWatchedTmdbIds(new Set(watched.map((w) => w.tmdb_id)));
     }).catch(() => {});
   }, []);
 
@@ -68,6 +73,7 @@ export default function FavoriteSearchModal({
 
   const handleAdd = useCallback(async (movie: Movie) => {
     if (slotsLeft <= 0) return;
+    if (!watchedTmdbIds.has(movie.id)) return;
     setAddingId(movie.id);
     try {
       const existing = await moviesService.getMovieByTmdbId(
@@ -75,20 +81,8 @@ export default function FavoriteSearchModal({
         (movie.media_type as 'movie' | 'tv') || 'movie'
       );
 
-      if (existing) {
-        if (!existing.is_favorite) {
-          await moviesService.toggleFavorite(existing.id);
-        }
-      } else {
-        const added = await moviesService.addMovie({
-          tmdb_id: movie.id,
-          media_type: (movie.media_type as 'movie' | 'tv') || 'movie',
-          title: movie.title || movie.name || '',
-          poster_path: movie.poster_path,
-          release_date: movie.release_date || movie.first_air_date || null,
-          status: 'watchlist',
-        });
-        await moviesService.toggleFavorite(added.id);
+      if (existing && !existing.is_favorite) {
+        await moviesService.toggleFavorite(existing.id);
       }
 
       setAddedIds((prev) => new Set([...prev, movie.id]));
@@ -99,7 +93,7 @@ export default function FavoriteSearchModal({
     } finally {
       setAddingId(null);
     }
-  }, [slotsLeft, onFavoriteAdded]);
+  }, [slotsLeft, watchedTmdbIds, onFavoriteAdded]);
 
   const isAdded = (tmdbId: number) =>
     addedIds.has(tmdbId) || existingFavoriteIds.has(tmdbId);
@@ -173,6 +167,7 @@ export default function FavoriteSearchModal({
                 const year = (movie.release_date || movie.first_air_date || '').slice(0, 4);
                 const added = isAdded(movie.id);
                 const adding = addingId === movie.id;
+                const watched = watchedTmdbIds.has(movie.id);
                 const full = slotsLeft <= 0 && !added;
 
                 return (
@@ -204,27 +199,33 @@ export default function FavoriteSearchModal({
                       </p>
                     </div>
 
-                    {/* Add button */}
-                    <button
-                      onClick={() => !added && !full && handleAdd(movie)}
-                      disabled={added || adding || full}
-                      className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all ${
-                        added
-                          ? 'bg-[#D4A843] cursor-default'
-                          : full
-                          ? 'bg-[#E4DED2] cursor-not-allowed opacity-50'
-                          : 'bg-[#0D0D0D] hover:bg-[#F95C4B]'
-                      }`}
-                      title={added ? 'Déjà en favoris' : full ? 'Limite atteinte' : 'Ajouter aux favoris'}
-                    >
-                      {adding ? (
-                        <div className="w-3.5 h-3.5 rounded-full border-2 border-white border-t-transparent animate-spin" />
-                      ) : added ? (
-                        <Check className="w-4 h-4 text-[#F6F4F1]" />
-                      ) : (
-                        <Plus className="w-4 h-4 text-[#F6F4F1]" />
-                      )}
-                    </button>
+                    {/* Add button / not-watched label */}
+                    {!watched && !added ? (
+                      <span className="shrink-0 text-xs text-[#B8B0A0] font-medium px-2 py-1 bg-[#E4DED2] rounded-full whitespace-nowrap">
+                        Non vu
+                      </span>
+                    ) : (
+                      <button
+                        onClick={() => !added && !full && handleAdd(movie)}
+                        disabled={added || adding || full}
+                        className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+                          added
+                            ? 'bg-[#D4A843] cursor-default'
+                            : full
+                            ? 'bg-[#E4DED2] cursor-not-allowed opacity-50'
+                            : 'bg-[#0D0D0D] hover:bg-[#F95C4B]'
+                        }`}
+                        title={added ? 'Déjà en favoris' : full ? 'Limite atteinte' : 'Ajouter aux favoris'}
+                      >
+                        {adding ? (
+                          <div className="w-3.5 h-3.5 rounded-full border-2 border-white border-t-transparent animate-spin" />
+                        ) : added ? (
+                          <Check className="w-4 h-4 text-[#F6F4F1]" />
+                        ) : (
+                          <Plus className="w-4 h-4 text-[#F6F4F1]" />
+                        )}
+                      </button>
+                    )}
                   </li>
                 );
               })}

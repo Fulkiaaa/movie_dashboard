@@ -1,13 +1,22 @@
-'use client';
+"use client";
 
-import { useAuth } from '@/contexts/AuthContext';
-import { Film, Clock, Star, Eye, List, BarChart3, Trophy, Percent } from 'lucide-react';
-import Link from 'next/link';
-import { useState, useEffect } from 'react';
-import MovieModal from '@/components/MovieModal';
-import { Movie, tmdbService } from '@/services/tmdb';
-import { moviesService, UserMovie } from '@/services/movies';
-import Image from 'next/image';
+import { useAuth } from "@/contexts/AuthContext";
+import {
+  Film,
+  Clock,
+  Star,
+  Eye,
+  List,
+  BarChart3,
+  Trophy,
+  Percent,
+} from "lucide-react";
+import Link from "next/link";
+import { useState, useEffect } from "react";
+import MovieModal from "@/components/MovieModal";
+import { Movie, tmdbService } from "@/services/tmdb";
+import { moviesService, UserMovie } from "@/services/movies";
+import Image from "next/image";
 
 interface AdvancedStats {
   totalWatched: number;
@@ -56,26 +65,30 @@ export default function DashboardPage() {
       const oneMonthAgo = new Date();
       oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
 
-      const thisMonthCount = watched.filter(m =>
-        new Date(m.created_at) >= oneMonthAgo
+      const thisMonthCount = watched.filter(
+        (m) => new Date(m.created_at) >= oneMonthAgo,
       ).length;
 
-      const ratedMovies = watched.filter(m => m.rating !== null && m.rating > 0);
-      const averageRating = ratedMovies.length > 0
-        ? ratedMovies.reduce((sum, m) => sum + (m.rating || 0), 0) / ratedMovies.length
-        : 0;
+      const ratedMovies = watched.filter(
+        (m) => m.rating !== null && m.rating > 0,
+      );
+      const averageRating =
+        ratedMovies.length > 0
+          ? ratedMovies.reduce((sum, m) => sum + (m.rating || 0), 0) /
+            ratedMovies.length
+          : 0;
 
       let totalMinutes = 0;
       for (const movie of watched) {
         try {
-          if (movie.media_type === 'movie') {
+          if (movie.media_type === "movie") {
             const details = await tmdbService.getMovieDetails(movie.tmdb_id);
             if (details.runtime) {
               totalMinutes += details.runtime;
             }
           }
         } catch (error) {
-          console.error('Error loading movie runtime:', error);
+          console.error("Error loading movie runtime:", error);
         }
       }
 
@@ -90,7 +103,7 @@ export default function DashboardPage() {
         ratedMoviesCount: ratedMovies.length,
       });
     } catch (error) {
-      console.error('Error loading data:', error);
+      console.error("Error loading data:", error);
     } finally {
       setLoadingStats(false);
     }
@@ -102,13 +115,14 @@ export default function DashboardPage() {
 
   const handleMovieClick = async (userMovie: UserMovie) => {
     try {
-      const details = userMovie.media_type === 'movie'
-        ? await tmdbService.getMovieDetails(userMovie.tmdb_id)
-        : await tmdbService.getTVDetails(userMovie.tmdb_id);
+      const details =
+        userMovie.media_type === "movie"
+          ? await tmdbService.getMovieDetails(userMovie.tmdb_id)
+          : await tmdbService.getTVDetails(userMovie.tmdb_id);
 
       setSelectedMovie(details as Movie);
     } catch (error) {
-      console.error('Error loading movie details:', error);
+      console.error("Error loading movie details:", error);
     }
   };
 
@@ -154,14 +168,11 @@ export default function DashboardPage() {
   }
 
   const MovieCard = ({ movie }: { movie: UserMovie }) => (
-    <button
-      onClick={() => handleMovieClick(movie)}
-      className="group"
-    >
+    <button onClick={() => handleMovieClick(movie)} className="group">
       <div className="aspect-2/3 bg-[#E4DED2] rounded-lg overflow-hidden mb-2 border border-[#E4DED2] group-hover:border-[#F95C4B] group-hover:shadow-[0_4px_12px_rgba(13,13,13,0.08)] transition-all relative">
         {movie.poster_path ? (
           <Image
-            src={tmdbService.getImageUrl(movie.poster_path, 'w300')}
+            src={tmdbService.getImageUrl(movie.poster_path, "w300")}
             alt={movie.title}
             width={200}
             height={300}
@@ -207,18 +218,20 @@ export default function DashboardPage() {
         <div className="bg-[#F6F4F1] border border-[#E4DED2] rounded-xl p-4 md:p-6 mb-6 md:mb-8 shadow-[0_1px_3px_rgba(13,13,13,0.06)]">
           <div className="flex items-center justify-between mb-4 md:mb-6">
             <div className="flex items-center gap-2 md:gap-3">
-              <Eye className="w-5 h-5 md:w-6 md:h-6 text-[#F95C4B]" />
+              <Eye className="w-5 h-5 md:w-6 md:h-6 text-[#6B9472]" />
               <div>
-                <h2 className="text-lg md:text-2xl font-bold text-[#0D0D0D]">Mes Films Vus</h2>
-                <div className="w-8 h-0.5 bg-[#F95C4B] mt-1"></div>
+                <h2 className="text-lg md:text-2xl font-bold text-[#0D0D0D]">
+                  Mes Films Vus
+                </h2>
+                <div className="w-8 h-0.5 bg-[#6B9472] mt-1"></div>
               </div>
             </div>
             <div className="text-right">
               <p className="text-xs md:text-sm font-semibold text-[#0D0D0D]">
-                {watchedMovies.length} film{watchedMovies.length > 1 ? 's' : ''}
+                {watchedMovies.length} film{watchedMovies.length > 1 ? "s" : ""}
               </p>
               <p className="text-xs text-[#B8B0A0] hidden sm:block">
-                {loadingStats ? '...' : formatTime(stats.totalMinutes)} cumulés
+                {loadingStats ? "..." : formatTime(stats.totalMinutes)} cumulés
               </p>
             </div>
           </div>
@@ -230,7 +243,9 @@ export default function DashboardPage() {
           ) : watchedMovies.length === 0 ? (
             <div className="text-center py-12">
               <Eye className="w-16 h-16 text-[#B8B0A0] mx-auto mb-4" />
-              <p className="text-[#B8B0A0] mb-2">Aucun film visionné pour le moment</p>
+              <p className="text-[#B8B0A0] mb-2">
+                Aucun film visionné pour le moment
+              </p>
               <p className="text-[#B8B0A0] text-sm mb-6">
                 Commencez à ajouter des films à votre collection
               </p>
@@ -252,9 +267,11 @@ export default function DashboardPage() {
                 <div className="mt-4 md:mt-6 text-center">
                   <Link
                     href="/dashboard/watched"
-                    className="inline-block px-4 md:px-6 py-2 md:py-3 bg-[#F95C4B] text-[#F6F4F1] rounded-lg hover:bg-[#C7392A] transition-all text-sm md:text-base"
+                    className="inline-flex items-center gap-1.5 text-sm text-[#B8B0A0] hover:text-[#0D0D0D] transition-colors"
                   >
-                    Voir tous les films ({watchedMovies.length})
+                    Voir tous les films
+                    <span className="text-xs">({watchedMovies.length})</span>
+                    <span className="text-xs">→</span>
                   </Link>
                 </div>
               )}
@@ -268,13 +285,20 @@ export default function DashboardPage() {
           <div className="bg-[#F6F4F1] border border-[#E4DED2] rounded-xl p-4 md:p-6 shadow-[0_1px_3px_rgba(13,13,13,0.06)]">
             <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
               <Percent className="w-5 h-5 md:w-6 md:h-6 text-[#F95C4B]" />
-              <h3 className="text-lg md:text-xl font-bold text-[#0D0D0D]">Taux de Notation</h3>
+              <h3 className="text-lg md:text-xl font-bold text-[#0D0D0D]">
+                Taux de Notation
+              </h3>
             </div>
             <div className="flex items-end gap-3 md:gap-4">
               <p className="text-3xl md:text-4xl font-bold text-[#0D0D0D]">
-                {loadingStats ? '...' : stats.totalWatched > 0
-                  ? Math.round((stats.ratedMoviesCount / stats.totalWatched) * 100)
-                  : 0}%
+                {loadingStats
+                  ? "..."
+                  : stats.totalWatched > 0
+                    ? Math.round(
+                        (stats.ratedMoviesCount / stats.totalWatched) * 100,
+                      )
+                    : 0}
+                %
               </p>
               <p className="text-sm md:text-base text-[#B8B0A0] mb-1 md:mb-2">
                 {stats.ratedMoviesCount} / {stats.totalWatched}
@@ -284,9 +308,11 @@ export default function DashboardPage() {
               <div
                 className="bg-[#F95C4B] h-full transition-all duration-500"
                 style={{
-                  width: `${stats.totalWatched > 0
-                    ? (stats.ratedMoviesCount / stats.totalWatched) * 100
-                    : 0}%`
+                  width: `${
+                    stats.totalWatched > 0
+                      ? (stats.ratedMoviesCount / stats.totalWatched) * 100
+                      : 0
+                  }%`,
                 }}
               ></div>
             </div>
@@ -296,21 +322,33 @@ export default function DashboardPage() {
           <div className="bg-[#F6F4F1] border border-[#E4DED2] rounded-xl p-4 md:p-6 shadow-[0_1px_3px_rgba(13,13,13,0.06)]">
             <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
               <BarChart3 className="w-5 h-5 md:w-6 md:h-6 text-[#F95C4B]" />
-              <h3 className="text-lg md:text-xl font-bold text-[#0D0D0D]">Activité Récente</h3>
+              <h3 className="text-lg md:text-xl font-bold text-[#0D0D0D]">
+                Activité Récente
+              </h3>
             </div>
             <div className="space-y-2 md:space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-sm md:text-base text-[#B8B0A0]">7 derniers jours</span>
-                <span className="text-lg md:text-xl font-bold text-[#0D0D0D]">{stats.thisWeek}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm md:text-base text-[#B8B0A0]">30 derniers jours</span>
-                <span className="text-lg md:text-xl font-bold text-[#0D0D0D]">{stats.thisMonth}</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm md:text-base text-[#B8B0A0]">Temps total</span>
+                <span className="text-sm md:text-base text-[#B8B0A0]">
+                  7 derniers jours
+                </span>
                 <span className="text-lg md:text-xl font-bold text-[#0D0D0D]">
-                  {loadingStats ? '...' : formatTime(stats.totalMinutes)}
+                  {stats.thisWeek}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm md:text-base text-[#B8B0A0]">
+                  30 derniers jours
+                </span>
+                <span className="text-lg md:text-xl font-bold text-[#0D0D0D]">
+                  {stats.thisMonth}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm md:text-base text-[#B8B0A0]">
+                  Temps total
+                </span>
+                <span className="text-lg md:text-xl font-bold text-[#0D0D0D]">
+                  {loadingStats ? "..." : formatTime(stats.totalMinutes)}
                 </span>
               </div>
             </div>
@@ -323,12 +361,15 @@ export default function DashboardPage() {
             <div className="flex items-center gap-2 md:gap-3">
               <List className="w-5 h-5 md:w-6 md:h-6 text-[#F95C4B]" />
               <div>
-                <h2 className="text-lg md:text-2xl font-bold text-[#0D0D0D]">Ma Watchlist</h2>
+                <h2 className="text-lg md:text-2xl font-bold text-[#0D0D0D]">
+                  Ma Watchlist
+                </h2>
                 <div className="w-8 h-0.5 bg-[#F95C4B] mt-1"></div>
               </div>
             </div>
             <span className="text-xs md:text-sm text-[#B8B0A0]">
-              {watchlistMovies.length} film{watchlistMovies.length > 1 ? 's' : ''}
+              {watchlistMovies.length} film
+              {watchlistMovies.length > 1 ? "s" : ""}
             </span>
           </div>
 
@@ -359,7 +400,10 @@ export default function DashboardPage() {
                     <div className="aspect-2/3 bg-[#E4DED2] rounded-lg overflow-hidden mb-2 border border-[#E4DED2] group-hover:border-[#F95C4B] group-hover:shadow-[0_4px_12px_rgba(13,13,13,0.08)] transition-all">
                       {movie.poster_path ? (
                         <Image
-                          src={tmdbService.getImageUrl(movie.poster_path, 'w300')}
+                          src={tmdbService.getImageUrl(
+                            movie.poster_path,
+                            "w300",
+                          )}
                           alt={movie.title}
                           width={200}
                           height={300}
@@ -381,9 +425,11 @@ export default function DashboardPage() {
                 <div className="mt-4 md:mt-6 text-center">
                   <Link
                     href="/dashboard/watchlist"
-                    className="inline-block px-4 md:px-6 py-2 md:py-3 bg-[#F95C4B] text-[#F6F4F1] rounded-lg hover:bg-[#C7392A] transition-all text-sm md:text-base"
+                    className="inline-flex items-center gap-1.5 text-sm text-[#B8B0A0] hover:text-[#0D0D0D] transition-colors"
                   >
-                    Voir toute la watchlist ({watchlistMovies.length})
+                    Voir toute la watchlist
+                    <span className="text-xs">({watchlistMovies.length})</span>
+                    <span className="text-xs">→</span>
                   </Link>
                 </div>
               )}
@@ -395,7 +441,9 @@ export default function DashboardPage() {
         <div className="bg-[#F6F4F1] border border-[#E4DED2] rounded-xl p-6 shadow-[0_1px_3px_rgba(13,13,13,0.06)]">
           <div className="flex items-center gap-3 mb-2">
             <Trophy className="w-6 h-6 md:w-7 md:h-7 text-[#D4A843]" />
-            <h2 className="text-xl md:text-2xl font-bold text-[#0D0D0D]">Mes Meilleurs Films</h2>
+            <h2 className="text-xl md:text-2xl font-bold text-[#0D0D0D]">
+              Mes Meilleurs Films
+            </h2>
           </div>
           <div className="w-8 h-0.5 bg-[#F95C4B] mb-6"></div>
 
@@ -403,15 +451,18 @@ export default function DashboardPage() {
             <div className="flex items-center justify-center py-12">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#F95C4B]"></div>
             </div>
-          ) : watchedMovies.filter(m => m.rating !== null && m.rating >= 4.5).length === 0 ? (
+          ) : watchedMovies.filter((m) => m.rating !== null && m.rating >= 4.5)
+              .length === 0 ? (
             <div className="text-center py-12">
               <Trophy className="w-16 h-16 text-[#B8B0A0] mx-auto mb-4" />
-              <p className="text-[#B8B0A0]">Aucun film noté 4,5 étoiles ou plus pour le moment</p>
+              <p className="text-[#B8B0A0]">
+                Aucun film noté 4,5 étoiles ou plus pour le moment
+              </p>
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
               {watchedMovies
-                .filter(m => m.rating !== null && m.rating >= 4.5)
+                .filter((m) => m.rating !== null && m.rating >= 4.5)
                 .slice(0, 6)
                 .map((movie) => (
                   <button
@@ -422,7 +473,10 @@ export default function DashboardPage() {
                     <div className="aspect-2/3 bg-[#E4DED2] rounded-lg overflow-hidden mb-2 border border-[#E4DED2] group-hover:border-[#D4A843] group-hover:shadow-[0_4px_12px_rgba(13,13,13,0.08)] transition-all relative">
                       {movie.poster_path ? (
                         <Image
-                          src={tmdbService.getImageUrl(movie.poster_path, 'w300')}
+                          src={tmdbService.getImageUrl(
+                            movie.poster_path,
+                            "w300",
+                          )}
                           alt={movie.title}
                           width={200}
                           height={300}

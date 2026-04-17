@@ -21,25 +21,25 @@ const DIRECTIONS = [
   {
     label: 'Déjà vu',
     description: 'Glissez vers la droite',
-    borderColor: '#22c55e',
-    textColor: '#4ade80',
-    bgColor: 'rgba(34, 197, 94, 0.15)',
+    borderColor: '#6B9472',
+    textColor: '#6B9472',
+    bgColor: 'rgba(107, 148, 114, 0.15)',
     Arrow: ArrowRight,
   },
   {
     label: 'Pas vu',
     description: 'Glissez vers la gauche',
-    borderColor: '#ef4444',
-    textColor: '#f87171',
-    bgColor: 'rgba(239, 68, 68, 0.15)',
+    borderColor: '#E4DED2',
+    textColor: '#F6F4F1',
+    bgColor: 'rgba(228, 222, 210, 0.15)',
     Arrow: ArrowLeft,
   },
   {
     label: 'À voir',
     description: 'Glissez vers le haut',
-    borderColor: '#D4A843',
-    textColor: '#D4A843',
-    bgColor: 'rgba(212, 168, 67, 0.15)',
+    borderColor: '#B8B0A0',
+    textColor: '#B8B0A0',
+    bgColor: 'rgba(184, 176, 160, 0.15)',
     Arrow: ArrowUp,
   },
 ] as const;
@@ -132,38 +132,39 @@ export default function SwipeTutorial({ onDismiss }: SwipeTutorialProps) {
       style={{ background: 'rgba(0, 0, 0, 0.68)', backdropFilter: 'blur(4px)' }}
       onClick={dismiss}
     >
+      {/* Skip button — fixed top-right, always visible */}
+      <button
+        onClick={dismiss}
+        style={{
+          position: 'fixed',
+          top: 20,
+          right: 20,
+          fontSize: 13,
+          fontWeight: 600,
+          color: '#0D0D0D',
+          background: '#F6F4F1',
+          border: 'none',
+          cursor: 'pointer',
+          padding: '7px 16px',
+          borderRadius: 8,
+          transition: 'background 0.15s ease',
+          zIndex: 51,
+        }}
+        onMouseEnter={e => {
+          (e.currentTarget as HTMLButtonElement).style.background = '#EBE7E0';
+        }}
+        onMouseLeave={e => {
+          (e.currentTarget as HTMLButtonElement).style.background = '#F6F4F1';
+        }}
+      >
+        Passer
+      </button>
+
       <div
         className="flex flex-col items-center"
         style={{ gap: 28 }}
         onClick={e => e.stopPropagation()}
       >
-        {/* Skip button */}
-        <button
-          onClick={dismiss}
-          style={{
-            alignSelf: 'flex-end',
-            fontSize: 13,
-            fontWeight: 500,
-            color: 'rgba(246, 244, 241, 0.55)',
-            background: 'transparent',
-            border: 'none',
-            cursor: 'pointer',
-            padding: '6px 12px',
-            borderRadius: 8,
-            transition: 'color 0.15s ease, background 0.15s ease',
-          }}
-          onMouseEnter={e => {
-            (e.currentTarget as HTMLButtonElement).style.color = '#F6F4F1';
-            (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.08)';
-          }}
-          onMouseLeave={e => {
-            (e.currentTarget as HTMLButtonElement).style.color = 'rgba(246, 244, 241, 0.55)';
-            (e.currentTarget as HTMLButtonElement).style.background = 'transparent';
-          }}
-        >
-          Passer
-        </button>
-
         {/* Title + instruction */}
         <div style={{ textAlign: 'center' }}>
           <h2 style={{ color: '#F6F4F1', fontSize: 20, fontWeight: 700, margin: '0 0 6px' }}>
@@ -175,13 +176,13 @@ export default function SwipeTutorial({ onDismiss }: SwipeTutorialProps) {
               alignItems: 'center',
               justifyContent: 'center',
               gap: 6,
-              color: isDone ? '#F95C4B' : direction.textColor,
+              color: isDone ? '#D4A843' : direction.textColor,
               fontSize: 14,
               fontWeight: 500,
               transition: 'color 0.3s ease',
             }}
           >
-            <Arrow size={16} />
+            {!isDone && <Arrow size={16} />}
             <span>{isDone ? 'Vous êtes prêt !' : direction.description}</span>
           </div>
         </div>
@@ -254,7 +255,7 @@ export default function SwipeTutorial({ onDismiss }: SwipeTutorialProps) {
                 height: 8,
                 width: i === dirIndex ? 24 : 8,
                 borderRadius: 4,
-                background: i === dirIndex ? '#F95C4B' : 'rgba(246, 244, 241, 0.25)',
+                background: i === dirIndex ? '#D4A843' : 'rgba(246, 244, 241, 0.25)',
                 transition: 'all 0.35s ease',
               }}
             />

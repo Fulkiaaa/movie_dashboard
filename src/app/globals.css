@@ -8,12 +8,15 @@
   --color-coral: #f95c4b;
   --color-eclipse: #0d0d0d;
   --color-gold: #d4a843;
+  --color-sage: #6b9472;
 
   /* Variantes */
   --color-coral-light: #fde8e5;
   --color-coral-dark: #c7392a;
   --color-gold-light: #f5e6c4;
   --color-gold-dark: #8c6d2a;
+  --color-sage-light: #d4e8d9;
+  --color-sage-dark: #4a7055;
   --color-stone-dark: #b8b0a0;
   --color-paper-dark: #ebe7e0;
 
@@ -24,6 +27,11 @@
   --color-text-secondary: var(--color-stone-dark);
   --color-accent: var(--color-coral);
   --color-accent-secondary: var(--color-gold);
+
+  /* Statuts films */
+  --color-status-watched: var(--color-sage);
+  --color-status-watchlist: var(--color-gold);
+  --color-status-unseen: var(--color-stone);
 
   /* Ombres */
   --shadow-sm: 0 1px 3px rgba(13, 13, 13, 0.06);

@@ -1,14 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  X,
-  Star,
-  Eye,
-  Clock,
-  Calendar,
-  Film as FilmIcon,
-} from "lucide-react";
+import { X, Star, Eye, Clock, Calendar, Film as FilmIcon } from "lucide-react";
 import HalfStarRating from "@/components/HalfStarRating";
 import { tmdbService, Movie, MovieDetails } from "@/services/tmdb";
 import { moviesService, UserMovie } from "@/services/movies";
@@ -344,7 +337,7 @@ export default function MovieModal({
                   disabled={saving}
                   className={`flex items-center justify-center gap-1.5 md:gap-2 px-2 md:px-4 py-2 md:py-2.5 rounded-lg text-xs md:text-base font-medium transition-all active:scale-95 ${
                     status === "watched"
-                      ? "bg-[#D4A843] text-[#F6F4F1]"
+                      ? "bg-[#6B9472] text-[#F6F4F1]"
                       : "bg-[#E4DED2] text-[#0D0D0D] hover:bg-[#EBE7E0]"
                   } disabled:opacity-50`}
                 >
@@ -367,7 +360,7 @@ export default function MovieModal({
                   </span>
                 </button>
 
-                {userMovie && (
+                {userMovie && status === "watched" && (
                   <button
                     onClick={handleToggleFavorite}
                     disabled={saving}
