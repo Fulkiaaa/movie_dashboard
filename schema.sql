@@ -65,6 +65,38 @@ CREATE TABLE IF NOT EXISTS subscriptions (
 CREATE INDEX IF NOT EXISTS idx_subscriptions_user_id ON subscriptions(user_id);
 CREATE INDEX IF NOT EXISTS idx_subscriptions_status  ON subscriptions(user_id, status);
 
+-- Listes personnalisées
+CREATE TABLE IF NOT EXISTS user_lists (
+  id          UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id     UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+  name        VARCHAR(100) NOT NULL,
+  description TEXT,
+  is_public   BOOLEAN DEFAULT FALSE NOT NULL,
+  created_at  TIMESTAMPTZ DEFAULT NOW(),
+  updated_at  TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS list_movies (
+  id           UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  list_id      UUID REFERENCES user_lists(id) ON DELETE CASCADE NOT NULL,
+  user_id      UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+  tmdb_id      INTEGER NOT NULL,
+  media_type   VARCHAR(10) NOT NULL CHECK (media_type IN ('movie', 'tv')),
+  title        VARCHAR(500) NOT NULL,
+  poster_path  VARCHAR(500),
+  release_date VARCHAR(50),
+  added_at     TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(list_id, tmdb_id, media_type)
+);
+
+CREATE INDEX IF NOT EXISTS idx_user_lists_user_id    ON user_lists(user_id);
+CREATE INDEX IF NOT EXISTS idx_list_movies_list_id   ON list_movies(list_id);
+CREATE INDEX IF NOT EXISTS idx_list_movies_user_tmdb ON list_movies(user_id, tmdb_id, media_type);
+
+CREATE OR REPLACE TRIGGER update_user_lists_updated_at
+  BEFORE UPDATE ON user_lists
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
 -- Index
 CREATE INDEX IF NOT EXISTS idx_user_movies_user_id ON user_movies(user_id);
 CREATE INDEX IF NOT EXISTS idx_user_movies_status ON user_movies(user_id, status);

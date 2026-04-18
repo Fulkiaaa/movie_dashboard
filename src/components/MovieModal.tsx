@@ -9,10 +9,15 @@ import {
   Calendar,
   Film as FilmIcon,
   Check,
+  List,
+  Plus,
+  Minus,
+  ChevronDown,
 } from "lucide-react";
 import HalfStarRating from "@/components/HalfStarRating";
 import { tmdbService, Movie, MovieDetails } from "@/services/tmdb";
 import { moviesService, UserMovie } from "@/services/movies";
+import { listsService, UserList } from "@/services/lists";
 import { useAuth } from "@/contexts/AuthContext";
 import Image from "next/image";
 
@@ -41,6 +46,14 @@ export default function MovieModal({
   const [savingComment, setSavingComment] = useState(false);
   const [commentSaved, setCommentSaved] = useState(false);
 
+  // Lists
+  const [lists, setLists] = useState<UserList[]>([]);
+  const [movieListIds, setMovieListIds] = useState<string[]>([]);
+  const [showLists, setShowLists] = useState(false);
+  const [newListName, setNewListName] = useState("");
+  const [creatingList, setCreatingList] = useState(false);
+  const [togglingList, setTogglingList] = useState<string | null>(null);
+
   useEffect(() => {
     loadMovieData();
   }, [movie.id]);
@@ -56,10 +69,14 @@ export default function MovieModal({
       setDetails(movieDetails);
 
       if (user) {
-        const existingMovie = await moviesService.getMovieByTmdbId(
-          movie.id,
-          movie.media_type,
-        );
+        const [existingMovie, allLists, listIds] = await Promise.all([
+          moviesService.getMovieByTmdbId(movie.id, movie.media_type),
+          listsService.getLists(),
+          listsService.getMovieListIds(movie.id, movie.media_type),
+        ]);
+
+        setLists(allLists);
+        setMovieListIds(listIds);
 
         if (existingMovie) {
           setUserMovie(existingMovie);
@@ -173,6 +190,51 @@ export default function MovieModal({
       console.error("Error saving comment:", error);
     } finally {
       setSavingComment(false);
+    }
+  };
+
+  const handleToggleList = async (listId: string) => {
+    setTogglingList(listId);
+    try {
+      if (movieListIds.includes(listId)) {
+        await listsService.removeMovie(listId, movie.id, movie.media_type);
+        setMovieListIds(prev => prev.filter(id => id !== listId));
+      } else {
+        await listsService.addMovie(listId, {
+          tmdb_id: movie.id,
+          media_type: movie.media_type,
+          title: movie.title || movie.name || "",
+          poster_path: movie.poster_path,
+          release_date: movie.release_date || movie.first_air_date || null,
+        });
+        setMovieListIds(prev => [...prev, listId]);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setTogglingList(null);
+    }
+  };
+
+  const handleCreateAndAddList = async () => {
+    if (!newListName.trim()) return;
+    setCreatingList(true);
+    try {
+      const list = await listsService.createList(newListName.trim());
+      await listsService.addMovie(list.id, {
+        tmdb_id: movie.id,
+        media_type: movie.media_type,
+        title: movie.title || movie.name || "",
+        poster_path: movie.poster_path,
+        release_date: movie.release_date || movie.first_air_date || null,
+      });
+      setLists(prev => [list, ...prev]);
+      setMovieListIds(prev => [...prev, list.id]);
+      setNewListName("");
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setCreatingList(false);
     }
   };
 
@@ -465,6 +527,83 @@ export default function MovieModal({
                   </button>
                 )}
               </div>
+
+              {/* Listes */}
+              {user && (
+                <div className="mt-3 md:mt-4 border-t border-[#E4DED2] pt-3 md:pt-4">
+                  <button
+                    onClick={() => setShowLists(v => !v)}
+                    className="flex items-center justify-between w-full text-left cursor-pointer"
+                  >
+                    <div className="flex items-center gap-2">
+                      <List className="w-3.5 h-3.5 md:w-4 md:h-4 text-[#B8B0A0]" />
+                      <span className="text-xs md:text-sm font-medium text-[#0D0D0D]">
+                        Mes listes
+                      </span>
+                      {movieListIds.length > 0 && (
+                        <span className="px-1.5 py-0.5 bg-[#F95C4B] text-[#F6F4F1] rounded-full text-[10px] font-medium leading-none">
+                          {movieListIds.length}
+                        </span>
+                      )}
+                    </div>
+                    <ChevronDown
+                      className={`w-4 h-4 text-[#B8B0A0] transition-transform ${showLists ? "rotate-180" : ""}`}
+                    />
+                  </button>
+
+                  {showLists && (
+                    <div className="mt-2 space-y-1">
+                      {lists.length === 0 ? (
+                        <p className="text-xs text-[#B8B0A0] py-1">Aucune liste créée</p>
+                      ) : (
+                        lists.map(list => {
+                          const inList = movieListIds.includes(list.id);
+                          return (
+                            <button
+                              key={list.id}
+                              onClick={() => handleToggleList(list.id)}
+                              disabled={togglingList === list.id}
+                              className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-xs transition-colors cursor-pointer ${
+                                inList
+                                  ? "bg-[#F95C4B]/10 text-[#C7392A]"
+                                  : "hover:bg-[#EBE7E0] text-[#0D0D0D]"
+                              } disabled:opacity-50`}
+                            >
+                              <span className="font-medium truncate">{list.name}</span>
+                              <span className="flex items-center gap-1 shrink-0 ml-2">
+                                <span className="text-[#B8B0A0]">{list.movie_count}</span>
+                                {inList
+                                  ? <Minus className="w-3 h-3" />
+                                  : <Plus className="w-3 h-3" />
+                                }
+                              </span>
+                            </button>
+                          );
+                        })
+                      )}
+
+                      {/* Créer une nouvelle liste */}
+                      <div className="flex gap-2 pt-1">
+                        <input
+                          value={newListName}
+                          onChange={e => setNewListName(e.target.value)}
+                          onKeyDown={e => e.key === "Enter" && handleCreateAndAddList()}
+                          placeholder="Nouvelle liste…"
+                          maxLength={100}
+                          className="flex-1 px-2.5 py-1.5 text-xs text-[#0D0D0D] placeholder-[#B8B0A0] bg-[#F6F4F1] border border-[#B8B0A0] rounded-lg focus:outline-none focus:border-[#F95C4B] transition-colors"
+                        />
+                        <button
+                          onClick={handleCreateAndAddList}
+                          disabled={!newListName.trim() || creatingList}
+                          className="px-3 py-1.5 bg-[#0D0D0D] text-[#F6F4F1] rounded-lg text-xs font-medium hover:bg-[#2A2A2A] transition-colors disabled:opacity-50 cursor-pointer"
+                        >
+                          {creatingList ? "…" : "Créer"}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>
