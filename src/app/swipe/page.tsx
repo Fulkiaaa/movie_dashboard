@@ -764,7 +764,7 @@ export default function SwipePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#F6F4F1] flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#F95C4B]"></div>
       </div>
     );
@@ -772,7 +772,7 @@ export default function SwipePage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-[#F6F4F1] flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <Eye className="w-16 h-16 text-[#B8B0A0] mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-[#0D0D0D] mb-2">
@@ -798,7 +798,7 @@ export default function SwipePage() {
     const years = Array.from({ length: 10 }, (_, i) => currentYear - i);
 
     return (
-      <div className="min-h-screen bg-[#E4DED2] py-6 md:py-12 px-4">
+      <div className="min-h-screen py-6 md:py-12 px-4">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-8 md:mb-12">
             <h1 className="text-2xl md:text-4xl font-bold text-[#0D0D0D] mb-2 md:mb-3">
@@ -814,7 +814,7 @@ export default function SwipePage() {
             <div className="md:col-span-2">
               <button
                 onClick={() => setMode("customFilter")}
-                className="group w-full p-4 md:p-8 bg-[#F6F4F1] rounded-xl md:rounded-2xl shadow-[0_1px_3px_rgba(13,13,13,0.06)] hover:shadow-[0_4px_12px_rgba(13,13,13,0.08)] transition-all border border-[#E4DED2] hover:border-[#F95C4B]"
+                className="group w-full p-4 md:p-8 glass-warm rounded-xl md:rounded-2xl hover:shadow-md transition-all hover:border-[#F95C4B]"
               >
                 <Sliders className="w-10 h-10 md:w-12 md:h-12 text-[#0D0D0D] mb-3 md:mb-4 mx-auto" />
                 <h3 className="text-lg md:text-xl font-bold text-[#0D0D0D] mb-1 md:mb-2">
@@ -829,7 +829,7 @@ export default function SwipePage() {
             {/* Popular */}
             <button
               onClick={() => loadMoviesWithFilter({ type: "popular" })}
-              className="group p-4 md:p-8 bg-[#F6F4F1] rounded-xl md:rounded-2xl shadow-[0_1px_3px_rgba(13,13,13,0.06)] hover:shadow-[0_4px_12px_rgba(13,13,13,0.08)] transition-all border border-[#E4DED2] hover:border-[#F95C4B]"
+              className="group p-4 md:p-8 glass-warm rounded-xl md:rounded-2xl hover:shadow-md transition-all hover:border-[#F95C4B]"
             >
               <TrendingUp className="w-10 h-10 md:w-12 md:h-12 text-[#F95C4B] mb-3 md:mb-4" />
               <h3 className="text-lg md:text-xl font-bold text-[#0D0D0D] mb-1 md:mb-2">
@@ -843,7 +843,7 @@ export default function SwipePage() {
             {/* Top Rated */}
             <button
               onClick={() => loadMoviesWithFilter({ type: "topRated" })}
-              className="group p-4 md:p-8 bg-[#F6F4F1] rounded-xl md:rounded-2xl shadow-[0_1px_3px_rgba(13,13,13,0.06)] hover:shadow-[0_4px_12px_rgba(13,13,13,0.08)] transition-all border border-[#E4DED2] hover:border-[#D4A843]"
+              className="group p-4 md:p-8 glass-warm rounded-xl md:rounded-2xl hover:shadow-md transition-all hover:border-[#D4A843]"
             >
               <Star className="w-10 h-10 md:w-12 md:h-12 text-[#D4A843] mb-3 md:mb-4" />
               <h3 className="text-lg md:text-xl font-bold text-[#0D0D0D] mb-1 md:mb-2">
@@ -857,7 +857,7 @@ export default function SwipePage() {
             {/* Trending */}
             <button
               onClick={() => loadMoviesWithFilter({ type: "trending" })}
-              className="group p-4 md:p-8 bg-[#F6F4F1] rounded-xl md:rounded-2xl shadow-[0_1px_3px_rgba(13,13,13,0.06)] hover:shadow-[0_4px_12px_rgba(13,13,13,0.08)] transition-all border border-[#E4DED2] hover:border-[#F95C4B]"
+              className="group p-4 md:p-8 glass-warm rounded-xl md:rounded-2xl hover:shadow-md transition-all hover:border-[#F95C4B]"
             >
               <Play className="w-10 h-10 md:w-12 md:h-12 text-[#F95C4B] mb-3 md:mb-4" />
               <h3 className="text-lg md:text-xl font-bold text-[#0D0D0D] mb-1 md:mb-2">
@@ -875,7 +875,7 @@ export default function SwipePage() {
                   setShowYearMenu(!showYearMenu);
                   if (showGenreMenu) setShowGenreMenu(false);
                 }}
-                className="group w-full p-4 md:p-8 bg-[#F6F4F1] rounded-xl md:rounded-2xl shadow-[0_1px_3px_rgba(13,13,13,0.06)] hover:shadow-[0_4px_12px_rgba(13,13,13,0.08)] transition-all border border-[#E4DED2] hover:border-[#F95C4B]"
+                className="group w-full p-4 md:p-8 glass-warm rounded-xl md:rounded-2xl hover:shadow-md transition-all hover:border-[#F95C4B]"
               >
                 <Calendar className="w-10 h-10 md:w-12 md:h-12 text-[#F95C4B] mb-3 md:mb-4" />
                 <h3 className="text-lg md:text-xl font-bold text-[#0D0D0D] mb-1 md:mb-2">
@@ -892,7 +892,7 @@ export default function SwipePage() {
                     className="fixed inset-0 z-10"
                     onClick={() => setShowYearMenu(false)}
                   />
-                  <div className="absolute top-full mt-2 w-full bg-[#F6F4F1] rounded-xl shadow-[0_8px_24px_rgba(13,13,13,0.12)] p-3 md:p-4 grid grid-cols-2 gap-2 z-20 max-h-80 overflow-y-auto border border-[#E4DED2]">
+                  <div className="absolute top-full mt-2 w-full glass-warm rounded-xl shadow-lg p-3 md:p-4 grid grid-cols-2 gap-2 z-20 max-h-80 overflow-y-auto">
                     {years.map((year) => (
                       <button
                         key={year}
@@ -917,7 +917,7 @@ export default function SwipePage() {
                   setShowGenreMenu(!showGenreMenu);
                   if (showYearMenu) setShowYearMenu(false);
                 }}
-                className="group w-full p-4 md:p-8 bg-[#F6F4F1] rounded-xl md:rounded-2xl shadow-[0_1px_3px_rgba(13,13,13,0.06)] hover:shadow-[0_4px_12px_rgba(13,13,13,0.08)] transition-all border border-[#E4DED2] hover:border-[#F95C4B]"
+                className="group w-full p-4 md:p-8 glass-warm rounded-xl md:rounded-2xl hover:shadow-md transition-all hover:border-[#F95C4B]"
               >
                 <Film className="w-10 h-10 md:w-12 md:h-12 text-[#F95C4B] mb-3 md:mb-4" />
                 <h3 className="text-lg md:text-xl font-bold text-[#0D0D0D] mb-1 md:mb-2">
@@ -934,7 +934,7 @@ export default function SwipePage() {
                     className="fixed inset-0 z-10"
                     onClick={() => setShowGenreMenu(false)}
                   />
-                  <div className="absolute top-full mt-2 w-full bg-[#F6F4F1] rounded-xl shadow-[0_8px_24px_rgba(13,13,13,0.12)] p-3 md:p-4 grid grid-cols-2 md:grid-cols-3 gap-2 z-20 max-h-80 md:max-h-96 overflow-y-auto border border-[#E4DED2]">
+                  <div className="absolute top-full mt-2 w-full glass-warm rounded-xl shadow-lg p-3 md:p-4 grid grid-cols-2 md:grid-cols-3 gap-2 z-20 max-h-80 md:max-h-96 overflow-y-auto">
                     {genres.map((genre) => (
                       <button
                         key={genre.id}
@@ -978,7 +978,7 @@ export default function SwipePage() {
     };
 
     return (
-      <div className="min-h-screen bg-[#E4DED2] py-6 px-4 overflow-y-auto">
+      <div className="min-h-screen py-6 px-4 overflow-y-auto">
         <div className="max-w-4xl mx-auto pb-24">
           <div className="flex items-center gap-4 mb-8">
             <button
@@ -998,7 +998,7 @@ export default function SwipePage() {
           </div>
 
           {/* Genres */}
-          <div className="bg-[#F6F4F1] rounded-xl p-6 mb-4 shadow-[0_1px_3px_rgba(13,13,13,0.06)]">
+          <div className="glass-warm rounded-2xl p-6 mb-4">
             <h3 className="font-bold text-lg text-[#0D0D0D] mb-3 flex items-center gap-2">
               <Film className="w-5 h-5 text-[#F95C4B]" />
               Genres
@@ -1029,7 +1029,7 @@ export default function SwipePage() {
           </div>
 
           {/* Date Range */}
-          <div className="bg-[#F6F4F1] rounded-xl p-6 mb-4 shadow-[0_1px_3px_rgba(13,13,13,0.06)]">
+          <div className="glass-warm rounded-2xl p-6 mb-4">
             <h3 className="font-bold text-lg text-[#0D0D0D] mb-3 flex items-center gap-2">
               <Calendar className="w-5 h-5 text-[#F95C4B]" />
               Période de sortie
@@ -1071,7 +1071,7 @@ export default function SwipePage() {
           </div>
 
           {/* Languages */}
-          <div className="bg-[#F6F4F1] rounded-xl p-6 mb-4 shadow-[0_1px_3px_rgba(13,13,13,0.06)]">
+          <div className="glass-warm rounded-2xl p-6 mb-4">
             <h3 className="font-bold text-lg text-[#0D0D0D] mb-3 flex items-center gap-2">
               <Languages className="w-5 h-5 text-[#F95C4B]" />
               Langues originales
@@ -1105,7 +1105,7 @@ export default function SwipePage() {
           </div>
 
           {/* Countries */}
-          <div className="bg-[#F6F4F1] rounded-xl p-6 mb-4 shadow-[0_1px_3px_rgba(13,13,13,0.06)]">
+          <div className="glass-warm rounded-2xl p-6 mb-4">
             <h3 className="font-bold text-lg text-[#0D0D0D] mb-3 flex items-center gap-2">
               <Globe className="w-5 h-5 text-[#F95C4B]" />
               Pays de production
@@ -1140,7 +1140,7 @@ export default function SwipePage() {
 
           {/* Certifications */}
           {availableCertifications.length > 0 && (
-            <div className="bg-[#F6F4F1] rounded-xl p-6 mb-4 shadow-[0_1px_3px_rgba(13,13,13,0.06)]">
+            <div className="glass-warm rounded-2xl p-6 mb-4">
               <h3 className="font-bold text-lg text-[#0D0D0D] mb-3 flex items-center gap-2">
                 <Star className="w-5 h-5 text-[#D4A843]" />
                 Classification (France)
@@ -1176,7 +1176,7 @@ export default function SwipePage() {
 
           {/* Streaming Providers */}
           {availableProviders.length > 0 && (
-            <div className="bg-[#F6F4F1] rounded-xl p-6 mb-4 shadow-[0_1px_3px_rgba(13,13,13,0.06)]">
+            <div className="glass-warm rounded-2xl p-6 mb-4">
               <h3 className="font-bold text-lg text-[#0D0D0D] mb-3 flex items-center gap-2">
                 <Play className="w-5 h-5 text-[#F95C4B]" />
                 Plateformes de streaming
@@ -1226,7 +1226,7 @@ export default function SwipePage() {
           )}
 
           {/* Fixed bottom action button */}
-          <div className="fixed bottom-0 left-0 right-0 bg-[#F6F4F1] border-t border-[#E4DED2] p-4 shadow-[0_-4px_12px_rgba(13,13,13,0.08)]">
+          <div className="fixed bottom-0 left-0 right-0 glass-warm border-t border-[#E4DED2]/60 p-4 shadow-[0_-8px_24px_rgba(13,13,13,0.08)]">
             <div className="max-w-4xl mx-auto">
               <button
                 onClick={() => {
@@ -1260,7 +1260,7 @@ export default function SwipePage() {
 
   // Swipe Screen
   return (
-    <div className="min-h-screen overflow-hidden bg-[#E4DED2] flex items-start justify-center pt-6 md:pt-8 px-2 md:px-4 touch-none">
+    <div className="min-h-screen overflow-hidden flex items-start justify-center pt-6 md:pt-8 px-2 md:px-4 touch-none">
       {showTutorial && (
         <SwipeTutorial onDismiss={() => setShowTutorial(false)} />
       )}
@@ -1273,7 +1273,7 @@ export default function SwipePage() {
               setMovies([]);
               setCurrentIndex(0);
             }}
-            className="px-3 md:px-4 py-1.5 md:py-2 bg-[#F6F4F1] text-[#0D0D0D] rounded-lg hover:bg-[#EBE7E0] transition-colors shadow-[0_1px_3px_rgba(13,13,13,0.06)] text-sm md:text-base"
+            className="px-3 md:px-4 py-1.5 md:py-2 glass-warm text-[#0D0D0D] rounded-lg hover:shadow-md transition-all text-sm md:text-base"
           >
             ← <span className="hidden sm:inline">Changer de catégorie</span>
             <span className="sm:hidden">Retour</span>
@@ -1285,7 +1285,7 @@ export default function SwipePage() {
             <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#F95C4B]"></div>
           </div>
         ) : !currentMovie ? (
-          <div className="bg-[#F6F4F1] rounded-2xl md:rounded-3xl p-8 md:p-12 text-center shadow-[0_8px_24px_rgba(13,13,13,0.12)] mx-4">
+          <div className="glass-warm rounded-2xl md:rounded-3xl p-8 md:p-12 text-center mx-4">
             <h2 className="text-2xl md:text-3xl font-bold text-[#0D0D0D] mb-3 md:mb-4">
               C'est tout pour aujourd'hui
             </h2>

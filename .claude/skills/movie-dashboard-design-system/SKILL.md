@@ -102,12 +102,12 @@ Coral et Gold Reel sont des couleurs d'accent. Sur fonds clairs (Paper, Stone) :
 
 ## Typographie
 
-### Police principale : DM Sans
+### Police principale : Outfit
 
 Importer depuis Google Fonts :
 
 ```css
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700&display=swap");
 ```
 
 ### Échelle typographique
@@ -279,7 +279,7 @@ Définir ces variables à la racine du projet (dans `globals.css` ou le layout p
   --color-accent-secondary: var(--color-gold);
 
   /* Typo */
-  --font-family: "DM Sans", system-ui, sans-serif;
+  --font-family: "Outfit", system-ui, sans-serif;
 
   /* Espacements */
   --space-xs: 4px;

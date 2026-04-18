@@ -5,6 +5,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 export interface AppUser {
   id: string;
   email: string;
+  is_pro: boolean;
 }
 
 interface AuthContextType {
@@ -47,7 +48,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Erreur lors de la connexion');
-    setUser(data.user);
+    setUser({ ...data.user, is_pro: data.user.is_pro ?? false });
   };
 
   const signUp = async (email: string, password: string) => {
@@ -58,7 +59,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Erreur lors de la création du compte');
-    setUser(data.user);
+    setUser({ ...data.user, is_pro: false });
   };
 
   const signOut = async () => {

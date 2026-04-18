@@ -179,7 +179,7 @@ export default function MovieModal({
   if (loading) {
     return (
       <div className="fixed inset-0 z-[150] flex items-center justify-center bg-[#0D0D0D]/50 backdrop-blur-sm p-4">
-        <div className="bg-[#F6F4F1] rounded-xl md:rounded-2xl p-6 md:p-8">
+        <div className="glass-warm rounded-xl md:rounded-2xl p-6 md:p-8">
           <div className="animate-spin rounded-full h-10 w-10 md:h-12 md:w-12 border-b-2 border-[#F95C4B]"></div>
         </div>
       </div>
@@ -198,7 +198,7 @@ export default function MovieModal({
       onClick={onClose}
     >
       <div
-        className="bg-[#F6F4F1] w-full md:max-w-4xl md:rounded-2xl rounded-t-3xl h-[85vh] md:h-auto md:max-h-[90vh] overflow-y-auto"
+        className="glass-warm w-full md:max-w-4xl md:rounded-2xl rounded-t-3xl h-[85vh] md:h-auto md:max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header avec backdrop */}

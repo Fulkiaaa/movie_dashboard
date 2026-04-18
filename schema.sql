@@ -41,6 +41,30 @@ CREATE TABLE IF NOT EXISTS skipped_movies (
   UNIQUE(user_id, tmdb_id, media_type)
 );
 
+-- Table des abonnements
+CREATE TABLE IF NOT EXISTS subscriptions (
+  id           UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id      UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL UNIQUE,
+  plan         VARCHAR(20) NOT NULL DEFAULT 'free'
+                 CHECK (plan IN ('free', 'pro', 'pro_annual')),
+  status       VARCHAR(20) NOT NULL DEFAULT 'active'
+                 CHECK (status IN ('active', 'trialing', 'cancelled', 'expired')),
+  started_at   TIMESTAMPTZ DEFAULT NOW(),
+  expires_at   TIMESTAMPTZ,
+  cancelled_at TIMESTAMPTZ,
+  -- Prêt pour Stripe : stocker l'ID de subscription externe
+  stripe_subscription_id VARCHAR(255),
+  created_at   TIMESTAMPTZ DEFAULT NOW(),
+  updated_at   TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Migration : ajouter la table si elle n'existe pas encore
+-- (déjà géré par CREATE TABLE IF NOT EXISTS ci-dessus)
+
+-- Index
+CREATE INDEX IF NOT EXISTS idx_subscriptions_user_id ON subscriptions(user_id);
+CREATE INDEX IF NOT EXISTS idx_subscriptions_status  ON subscriptions(user_id, status);
+
 -- Index
 CREATE INDEX IF NOT EXISTS idx_user_movies_user_id ON user_movies(user_id);
 CREATE INDEX IF NOT EXISTS idx_user_movies_status ON user_movies(user_id, status);
@@ -62,6 +86,10 @@ CREATE OR REPLACE TRIGGER update_users_updated_at
 
 CREATE OR REPLACE TRIGGER update_user_movies_updated_at
   BEFORE UPDATE ON user_movies
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE OR REPLACE TRIGGER update_subscriptions_updated_at
+  BEFORE UPDATE ON subscriptions
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- Trigger limite 10 favoris

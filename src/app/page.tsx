@@ -201,9 +201,9 @@ export default function Home() {
                 onClick={() => scroll("left")}
                 disabled={!canScrollLeft}
                 aria-label="Précédent"
-                className="w-8 h-8 flex items-center justify-center rounded-full border border-[#E4DED2]
-                           bg-[#F6F4F1] text-[#0D0D0D] transition-all
-                           hover:bg-[#EBE7E0] hover:border-[#B8B0A0]
+                className="w-8 h-8 flex items-center justify-center rounded-full cursor-pointer
+                           glass-warm text-[#0D0D0D] transition-all
+                           hover:shadow-md
                            disabled:opacity-30 disabled:cursor-not-allowed"
               >
                 <ChevronLeft className="w-4 h-4" />
@@ -212,9 +212,9 @@ export default function Home() {
                 onClick={() => scroll("right")}
                 disabled={!canScrollRight}
                 aria-label="Suivant"
-                className="w-8 h-8 flex items-center justify-center rounded-full border border-[#E4DED2]
-                           bg-[#F6F4F1] text-[#0D0D0D] transition-all
-                           hover:bg-[#EBE7E0] hover:border-[#B8B0A0]
+                className="w-8 h-8 flex items-center justify-center rounded-full cursor-pointer
+                           glass-warm text-[#0D0D0D] transition-all
+                           hover:shadow-md
                            disabled:opacity-30 disabled:cursor-not-allowed"
               >
                 <ChevronRight className="w-4 h-4" />
@@ -240,7 +240,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F6F4F1]">
+    <div className="min-h-screen">
       {/* ── Hero Section ─────────────────────────────────────────── */}
       <section className="relative h-[65vh] min-h-[480px] md:h-[72vh] overflow-hidden">
         {featuredMovie?.backdrop_path ? (
@@ -315,30 +315,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Auth nudge strip ─────────────────────────────────────── */}
-      {!user && (
-        <div className="bg-[#0D0D0D]">
-          <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
-            <p className="text-[#B8B0A0] text-sm hidden sm:block">
-              Créez un compte pour organiser votre collection de films
-            </p>
-            <div className="flex items-center gap-2 ml-auto">
-              <Link
-                href="/auth/login"
-                className="px-4 py-2 text-sm text-[#E4DED2] hover:text-white transition-colors"
-              >
-                Connexion
-              </Link>
-              <Link
-                href="/auth/signup"
-                className="px-4 py-2 bg-[#F95C4B] hover:bg-[#C7392A] text-white text-sm font-semibold rounded-xl transition-all"
-              >
-                Commencer
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* ── Movie rows ───────────────────────────────────────────── */}
       <div className="py-8 md:py-12">

@@ -12,6 +12,7 @@ import {
   ChevronDown,
   Home,
   GalleryHorizontal,
+  BarChart3,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
@@ -70,9 +71,10 @@ export default function Header() {
   const username = user?.email?.split("@")[0]?.slice(0, 18) ?? "Compte";
 
   return (
-    <header className="sticky top-0 z-50 glass-warm border-b border-[#E4DED2]/60">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+    <header className="sticky top-0 z-50 px-3 md:px-4 pt-3 pb-2">
+      <div className="max-w-7xl mx-auto glass-warm rounded-2xl shadow-[0_4px_24px_rgba(13,13,13,0.08)]">
+        <div className="px-4 sm:px-5">
+        <div className="flex items-center justify-between h-14">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
             <span className="text-xl font-bold text-[#0D0D0D] tracking-tight">
@@ -102,6 +104,13 @@ export default function Header() {
             >
               <GalleryHorizontal className="w-4 h-4" />
               Swipe
+            </Link>
+            <Link
+              href="/dashboard/stats"
+              className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-[#0D0D0D] hover:bg-[#EBE7E0] transition-colors"
+            >
+              <BarChart3 className="w-4 h-4" />
+              Stats
             </Link>
             <Link
               href="/profile"
@@ -229,7 +238,7 @@ export default function Header() {
 
         {/* Mobile Navigation Menu */}
         {showMobileMenu && (
-          <div className="md:hidden border-t border-[#E4DED2] py-3 bg-[#F6F4F1]">
+          <div className="md:hidden border-t border-[#E4DED2]/60 py-3">
             <nav className="flex flex-col gap-1">
               <Link
                 href="/"
@@ -256,6 +265,14 @@ export default function Header() {
                 <span className="font-medium">Swipe</span>
               </Link>
               <Link
+                href="/dashboard/stats"
+                onClick={() => setShowMobileMenu(false)}
+                className="flex items-center gap-2 px-4 py-3 text-[#0D0D0D] hover:bg-[#EBE7E0] transition-colors rounded-lg"
+              >
+                <BarChart3 className="w-5 h-5" />
+                <span className="font-medium">Statistiques</span>
+              </Link>
+              <Link
                 href="/profile"
                 onClick={() => setShowMobileMenu(false)}
                 className="flex items-center gap-2 px-4 py-3 text-[#0D0D0D] hover:bg-[#EBE7E0] transition-colors rounded-lg"
@@ -266,6 +283,7 @@ export default function Header() {
             </nav>
           </div>
         )}
+        </div>
       </div>
     </header>
   );

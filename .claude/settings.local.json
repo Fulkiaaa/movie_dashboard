@@ -13,7 +13,14 @@
       "Bash(sed -n '1358,1390p' \"g:/Visual Studio Code Projets/movie_dashboard/src/app/swipe/page.tsx\")",
       "Bash(sed -n '1450,1490p' \"g:/Visual Studio Code Projets/movie_dashboard/src/app/swipe/page.tsx\")",
       "Bash(sed -n '265,275p' \"g:/Visual Studio Code Projets/movie_dashboard/src/app/dashboard/page.tsx\")",
-      "Bash(sed -n '421,432p' \"g:/Visual Studio Code Projets/movie_dashboard/src/app/dashboard/page.tsx\")"
+      "Bash(sed -n '421,432p' \"g:/Visual Studio Code Projets/movie_dashboard/src/app/dashboard/page.tsx\")",
+      "Bash(xargs grep *)",
+      "WebFetch(domain:21st.dev)",
+      "WebFetch(domain:github.com)",
+      "WebSearch",
+      "WebFetch(domain:deepwiki.com)",
+      "Bash(uipro *)",
+      "Bash(python skills/ui-ux-pro-max/scripts/search.py \"movie dashboard cinema catalog glassmorphism warm vintage\" --design-system -p \"SeenIt Movie Dashboard\" -f markdown)"
     ]
   }
 }

@@ -68,7 +68,7 @@ export default function WatchlistPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#F6F4F1] flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#F95C4B]"></div>
       </div>
     );
@@ -76,7 +76,7 @@ export default function WatchlistPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-[#F6F4F1] flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <Film className="w-16 h-16 text-[#B8B0A0] mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-[#0D0D0D] mb-2">Connexion requise</h1>
@@ -90,7 +90,7 @@ export default function WatchlistPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F6F4F1]">
+    <div className="min-h-screen">
       <div className="container mx-auto px-3 md:px-4 py-4 md:py-8 max-w-7xl">
         {/* Header */}
         <div className="mb-6 md:mb-8">
@@ -199,7 +199,7 @@ export default function WatchlistPage() {
                 <button
                   onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
-                  className="px-4 py-2 border border-[#E4DED2] rounded-lg hover:border-[#F95C4B] transition-all disabled:opacity-50 disabled:cursor-not-allowed text-[#0D0D0D]"
+                  className="cursor-pointer px-4 py-2 glass-warm rounded-lg hover:border-[#F95C4B] hover:shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed text-[#0D0D0D]"
                 >
                   <ChevronLeft className="w-5 h-5" />
                 </button>
@@ -221,7 +221,7 @@ export default function WatchlistPage() {
                 <button
                   onClick={() => setCurrentPage(prev => Math.min(prev + 1, Math.ceil(filteredMovies.length / moviesPerPage)))}
                   disabled={currentPage === Math.ceil(filteredMovies.length / moviesPerPage)}
-                  className="px-4 py-2 border border-[#E4DED2] rounded-lg hover:border-[#F95C4B] transition-all disabled:opacity-50 disabled:cursor-not-allowed text-[#0D0D0D]"
+                  className="cursor-pointer px-4 py-2 glass-warm rounded-lg hover:border-[#F95C4B] hover:shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed text-[#0D0D0D]"
                 >
                   <ChevronRight className="w-5 h-5" />
                 </button>

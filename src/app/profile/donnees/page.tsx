@@ -46,7 +46,7 @@ function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="bg-[#F6F4F1] border border-[#E4DED2] rounded-2xl p-5 md:p-6 shadow-[0_1px_3px_rgba(13,13,13,0.06)]">
+    <div className="glass-warm rounded-2xl p-5 md:p-6">
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl flex items-center justify-center"
@@ -225,7 +225,7 @@ export default function DonneesPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#F6F4F1] flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="w-10 h-10 rounded-full border-2 border-[#E4DED2] border-t-[#F95C4B] animate-spin" />
       </div>
     );
@@ -233,7 +233,7 @@ export default function DonneesPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-[#F6F4F1] flex items-center justify-center p-4">
+      <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center">
           <Shield className="w-14 h-14 text-[#B8B0A0] mx-auto mb-4" />
           <h1 className="text-xl font-bold text-[#0D0D0D] mb-2">Connexion requise</h1>
@@ -246,7 +246,7 @@ export default function DonneesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F6F4F1] py-6 md:py-10">
+    <div className="min-h-screen py-6 md:py-10">
       <div className="max-w-3xl mx-auto px-4 md:px-6 lg:px-8">
 
         {/* Back */}
@@ -497,7 +497,7 @@ export default function DonneesPage() {
         </div>
 
         {/* ── Contact DPO ───────────────────────────────────── */}
-        <div className="bg-[#0D0D0D] rounded-2xl p-5 md:p-6 mt-2">
+        <div className="glass-dark rounded-2xl p-5 md:p-6 mt-2">
           <div className="flex items-center gap-3 mb-3">
             <Ban className="w-5 h-5 text-[#F95C4B]" />
             <h2 className="text-base font-bold text-[#F6F4F1]">Autres droits — Contact</h2>

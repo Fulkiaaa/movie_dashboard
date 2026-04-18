@@ -5,7 +5,7 @@ import { ArrowLeft, FileText, CheckCircle, XCircle, AlertTriangle, UserX } from 
 
 export default function TermsPage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
         {/* Back button */}
         <Link

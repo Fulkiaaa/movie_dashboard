@@ -103,7 +103,7 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#F6F4F1] flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#F95C4B]"></div>
       </div>
     );
@@ -111,7 +111,7 @@ export default function ProfilePage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-[#F6F4F1] flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <User className="w-16 h-16 text-[#B8B0A0] mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-[#0D0D0D] mb-2">Connexion requise</h1>
@@ -125,7 +125,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F6F4F1] py-4 md:py-8">
+    <div className="min-h-screen py-4 md:py-8">
       {selectedMovie && (
         <MovieModal
           movie={selectedMovie}
@@ -150,7 +150,7 @@ export default function ProfilePage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
           {/* Profile Card */}
           <div className="lg:col-span-1">
-            <div className="bg-[#F6F4F1] border border-[#E4DED2] rounded-2xl p-4 md:p-6 shadow-[0_1px_3px_rgba(13,13,13,0.06)] lg:sticky lg:top-8">
+            <div className="glass-warm rounded-2xl p-4 md:p-6 lg:sticky lg:top-8">
               {/* Avatar */}
               <div className="flex flex-col items-center mb-4 md:mb-6 pb-4 md:pb-6 border-b border-[#E4DED2]">
                 <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-[#0D0D0D] flex items-center justify-center mb-3 md:mb-4">
@@ -164,7 +164,7 @@ export default function ProfilePage() {
 
               {/* Info */}
               <div className="space-y-3">
-                <div className="flex items-start gap-3 p-3 bg-[#E4DED2] rounded-lg">
+                <div className="flex items-start gap-3 p-3 glass rounded-lg">
                   <Mail className="w-5 h-5 text-[#0D0D0D] mt-0.5" />
                   <div className="flex-1 min-w-0">
                     <p className="text-xs text-[#B8B0A0] mb-1">Email</p>
@@ -172,7 +172,7 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 p-3 bg-[#E4DED2] rounded-lg">
+                <div className="flex items-start gap-3 p-3 glass rounded-lg">
                   <Calendar className="w-5 h-5 text-[#0D0D0D] mt-0.5" />
                   <div className="flex-1">
                     <p className="text-xs text-[#B8B0A0] mb-1">Membre depuis</p>
@@ -186,7 +186,7 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 p-3 bg-[#E4DED2] rounded-lg">
+                <div className="flex items-start gap-3 p-3 glass rounded-lg">
                   <Star className="w-5 h-5 text-[#D4A843] mt-0.5 fill-[#D4A843]" />
                   <div className="flex-1">
                     <p className="text-xs text-[#B8B0A0] mb-1">Favoris</p>
@@ -230,7 +230,7 @@ export default function ProfilePage() {
 
           {/* Favorites Section */}
           <div className="lg:col-span-2">
-            <div className="bg-[#F6F4F1] border border-[#E4DED2] rounded-2xl p-4 md:p-6 shadow-[0_1px_3px_rgba(13,13,13,0.06)]">
+            <div className="glass-warm rounded-2xl p-4 md:p-6">
               <div className="flex items-center justify-between mb-4 md:mb-6">
                 <div className="flex items-center gap-2 md:gap-3">
                   <Star className="w-5 h-5 md:w-6 md:h-6 text-[#D4A843] fill-[#D4A843]" />
@@ -326,7 +326,7 @@ export default function ProfilePage() {
                   </div>
 
                   {favoritesCount < 10 && (
-                    <div className="mt-6 p-4 bg-[#E4DED2] rounded-lg text-center">
+                    <div className="mt-6 p-4 glass rounded-lg text-center">
                       <p className="text-sm text-[#B8B0A0]">
                         Vous pouvez ajouter encore {10 - favoritesCount} film{10 - favoritesCount > 1 ? 's' : ''} favori{10 - favoritesCount > 1 ? 's' : ''}
                       </p>

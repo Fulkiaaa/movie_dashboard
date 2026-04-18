@@ -10,6 +10,8 @@ import {
   BarChart3,
   Trophy,
   Percent,
+  Crown,
+  TrendingUp,
 } from "lucide-react";
 import Link from "next/link";
 import { useState, useEffect } from "react";
@@ -139,7 +141,7 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#F6F4F1] flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#F95C4B]"></div>
       </div>
     );
@@ -147,7 +149,7 @@ export default function DashboardPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-[#F6F4F1] flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <Film className="w-16 h-16 text-[#B8B0A0] mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-[#0D0D0D] mb-2">
@@ -202,7 +204,7 @@ export default function DashboardPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#F6F4F1]">
+    <div className="min-h-screen">
       <div className="container mx-auto px-3 md:px-4 py-4 md:py-8 max-w-7xl">
         {/* Header */}
         <div className="mb-6 md:mb-8">
@@ -215,15 +217,15 @@ export default function DashboardPage() {
         </div>
 
         {/* Films Vus */}
-        <div className="bg-[#F6F4F1] border border-[#E4DED2] rounded-xl p-4 md:p-6 mb-6 md:mb-8 shadow-[0_1px_3px_rgba(13,13,13,0.06)]">
+        <div className="glass-warm rounded-2xl p-4 md:p-6 mb-6 md:mb-8">
           <div className="flex items-center justify-between mb-4 md:mb-6">
             <div className="flex items-center gap-2 md:gap-3">
-              <Eye className="w-5 h-5 md:w-6 md:h-6 text-[#6B9472]" />
+              <Eye className="w-5 h-5 md:w-6 md:h-6 text-[#F95C4B]" />
               <div>
                 <h2 className="text-lg md:text-2xl font-bold text-[#0D0D0D]">
                   Mes Films Vus
                 </h2>
-                <div className="w-8 h-0.5 bg-[#6B9472] mt-1"></div>
+                <div className="w-8 h-0.5 bg-[#F95C4B] mt-1"></div>
               </div>
             </div>
             <div className="text-right">
@@ -282,7 +284,7 @@ export default function DashboardPage() {
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
           {/* Taux de notation */}
-          <div className="bg-[#F6F4F1] border border-[#E4DED2] rounded-xl p-4 md:p-6 shadow-[0_1px_3px_rgba(13,13,13,0.06)]">
+          <div className="glass-coral rounded-2xl p-4 md:p-6">
             <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
               <Percent className="w-5 h-5 md:w-6 md:h-6 text-[#F95C4B]" />
               <h3 className="text-lg md:text-xl font-bold text-[#0D0D0D]">
@@ -319,7 +321,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Activité */}
-          <div className="bg-[#F6F4F1] border border-[#E4DED2] rounded-xl p-4 md:p-6 shadow-[0_1px_3px_rgba(13,13,13,0.06)]">
+          <div className="glass-sage rounded-2xl p-4 md:p-6">
             <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
               <BarChart3 className="w-5 h-5 md:w-6 md:h-6 text-[#F95C4B]" />
               <h3 className="text-lg md:text-xl font-bold text-[#0D0D0D]">
@@ -356,7 +358,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Watchlist */}
-        <div className="bg-[#F6F4F1] border border-[#E4DED2] rounded-xl p-4 md:p-6 mb-6 md:mb-8 shadow-[0_1px_3px_rgba(13,13,13,0.06)]">
+        <div className="glass-warm rounded-2xl p-4 md:p-6 mb-6 md:mb-8">
           <div className="flex items-center justify-between mb-4 md:mb-6">
             <div className="flex items-center gap-2 md:gap-3">
               <List className="w-5 h-5 md:w-6 md:h-6 text-[#F95C4B]" />
@@ -437,8 +439,48 @@ export default function DashboardPage() {
           )}
         </div>
 
+        {/* Stats CTA — Pro : raccourci direct · Free : teaser upgrade */}
+        <Link
+          href="/dashboard/stats"
+          className="block rounded-2xl p-5 md:p-6 mb-6 md:mb-8 group transition-all hover:shadow-[0_8px_24px_rgba(13,13,13,0.10)]"
+          style={user.is_pro
+            ? { background: 'rgba(107,148,114,0.07)', border: '1px solid rgba(107,148,114,0.18)' }
+            : { background: 'rgba(212,168,67,0.07)',  border: '1px solid rgba(212,168,67,0.18)' }
+          }
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3 md:gap-4">
+              <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
+                style={{ background: user.is_pro ? '#6B9472' : '#D4A843' }}>
+                <TrendingUp className="w-5 h-5 text-[#F6F4F1]" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2 mb-0.5">
+                  <h3 className="text-base font-bold text-[#0D0D0D]">Statistiques avancées</h3>
+                  {!user.is_pro && (
+                    <span className="text-[10px] font-medium px-2 py-0.5 rounded-full"
+                      style={{ background: '#F5E6C4', color: '#8C6D2A' }}>
+                      <Crown className="w-2.5 h-2.5 inline mr-0.5" />Pro
+                    </span>
+                  )}
+                </div>
+                <p className="text-xs text-[#B8B0A0]">
+                  {user.is_pro
+                    ? 'Heatmap · Décennies · Évolution des notes · Activité mensuelle'
+                    : 'Débloquez l\'analyse complète de votre cinémathèque'
+                  }
+                </p>
+              </div>
+            </div>
+            <BarChart3
+              className="w-5 h-5 shrink-0 transition-colors"
+              style={{ color: user.is_pro ? '#6B9472' : '#B8B0A0' }}
+            />
+          </div>
+        </Link>
+
         {/* Meilleurs Films */}
-        <div className="bg-[#F6F4F1] border border-[#E4DED2] rounded-xl p-6 shadow-[0_1px_3px_rgba(13,13,13,0.06)]">
+        <div className="glass-gold rounded-2xl p-6">
           <div className="flex items-center gap-3 mb-2">
             <Trophy className="w-6 h-6 md:w-7 md:h-7 text-[#D4A843]" />
             <h2 className="text-xl md:text-2xl font-bold text-[#0D0D0D]">

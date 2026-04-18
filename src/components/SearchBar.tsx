@@ -92,7 +92,7 @@ export default function SearchBar({ onSelectMovie, variant = 'default' }: Search
           />
 
           {/* Results */}
-          <div className={`absolute top-full mt-2 w-full rounded-xl z-120 max-h-[60vh] md:max-h-96 overflow-y-auto ${isHero ? 'glass-dark' : 'bg-[#F6F4F1] border-2 border-[#E4DED2] shadow-[0_8px_24px_rgba(13,13,13,0.12)]'}`}>
+          <div className={`absolute top-full mt-2 w-full rounded-xl z-120 max-h-[60vh] md:max-h-96 overflow-y-auto ${isHero ? 'glass-dark' : 'glass-warm shadow-[0_8px_32px_rgba(13,13,13,0.10)]'}`}>
             {isLoading ? (
               <div className="p-4 text-center text-[#B8B0A0] text-sm md:text-base">
                 Recherche en cours...

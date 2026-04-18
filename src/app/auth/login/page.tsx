@@ -30,7 +30,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#E4DED2] flex items-center justify-center px-4">
+    <div className="min-h-screen flex items-center justify-center px-4">
       <div className="max-w-md w-full">
         {/* Logo */}
         <div className="flex justify-center mb-8">
@@ -40,7 +40,7 @@ export default function LoginPage() {
         </div>
 
         {/* Card */}
-        <div className="bg-[#F6F4F1] border border-[#E4DED2] rounded-2xl p-8 shadow-[0_8px_24px_rgba(13,13,13,0.12)]">
+        <div className="glass-warm rounded-2xl p-8 shadow-[0_8px_32px_rgba(13,13,13,0.10)]">
           <h1 className="text-2xl font-bold text-[#0D0D0D] mb-2 text-center">
             Connexion
           </h1>
@@ -107,7 +107,7 @@ export default function LoginPage() {
               <div className="w-full border-t border-[#E4DED2]"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-[#F6F4F1] text-[#B8B0A0]">ou</span>
+              <span className="px-2 text-[#B8B0A0]">ou</span>
             </div>
           </div>
 
